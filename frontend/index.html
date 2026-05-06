@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedInventory - Sistema Hospitalar</title>
+    <link rel="shortcut icon" href="assets/img/hosp_icon.png" type="image/png">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .hero {
+            background: linear-gradient(to right, #2f3c4b, #223e46);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        .card:hover {
+            transform: scale(1.03);
+            transition: 0.3s;
+        }
+        footer {
+            background: #222;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">MedInventory</a>
+        
+
+        <div class="collapse navbar-collapse" id="menu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#">Início</a></li>
+                <li class="nav-item"><a class="nav-link" href="login.html">Sistema</a></li>
+                <li class="nav-item"><a class="nav-link" href="#funcionalidades">Funcionalidades</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+                <li class="nav-item"><a class="btn btn-primary ms-2" href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <h1>Gestão Inteligente de Equipamentos Médicos</h1>
+    <p>Sistema web para inventário hospitalar com rastrensabilidade e controlo total</p>
+</section>
+
+<!-- SOBRE -->
+<section class="container my-5">
+    <h2 class="text-center mb-4">Sobre o Sistema</h2>
+    <p class="text-center">
+        O MedInventory é uma solução web desenvolvida para apoiar hospitais na gestão do inventário de equipamentos médicos,
+        permitindo controlo do ciclo de vida, documentação, fornecedores e localização.
+    </p>
+</section>
+
+<!-- FUNCIONALIDADES -->
+<section class="container my-5" id="funcionalidades">
+    <h2 class="text-center mb-4">Funcionalidades</h2>
+
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="card p-3 shadow">
+                <a class="nav-link" href="login.html"><h5>Gestão de Equipamentos</h5></a>
+                <p>Registo, edição e consulta de dispositivos médicos.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3 shadow">
+                <a class="nav-link" href="login.html"><h5>Localização</h5></a>
+                <p>Organização por serviço, sala e edifício.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3 shadow">
+                <a class="nav-link" href="login.html"><h5>Fornecedores</h5></a>
+                <p>Gestão de fabricantes e empresas de assistência técnica.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 mt-4">
+            <div class="card p-3 shadow">
+                <a class="nav-link" href="login.html"><h5>Documentação</h5></a>
+                <p>Armazenamento de manuais, contratos e certificados.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 mt-4">
+            <div class="card p-3 shadow">
+                <a class="nav-link" href="login.html"><h5>Pesquisa</h5></a>
+                <p>Filtros avançados para encontrar equipamentos rapidamente.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 mt-4">
+            <div class="card p-3 shadow">
+                <a class="nav-link" href="login.html"><h5>Dashboard</h5></a>
+                <p>Indicadores globais do estado do parque hospitalar.</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- EQUIPAMENTOS EXEMPLO -->
+<section class="container my-5">
+    <h2 class="text-center mb-4">Equipamentos Suportados</h2>
+
+    <div class="row text-center">
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow">
+                <h6>Monitor de Sinais Vitais</h6>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow">
+                <h6>Ventilador Pulmonar</h6>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow">
+                <h6>Bomba de Infusão</h6>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow">
+                <h6>Desfibrilhador</h6>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="container my-5" id="contacto">
+    <h2 class="text-center mb-4" >Contacto</h2>
+
+    <form class="w-50 mx-auto">
+        <input type="text" class="form-control mb-3" placeholder="Nome">
+        <input type="email" class="form-control mb-3" placeholder="Email">
+        <textarea class="form-control mb-3" placeholder="Mensagem"></textarea>
+        <button class="btn btn-primary w-100">Enviar</button>
+    </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>© 2026 MedInventory - Projeto SIBDAS</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
