@@ -7,7 +7,6 @@
 } 
 
 .bng-navbar {
- background-color: #343a40;
  display: flex; /* Alinha os elementos em linha */
  align-items: center;/* Centraliza os itens verticalmente */
  justify-content: space-between;/* Distribui os itens igualmente */
@@ -243,3 +242,22 @@ max-width: 500px; /* Limita a largura do formulário */
  border: none; /* Remove a borda padrão */
 border-radius: 5px; /* Bordas arredondadas */
  cursor: pointer; /* Cursor tipo "mão" ao passar por cima */}
+
+
+.hero {
+    background: linear-gradient(to right, #2f3c4b, #223e46);
+    color: white;
+    padding: 80px 20px;
+   text-align: center;
+ }
+ .card:hover {
+   transform: scale(1.03);
+   transition: 0.3s;
+        }
+
+footer {
+   background: #222;
+    color: white;
+    padding: 20px;
+    text-align: center;
+        }
