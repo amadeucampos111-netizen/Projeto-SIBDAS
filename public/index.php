@@ -88,7 +88,7 @@
                 <li class="nav-item"><a class="nav-link" href="#funcionalidades">Funcionalidades</a></li>
                 <li class="nav-item"><a class="nav-link" href="#equipamentos">Equipamentos</a></li>
                 <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-                <li class="nav-item"><a class="btn btn-primary btn-sm ms-lg-3 px-3 target-btn" href="login.html">Login</a></li>
+                <li class="nav-item"><a class="btn btn-primary btn-sm ms-lg-3 px-3 target-btn" href="login.php">Login</a></li>
             </ul>
         </div>
     </div>
