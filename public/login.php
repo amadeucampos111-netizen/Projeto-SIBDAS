@@ -28,14 +28,14 @@
             <div class="card p-4">
                 <div class="bng-navbar align-items-center justify-content-center my-4">
 
-                <a href="index.html"><img src="assets/img/hosp_icon.png"></a>
-                <a class="nav-link" href="index.html"><h4><strong>Sistema Hospitalar</strong></h4></a>
+                <a href="index.php"><img src="assets/img/hosp_icon.png"></a>
+                <a class="nav-link" href="index.php"><h4><strong>Sistema Hospitalar</strong></h4></a>
 
                 </div>
         <div class="row">
                 <div class="col">
                     <!-- Formulário -->
-                     <form action="../backend/index.html" method="post">
+                     <form action="../private/index.php" method="post">
                             <div class="mb-3">
                                 <!-- Utilizador -->
                                  <label for="email" class="form-label">Utilizador</label>
@@ -55,10 +55,12 @@
                                  </button>
                             </div>
 
+                            <!-- Substitui a div do erro por isto no teu ficheiro HTML/PHP de login -->
+                        <?php if (isset($_GET['erro'])): ?>
                             <div class="alert alert-danger p-2 text-center">
-                                <!-- Erros -->
-                                 <div> Erro: Utilizador não registado </div>
+                                <div><?php echo htmlspecialchars($_GET['erro']); ?></div>
                             </div>
+                        <?php endif; ?>
                     </form>
 
                 </div>
