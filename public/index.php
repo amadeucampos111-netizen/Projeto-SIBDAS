@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedInventory - Sistema Hospitalar</title>
+    <title>MedTrack</title>
     <link rel="shortcut icon" href="assets/img/hosp_icon.png" type="image/png">
 
     <!-- Bootstrap 5.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
      <!-- Font Awesome -->
-    <link rel="stylesheet" href="assets/fontawesome/all.min.css">
+    <link rel="stylesheet" href="assets/fontawesome/1240896.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -22,7 +22,7 @@
         }
         
         .hero-section {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #1e7225 0%, #289224 100%);
             color: white;
             padding: 100px 0;
         }
@@ -70,11 +70,11 @@
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-            <img src="assets/img/hosp_icon.png" alt="Logo" width="30" height="30">
-            <span>MedInventory</span>
+            <img src ="assets/img/hosp_icon.png" width="125" height="75">
+            <span>MedTrack</span>
         </a>
         
         <button class="navbar-dark navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
@@ -115,7 +115,7 @@
                 <h2 class="fw-bold mb-3">Sobre o Sistema</h2>
                 <div class="h-line bg-primary mx-auto mb-4" style="width: 60px; height: 3px;"></div>
                 <p class="text-secondary fs-5">
-                    O MedInventory é uma solução web moderna desenvolvida para apoiar instituições de saúde na gestão rigorosa do ciclo de vida de dispositivos médicos, otimizando a localização, documentação e assistência técnica.
+                    O MedTrack é uma solução web moderna desenvolvida para apoiar instituições de saúde na gestão rigorosa do ciclo de vida de dispositivos médicos, otimizando a localização, documentação e assistência técnica.
                 </p>
             </div>
         </div>
@@ -264,11 +264,11 @@
 <!-- FOOTER -->
 <footer class="text-center">
     <div class="container">
-        <p class="mb-0">© 2026 MedInventory - Projeto SIBDAS. Todos os direitos reservados.</p>
+        <p class="mb-0">© 2026 MedTrack - Projeto SIBDAS. Todos os direitos reservados.</p>
     </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.1240896.js"></script>
 
 </body>
 </html>

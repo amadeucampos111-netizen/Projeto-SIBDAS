@@ -6,21 +6,21 @@
     <title>ISEP-Ginasio</title>
 
     <!-- Bootstrap CSS & custom CSS -->
-    <link rel="stylesheet" href="assets/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/bootstrap/bootstrap.min.1240896.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="assets/css/estilos.css">
+    <link rel="stylesheet" href="assets/css/1240896.css">
     <!-- favicon -->
     <link rel="shortcut icon" href="assets/img/hosp_icon.png" type="image/png">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="assets/fontawesome/all.min.css">
+    <link rel="stylesheet" href="assets/fontawesome/1240896.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;700&display=swap" rel="stylesheet">
 
 </head>
 <body>
     <!-- Bootstrap JS and custom JS -->
-<script src="assets/bootstrap/bootstrap.bundle.min.js"></script> 
+<script src="assets/bootstrap/bootstrap.bundle.1240896.js"></script> 
 
 <div class="container-fluid mt5">
     <div class="row justify-content-center">
