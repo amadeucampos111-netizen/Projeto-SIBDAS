@@ -60,7 +60,7 @@
         }
 
         footer {
-            background-color: #15171a;
+            background-color: #289224;
             color: #a0a0a0;
             padding: 30px 0;
         }
