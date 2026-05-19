@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['perfil'] = 'Administrador';
 
         // Redireciona para a página restrita do hospital
-        header("Location: ../private/index.php");
+        header("Location: private/dashboard.php");
         exit;
 
     } else {
