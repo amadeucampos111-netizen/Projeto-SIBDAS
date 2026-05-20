@@ -73,8 +73,7 @@
 <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-            <img src ="assets/img/hosp_icon.png" width="125" height="75">
-            <span>MedTrack</span>
+            <img src ="assets/img/hosp_icon.png" width="150" height="100">
         </a>
         
         <button class="navbar-dark navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
