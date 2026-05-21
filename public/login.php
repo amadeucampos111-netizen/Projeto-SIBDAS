@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -50,17 +51,12 @@
 
                             <div class="mb-3 text-center">
                                 <!-- Submit -->
-                                 <button type="submit" class="btn btn-secondary px-4">Entrar
+                                <a href="../private/dashboard.php"> <button type="submit" class="btn btn-secondary px-4">Entrar
                                     <i class="fa-solid fa-right-to-bracket ms-2"></i>
-                                 </button>
+                                 </button> </a>
                             </div>
 
                             <!-- Substitui a div do erro por isto no teu ficheiro HTML/PHP de login -->
-                        <?php if (isset($_GET['erro'])): ?>
-                            <div class="alert alert-danger p-2 text-center">
-                                <div><?php echo htmlspecialchars($_GET['erro']); ?></div>
-                            </div>
-                        <?php endif; ?>
                     </form>
 
                 </div>
