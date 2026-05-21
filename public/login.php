@@ -36,7 +36,7 @@
         <div class="row">
                 <div class="col">
                     <!-- Formulário -->
-                     <form action="../private/index.php" method="post">
+                     <form action="../private/dashboard.php" method="post">
                             <div class="mb-3">
                                 <!-- Utilizador -->
                                  <label for="email" class="form-label">Utilizador</label>
@@ -51,12 +51,12 @@
 
                             <div class="mb-3 text-center">
                                 <!-- Submit -->
-                                <a href="../private/dashboard.php"> <button type="submit" class="btn btn-secondary px-4">Entrar
+                                <a href="http://localhost/apoio_hospitalar/private/dashboard.php"> <button type="submit" class="btn btn-secondary px-4">Entrar
                                     <i class="fa-solid fa-right-to-bracket ms-2"></i>
                                  </button> </a>
                             </div>
 
-                            <!-- Substitui a div do erro por isto no teu ficheiro HTML/PHP de login -->
+                           
                     </form>
 
                 </div>
