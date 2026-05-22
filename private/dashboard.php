@@ -1,5 +1,20 @@
 <?php
-include('conect_bd.php');
+
+$host = "localhost";
+$user = "root";
+$pass = ""; // Senha do Laragon é vazia por padrão
+$dbname = "medtrack_db";
+
+// Criar a ligação
+$conn = mysqli_connect($host, $user, $pass, $dbname);
+
+// Verificar se houve erro
+if (!$conn) {
+    die("Erro na ligação: " . mysqli_connect_error());
+} else {
+    // Apaga esta linha depois de testares, serve só para termos a certeza!
+    echo "";
+}
 
 // Contar quantos equipamentos existem
 $query_equip = "SELECT COUNT(*) as total FROM equipamentos";
@@ -38,6 +53,30 @@ $query_servicos = "SELECT l.servico_departamento, COUNT(e.id) as total
                    ORDER BY total DESC";
 
 $result_servicos = mysqli_query($conn, $query_servicos);
+
+// Consulta SQL para contar os equipamentos cuja data de fim de garantia é anterior à data de hoje
+$query_garantia_exp = "SELECT COUNT(*) as total 
+                       FROM equipamentos e
+                       INNER JOIN garantias_contratos g ON e.id = g.equipamento_id
+                       WHERE g.data_fim_garantia < CURDATE()";
+
+$result_garantia_exp = mysqli_query($conn, $query_garantia_exp);
+$data_garantia_exp = mysqli_fetch_assoc($result_garantia_exp);
+
+// Guarda o valor na variável para usar no Dashboard
+$total_garantias_expiradas = $data_garantia_exp['total'];
+
+// Consulta SQL para encontrar equipamentos que não têm nenhuma linha correspondente na tabela documentacao
+$query_sem_doc = "SELECT COUNT(*) as total 
+                  FROM equipamentos e
+                  LEFT JOIN documentacao d ON e.id = d.equipamento_id
+                  WHERE d.equipamento_id IS NULL";
+
+$result_sem_doc = mysqli_query($conn, $query_sem_doc);
+$data_sem_doc = mysqli_fetch_assoc($result_sem_doc);
+
+// Guarda o valor na variável para o Dashboard
+$total_sem_documentacao = $data_sem_doc['total'];
 ?>
 
 <!DOCTYPE html>
@@ -163,6 +202,33 @@ $result_servicos = mysqli_query($conn, $query_servicos);
                     </div>
                 </div>
             </div>
+
+            <div class="col-12 col-md-4 col-lg-3">
+    <div class="card card-stats border-left border-warning h-100" style="border-left: 5px solid #ffc107 !important;">
+        <div class="card-body d-flex align-items-center justify-content-between p-4">
+            <div>
+                <h6 class="text-uppercase fw-bold text-muted small mb-1">Garantias Expiradas</h6>
+                <h3 class="fw-bold mb-0 text-dark"><?php echo isset($total_garantias_expiradas) ? $total_garantias_expiradas : '0'; ?></h3>
+            </div>
+            <div class="icon-box bg-warning bg-opacity-10 text-warning">
+                <i class="fa-solid fa-calendar-xmark"></i>
+            </div>
+        </div>
+    </div>
+</div>
+            <div class="col-12 col-md-4 col-lg-3">
+    <div class="card card-stats border-left border-secondary h-100" style="border-left: 5px solid #6c757d !important;">
+        <div class="card-body d-flex align-items-center justify-content-between p-4">
+            <div>
+                <h6 class="text-uppercase fw-bold text-muted small mb-1">Sem Documentação</h6>
+                <h3 class="fw-bold mb-0 text-dark"><?php echo isset($total_sem_documentacao) ? $total_sem_documentacao : '0'; ?></h3>
+            </div>
+            <div class="icon-box bg-secondary bg-opacity-10 text-secondary">
+                <i class="fa-solid fa-file-circle-question"></i>
+            </div>
+        </div>
+    </div>
+</div>
 
             <div class="col-12 col-md-4 col-lg-3">
                 <div class="card card-stats border-indicador-azul h-100">
