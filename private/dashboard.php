@@ -77,6 +77,15 @@ $data_sem_doc = mysqli_fetch_assoc($result_sem_doc);
 
 // Guarda o valor na variável para o Dashboard
 $total_sem_documentacao = $data_sem_doc['total'];
+
+// Consulta SQL para contar apenas equipamentos de suporte de vida agrupados por serviço
+$query_suporte_vida = "SELECT l.servico_departamento, COUNT(e.id) as total 
+                       FROM localizaciones l
+                       LEFT JOIN equipamentos e ON e.localizacao_id = l.id AND e.categoria = 'Suporte de vida'
+                       GROUP BY l.servico_departamento
+                       ORDER BY total DESC";
+
+$result_suporte_vida = mysqli_query($conn, $query_suporte_vida);
 ?>
 
 <!DOCTYPE html>
@@ -277,6 +286,54 @@ $total_sem_documentacao = $data_sem_doc['total'];
                                     <span class="badge bg-custom-verde px-2 py-1.5">
                                         <?php echo $row['total']; ?>
                                     </span>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12 col-lg-6">
+        <div class="card card-stats p-4 shadow-sm border-0">
+            <div class="d-flex align-items-center mb-3">
+                <div class="icon-box bg-danger bg-opacity-10 text-danger me-3">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-0 text-dark">Dispositivos de Suporte de Vida</h5>
+                    <small class="text-muted">Distribuição de equipamentos críticos por serviço</small>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Serviço / Departamento</th>
+                            <th class="text-end">Críticos Ativos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        // Ciclo para ler os serviços e a quantidade de aparelhos de suporte de vida
+                        while ($row_sv = mysqli_fetch_assoc($result_suporte_vida)): 
+                        ?>
+                            <tr>
+                                <td class="fw-semibold text-secondary">
+                                    <?php echo htmlspecialchars($row_sv['servico_departamento'], ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
+                                <td class="text-end fw-bold">
+                                    <?php if ($row_sv['total'] > 0): ?>
+                                        <span class="badge bg-danger px-2 py-1.5">
+                                            <?php echo $row_sv['total']; ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="badge bg-light text-muted border px-2 py-1.5">0</span>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
