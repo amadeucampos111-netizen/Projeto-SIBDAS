@@ -19,6 +19,25 @@ $query_equip = "SELECT COUNT(*) as total FROM equipamentos WHERE estado_atual = 
 $result_equip = mysqli_query($conn, $query_equip);
 $data_equip = mysqli_fetch_assoc($result_equip);
 $total_equipamentos_ativos = $data_equip['total'];
+
+$query_equip = "SELECT COUNT(*) as total FROM equipamentos WHERE estado_atual = 'Em Manutenção'";
+$result_equip = mysqli_query($conn, $query_equip);
+$data_equip = mysqli_fetch_assoc($result_equip);
+$total_equipamentos_em_manutencao = $data_equip['total'];
+
+$query_equip = "SELECT COUNT(*) as total FROM equipamentos WHERE estado_atual = 'Inativo'";
+$result_equip = mysqli_query($conn, $query_equip);
+$data_equip = mysqli_fetch_assoc($result_equip);
+$total_equipamentos_inativos = $data_equip['total'];
+
+// Consulta SQL para contar os equipamentos agrupados por serviço/departamento
+$query_servicos = "SELECT l.servico_departamento, COUNT(e.id) as total 
+                   FROM localizaciones l
+                   LEFT JOIN equipamentos e ON e.localizacao_id = l.id
+                   GROUP BY l.servico_departamento
+                   ORDER BY total DESC";
+
+$result_servicos = mysqli_query($conn, $query_servicos);
 ?>
 
 <!DOCTYPE html>
@@ -118,6 +137,34 @@ $total_equipamentos_ativos = $data_equip['total'];
             </div>
 
             <div class="col-12 col-md-4 col-lg-3">
+                <div class="card card-stats border-indicador-verde h-100">
+                    <div class="card-body d-flex align-items-center justify-content-between p-4">
+                        <div>
+                            <h6 class="text-uppercase fw-bold text-muted small mb-1">Total Equipamentos em Manutenção</h6>
+                            <h3 class="fw-bold mb-0 text-dark"><?php echo isset($total_equipamentos_em_manutencao) ? $total_equipamentos_em_manutencao : '0'; ?></h3>
+                        </div>
+                        <div class="icon-box bg-info bg-opacity-10 text-info">
+                            <i class="fa-solid fa-stethoscope"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-3">
+                <div class="card card-stats border-indicador-verde h-100">
+                    <div class="card-body d-flex align-items-center justify-content-between p-4">
+                        <div>
+                            <h6 class="text-uppercase fw-bold text-muted small mb-1">Total Equipamentos inativos</h6>
+                            <h3 class="fw-bold mb-0 text-dark"><?php echo isset($total_equipamentos_inativos) ? $total_equipamentos_inativos : '0'; ?></h3>
+                        </div>
+                        <div class="icon-box bg-info bg-opacity-10 text-info">
+                            <i class="fa-solid fa-stethoscope"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-3">
                 <div class="card card-stats border-indicador-azul h-100">
                     <div class="card-body d-flex align-items-center justify-content-between p-4">
                         <div>
@@ -132,6 +179,49 @@ $total_equipamentos_ativos = $data_equip['total'];
             </div>
             
         </div>
+
+        <div class="row mt-4">
+    <div class="col-12 col-lg-6">
+        <div class="card card-stats p-4 shadow-sm border-0">
+            <div class="d-flex align-items-center mb-3">
+                <div class="icon-box bg-success bg-opacity-10 text-custom-verde me-3">
+                    <i class="fa-solid fa-hospital"></i>
+                </div>
+                <h5 class="fw-bold mb-0 text-dark">Equipamentos por Serviço</h5>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Serviço / Departamento</th>
+                            <th class="text-end">Qtd. Equipamentos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        // Executa o ciclo para ler todos os serviços encontrados na base de dados
+                        while ($row = mysqli_fetch_assoc($result_servicos)): 
+                        ?>
+                            <tr>
+                                <td class="fw-semibold text-secondary">
+                                    <?php echo htmlspecialchars($row['servico_departamento'], ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
+                                <td class="text-end fw-bold text-dark">
+                                    <span class="badge bg-custom-verde px-2 py-1.5">
+                                        <?php echo $row['total']; ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+        
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
