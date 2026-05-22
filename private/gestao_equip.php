@@ -15,6 +15,12 @@ if (!$conn) {
     echo "";
 }
 
+$query_tabela = "SELECT e.*, l.servico_departamento, l.sala_gabinete 
+                 FROM equipamentos e
+                 INNER JOIN localizaciones l ON e.localizacao_id = l.id
+                 ORDER BY e.id DESC";
+
+$result_tabela = mysqli_query($conn, $query_tabela);
 
 ?>
 <!DOCTYPE html>
@@ -233,73 +239,108 @@ if (!$conn) {
             </form>
         </div>
 
-        <!-- TABELA DE CONSULTA / LISTAGEM -->
-        <div class="card card-custom p-4" id="listagem">
-            <div class="border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between text-secondary">
-                <div class="d-flex align-items-center">
-                    <i class="fa-solid fa-table-list fs-4 me-2 text-dark"></i>
-                    <h5 class="fw-bold mb-0 text-dark">Equipamentos Registados no Sistema</h5>
-                </div>
-                <span class="badge bg-secondary">Simulação de Dados Ativos</span>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Cód. Inventário</th>
-                            <th>Designação</th>
-                            <th>Categoria</th>
-                            <th>Localização</th>
-                            <th>Criticidade</th>
-                            <th>Estado</th>
-                            <th class="text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Exemplo 1: Equipamento Ativo de Suporte de Vida -->
-                        <tr>
-                            <td class="fw-bold">EQ-VENT-001</td>
-                            <td>
-                                <div class="fw-semibold">Ventilador Pulmonar de Alta Gama</div>
-                                <small class="text-muted">Puritan Bennett - PB980</small>
-                            </td>
-                            <td><span class="badge bg-light text-dark border">Suporte de vida</span></td>
-                            <td><small>Urgência Geral (Sala Reanimação 1)</small></td>
-                            <td><span class="badge bg-danger">Suporte de vida</span></td>
-                            <td><span class="badge bg-success">Ativo</span></td>
-                            <td class="text-center">
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary" title="Editar Ficha"><i class="fa-solid fa-pen"></i></button>
-                                    <button class="btn btn-outline-danger" title="Abater/Apagar"><i class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Exemplo 2: Equipamento em Manutenção -->
-                        <tr>
-                            <td class="fw-bold">EQ-MON-042</td>
-                            <td>
-                                <div class="fw-semibold">Monitor Multiparamétrico de Sinais Vitais</div>
-                                <small class="text-muted">Mindray - BeneVision N17</small>
-                            </td>
-                            <td><span class="badge bg-light text-dark border">Monitorização</span></td>
-                            <td><small>UCI (Box 5)</small></td>
-                            <td><span class="badge bg-warning text-dark">Alta</span></td>
-                            <td><span class="badge bg-warning text-dark">Em manutenção</span></td>
-                            <td class="text-center">
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary" title="Editar Ficha"><i class="fa-solid fa-pen"></i></button>
-                                    <button class="btn btn-outline-danger" title="Abater/Apagar"><i class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <!-- TABELA DE CONSULTA / LISTAGEM REAL -->
+<div class="card card-custom p-4" id="listagem">
+    <div class="border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between text-secondary">
+        <div class="d-flex align-items-center">
+            <i class="fa-solid fa-table-list fs-4 me-2 text-dark"></i>
+            <h5 class="fw-bold mb-0 text-dark">Equipamentos Registados no Sistema</h5>
         </div>
-
+        <span class="badge bg-custom-verde text-white">Dados Reais em Tempo Real</span>
     </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Cód. Inventário</th>
+                    <th>Designação</th>
+                    <th>Categoria</th>
+                    <th>Localização</th>
+                    <th>Criticidade</th>
+                    <th>Estado</th>
+                    <th class="text-center">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                // 4. Validar se existem registos na base de dados
+                if (mysqli_num_rows($result_tabela) > 0):
+                    
+                    // 5. Iniciar o ciclo While para ler linha a linha da base de dados
+                    while ($row = mysqli_fetch_assoc($result_tabela)): 
+                        
+                        // Lógica visual para mudar as cores das Badges de Criticidade conforme o valor
+                        $classe_criticidade = 'bg-secondary';
+                        if ($row['criticidade'] === 'Suporte de vida') $classe_criticidade = 'bg-danger';
+                        elseif ($row['criticidade'] === 'Alta') $classe_criticidade = 'bg-warning text-dark';
+                        elseif ($row['criticidade'] === 'Média') $classe_criticidade = 'bg-info text-dark';
+                        
+                        // Lógica visual para mudar as cores das Badges de Estado
+                        $classe_estado = 'bg-success';
+                        if ($row['estado_atual'] === 'Em manutenção') $classe_estado = 'bg-warning text-dark';
+                        elseif ($row['estado_atual'] === 'Inativo') $classe_estado = 'bg-danger';
+                        elseif ($row['estado_atual'] === 'Abatido') $classe_estado = 'bg-dark';
+                ?>
+                        <tr>
+                            <!-- Código de Inventário -->
+                            <td class="fw-bold"><?php echo htmlspecialchars($row['codigo_interno'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            
+                            <!-- Designação, Marca e Modelo -->
+                            <td>
+                                <div class="fw-semibold"><?php echo htmlspecialchars($row['designacao'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                <small class="text-muted"><?php echo htmlspecialchars($row['marca'] . " - " . $row['modelo'], ENT_QUOTES, 'UTF-8'); ?></small>
+                            </td>
+                            
+                            <!-- Categoria -->
+                            <td><span class="badge bg-light text-dark border"><?php echo htmlspecialchars($row['categoria'], ENT_QUOTES, 'UTF-8'); ?></span></td>
+                            
+                            <!-- Localização Dinâmica vinda do INNER JOIN -->
+                            <td>
+                                <small>
+                                    <?php echo htmlspecialchars($row['servico_departamento'] . " (" . $row['sala_gabinete'] . ")", ENT_QUOTES, 'UTF-8'); ?>
+                                </small>
+                            </td>
+                            
+                            <!-- Criticidade Estilizada -->
+                            <td><span class="badge <?php echo $classe_criticidade; ?>"><?php echo htmlspecialchars($row['criticidade'], ENT_QUOTES, 'UTF-8'); ?></span></td>
+                            
+                            <!-- Estado Técnico Estilizado -->
+                            <td><span class="badge <?php echo $classe_estado; ?>"><?php echo htmlspecialchars($row['estado_atual'], ENT_QUOTES, 'UTF-8'); ?></span></td>
+                            
+                            <!-- Botões de Ação com IDs Dinâmicos -->
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <a href="editar_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Ficha">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <a href="eliminar_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Abater/Apagar" onclick="return confirm('Tem a certeza que deseja eliminar este equipamento?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                <?php 
+                    endwhile; 
+                else: 
+                ?>
+                    <!-- Mensagem amigável caso a tabela da BD esteja vazia -->
+                    <tr>
+                        <td colspan="7" class="text-center p-4 text-muted">
+                            <i class="fa-solid fa-box-open fs-3 d-block mb-2"></i>
+                            Nenhum equipamento foi registado ainda na base de dados.
+                        </td>
+                    </tr>
+                <?php 
+                endif; 
+                
+                // Fechar a ligação após carregar a tabela
+                mysqli_close($conn);
+                ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
