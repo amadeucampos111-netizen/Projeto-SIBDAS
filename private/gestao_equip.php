@@ -330,6 +330,9 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
                             <!-- Botões de Ação com IDs Dinâmicos -->
                             <td class="text-center">
                                 <div class="btn-group btn-group-sm">
+                                    <a href="ver_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-info" title="Consultar Detalhes">
+                                        <i class="fa-solid fa-eye"></i>
+                                     </a>
                                     <a href="editar_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Ficha">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
