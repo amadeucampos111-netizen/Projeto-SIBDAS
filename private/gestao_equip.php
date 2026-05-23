@@ -10,10 +10,8 @@ $conn = mysqli_connect($host, $user, $pass, $dbname);
 // Verificar se houve erro
 if (!$conn) {
     die("Erro na ligação: " . mysqli_connect_error());
-} else {
-    // Apaga esta linha depois de testares, serve só para termos a certeza!
-    echo "";
-}
+} 
+
 
 $query_tabela = "SELECT e.*, l.servico_departamento, l.sala_gabinete 
                  FROM equipamentos e
@@ -22,7 +20,28 @@ $query_tabela = "SELECT e.*, l.servico_departamento, l.sala_gabinete
 
 $result_tabela = mysqli_query($conn, $query_tabela);
 
-?>
+
+// Coloque isto mesmo no topo do ficheiro HTML ou antes do Card do Formulário
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_SESSION['mensagem_sucesso'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-circle-check me-2"></i> <?php echo $_SESSION['mensagem_sucesso']; ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <?php unset($_SESSION['mensagem_sucesso']); ?>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['mensagem_erro'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-triangle-exclamation me-2"></i> <?php echo $_SESSION['mensagem_erro']; ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <?php unset($_SESSION['mensagem_erro']); ?>
+<?php endif; ?>
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -98,7 +117,7 @@ $result_tabela = mysqli_query($conn, $query_tabela);
                 <h5 class="fw-bold mb-0">Inserir Novo Equipamento no Inventário</h5>
             </div>
             
-            <form action="processar_equipamento.php" method="POST">
+            <form action="inserir_equipamento.php" method="POST">
                 <div class="row g-3">
                     
                     <!-- Código Interno Único -->
@@ -232,7 +251,7 @@ $result_tabela = mysqli_query($conn, $query_tabela);
                 <!-- Botões de Ação -->
                 <div class="mt-4 d-flex justify-content-end gap-2">
                     <button type="reset" class="btn btn-outline-secondary px-4 fw-semibold">Limpar Campos</button>
-                    <button type="submit" class="btn btn-custom-verde text-white px-4 fw-semibold">
+                    <button type="submit" class="btn btn-outline-secondary px-4 fw-semibold">
                         <i class="fa-solid fa-floppy-disk me-1"></i> Gravar Equipamento
                     </button>
                 </div>
