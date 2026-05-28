@@ -208,22 +208,14 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
         <option value="" selected disabled>Selecione a Sala/Serviço...</option>
         
         <?php
-        // 1. Configurações de acesso à Base de Dados (caso já não as tenha declarado no topo do ficheiro)
-        $host = "localhost";
-        $user = "root";
-        $pass = ""; 
-        $dbname = "medtrack_db";
 
-        // Abrir ligação (se já tiver a variável $conn ativa no topo da página, pode ignorar esta linha)
-        $conn_loc = mysqli_connect($host, $user, $pass, $dbname);
-
-        if ($conn_loc) {
+        if ($conn) {
             // 2. Query para buscar todas as localizações disponíveis
             $query_loc = "SELECT id, edificio, piso, servico_departamento, sala_gabinete 
                           FROM localizaciones 
                           ORDER BY edificio ASC, piso ASC, servico_departamento ASC";
             
-            $result_loc = mysqli_query($conn_loc, $query_loc);
+            $result_loc = mysqli_query($conn, $query_loc);
 
             // 3. Correr o loop para criar as opções dinamicamente
             if ($result_loc && mysqli_num_rows($result_loc) > 0) {
@@ -241,7 +233,7 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
             }
             
             // Fechar a ligação local
-            mysqli_close($conn_loc);
+            mysqli_close($conn);
         }
         ?>
     </select>
@@ -386,12 +378,7 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
                             Nenhum equipamento foi registado ainda na base de dados.
                         </td>
                     </tr>
-                <?php 
-                endif; 
-                
-                // Fechar a ligação após carregar a tabela
-                mysqli_close($conn);
-                ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

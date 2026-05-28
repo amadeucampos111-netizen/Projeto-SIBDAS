@@ -55,5 +55,46 @@
             </div>
         </div>
     </nav>
+    
+    <!-- Inserir nova localização -->
+    <div class="card card-custom p-4 mb-4 shadow-sm border-0 rounded-3">
+    <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-primary">
+        <i class="fa-solid fa-map-location-dot fs-4 me-2"></i>
+        <h5 class="fw-bold mb-0 text-dark">Inserir Nova Localização Hospitalar</h5>
+    </div>
+    
+    <form action="inserir_localizacao.php" method="POST">
+        <div class="row g-3">
+            
+            <div class="col-12 col-md-3">
+                <label for="edificio" class="form-label fw-semibold">Edifício / Bloco</label>
+                <input type="text" class="form-control" id="edificio" name="edificio" placeholder="Ex: Edifício Central" required>
+            </div>
+
+            <div class="col-12 col-md-2">
+                <label for="piso" class="form-label fw-semibold">Piso / Andar</label>
+                <input type="text" class="form-control" id="piso" name="piso" placeholder="Ex: 0, 1, -1" required>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label for="servico_departamento" class="form-label fw-semibold">Serviço ou Departamento</label>
+                <input type="text" class="form-control" id="servico_departamento" name="servico_departamento" placeholder="Ex: Urgência Geral, UCI, Bloco Operatório" required>
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label for="sala_gabinete" class="form-label fw-semibold">Sala / Gabinete / Box</label>
+                <input type="text" class="form-control" id="sala_gabinete" name="sala_gabinete" placeholder="Ex: Sala Reanimação 1, Box 5" required>
+            </div>
+
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end gap-2">
+            <button type="reset" class="btn btn-outline-secondary px-4 fw-semibold">Limpar</button>
+            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                <i class="fa-solid fa-floppy-disk me-1"></i> Gravar Localização
+            </button>
+        </div>
+    </form>
+</div>
 </body>
 </html>
