@@ -222,7 +222,7 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
                 while ($loc = mysqli_fetch_assoc($result_loc)) {
                     // Monta o texto de exibição juntando as informações da localização
                     $texto_exibicao = htmlspecialchars(
-                        $loc['edificio'] . " - Piso " . $loc['piso'] . " - " . 
+                        $loc['edificio'] . " - " . $loc['piso'] . " - " . 
                         $loc['servico_departamento'] . " (" . $loc['sala_gabinete'] . ")",
                         ENT_QUOTES, 'UTF-8'
                     );

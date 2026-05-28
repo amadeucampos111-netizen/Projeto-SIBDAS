@@ -1,3 +1,23 @@
+<?php
+session_start();
+
+// 1. Configurações da Base de Dados
+$host = "localhost";
+$user = "root";
+$pass = ""; 
+$dbname = "medtrack_db";
+
+$conn = mysqli_connect($host, $user, $pass, $dbname);
+
+if (!$conn) {
+    die("Falha na ligação: " . mysqli_connect_error());
+}
+
+// 2. Query para ler todas as localizações ordenadas por Edifício e Piso
+$sql_tabela = "SELECT * FROM localizaciones ORDER BY edificio ASC, piso ASC, servico_departamento ASC";
+$result_tabela = mysqli_query($conn, $sql_tabela);
+?>
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -96,5 +116,109 @@
         </div>
     </form>
 </div>
+
+<!-- Listagem das localizações já registadas -->
+<div class="container mt-5 mb-5">
+
+    <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i> <?php echo $_SESSION['mensagem_sucesso']; unset($_SESSION['mensagem_sucesso']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['mensagem_erro'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> <?php echo $_SESSION['mensagem_erro']; unset($_SESSION['mensagem_erro']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
+    <div class="card card-custom p-4" id="listagem-localizacoes">
+        <div class="border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between text-secondary">
+            <div class="d-flex align-items-center">
+                <i class="fa-solid fa-map-location-dot fs-4 me-2 text-dark"></i>
+                <h5 class="fw-bold mb-0 text-dark">Localizações Hospitalares Registadas</h5>
+            </div>
+            <span class="badge bg-custom-azul text-white">Configuração do Sistema</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 80px;">ID</th>
+                        <th>Edifício / Bloco</th>
+                        <th>Piso / Andar</th>
+                        <th>Serviço / Departamento</th>
+                        <th>Sala / Gabinete / Box</th>
+                        <th class="text-center" style="width: 120px;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    // 3. Validar se existem registos na base de dados
+                    if (mysqli_num_rows($result_tabela) > 0):
+                        
+                        // 4. Ciclo While para ler linha a linha
+                        while ($row = mysqli_fetch_assoc($result_tabela)): 
+                    ?>
+                            <tr>
+                                <td class="text-muted fw-semibold">#<?php echo $row['id']; ?></td>
+                                
+                                <td class="fw-bold text-dark">
+                                    <i class="fa-solid fa-building text-secondary me-2"></i><?php echo htmlspecialchars($row['edificio'], ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
+                                
+                                <td>
+                                    <span class="badge bg-light text-dark border px-2 py-1.5">
+                                         <?php echo htmlspecialchars($row['piso'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </span>
+                                </td>
+                                
+                                <td class="fw-semibold text-primary">
+                                    <?php echo htmlspecialchars($row['servico_departamento'], ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
+                                
+                                <td>
+                                    <span class="text-secondary"><?php echo htmlspecialchars($row['sala_gabinete'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                </td>
+                                
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="editar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Localização">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <a href="eliminar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar" onclick="return confirm('Tem a certeza que deseja eliminar esta localização? Se existirem equipamentos associados a ela, poderá causar erros.');">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                    <?php 
+                        endwhile; 
+                    else: 
+                    ?>
+                        <tr>
+                            <td colspan="6" class="text-center p-5 text-muted">
+                                <i class="fa-solid fa-map-pin fs-2 d-block mb-2 text-secondary"></i>
+                                Nenhuma localização hospitalar foi mapeada ou registada na base de dados.
+                            </td>
+                        </tr>
+                    <?php 
+                    endif; 
+                    
+                    // Fechar a ligação após carregar a tabela
+                    mysqli_close($conn);
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
