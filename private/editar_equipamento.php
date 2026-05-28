@@ -13,6 +13,9 @@ if (!$conn) { die("Falha na ligação: " . mysqli_connect_error()); }
 // ==========================================
 // AÇÃO 1: RECUPERAR OS DADOS ATUAIS PARA O FORMULÁRIO
 // ==========================================
+
+$equipamento = null;
+
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $id = intval($_GET['id']);
     

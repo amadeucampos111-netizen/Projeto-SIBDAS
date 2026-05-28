@@ -203,16 +203,49 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
 
                     <!-- Localização Associada (Chave Estrangeira Dinâmica) -->
                     <div class="col-12 col-md-4">
-                        <label for="localizacao_id" class="form-label">Localização Hospitalar</label>
-                        <select class="form-select" id="localizacao_id" name="localizacao_id" required>
-                            <option value="" selected disabled>Selecione a Sala/Serviço...</option>
-                            <!-- Dados fictícios que seriam carregados via PHP de forma dinâmica -->
-                            <option value="1">Edifício Central - Piso 0 - Urgência Geral (Sala Reanimação 1)</option>
-                            <option value="4">Edifício Norte - Piso 0 - Imagiologia (Sala de tomografia TAC)</option>
-                            <option value="2">Edifício Central - Piso 1 - Bloco Operatório Central (Sala 3)</option>
-                            <option value="3">Edifício Norte - Piso 2 - UCI (Box 5)</option>
-                        </select>
-                    </div>
+    <label for="localizacao_id" class="form-label">Localização Hospitalar</label>
+    <select class="form-select" id="localizacao_id" name="localizacao_id" required>
+        <option value="" selected disabled>Selecione a Sala/Serviço...</option>
+        
+        <?php
+        // 1. Configurações de acesso à Base de Dados (caso já não as tenha declarado no topo do ficheiro)
+        $host = "localhost";
+        $user = "root";
+        $pass = ""; 
+        $dbname = "medtrack_db";
+
+        // Abrir ligação (se já tiver a variável $conn ativa no topo da página, pode ignorar esta linha)
+        $conn_loc = mysqli_connect($host, $user, $pass, $dbname);
+
+        if ($conn_loc) {
+            // 2. Query para buscar todas as localizações disponíveis
+            $query_loc = "SELECT id, edificio, piso, servico_departamento, sala_gabinete 
+                          FROM localizaciones 
+                          ORDER BY edificio ASC, piso ASC, servico_departamento ASC";
+            
+            $result_loc = mysqli_query($conn_loc, $query_loc);
+
+            // 3. Correr o loop para criar as opções dinamicamente
+            if ($result_loc && mysqli_num_rows($result_loc) > 0) {
+                while ($loc = mysqli_fetch_assoc($result_loc)) {
+                    // Monta o texto de exibição juntando as informações da localização
+                    $texto_exibicao = htmlspecialchars(
+                        $loc['edificio'] . " - Piso " . $loc['piso'] . " - " . 
+                        $loc['servico_departamento'] . " (" . $loc['sala_gabinete'] . ")",
+                        ENT_QUOTES, 'UTF-8'
+                    );
+                    
+                    // O valor enviado para o banco de dados será sempre o 'id' numérico
+                    echo "<option value='" . $loc['id'] . "'>" . $texto_exibicao . "</option>";
+                }
+            }
+            
+            // Fechar a ligação local
+            mysqli_close($conn_loc);
+        }
+        ?>
+    </select>
+</div>
 
                     <!-- Estado Atual (Enum Controlada) -->
                     <div class="col-12 col-md-4">
