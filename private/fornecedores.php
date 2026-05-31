@@ -270,5 +270,69 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
     </div>
 
 </div>
+
+<div class="card p-4 mb-4 shadow-sm border-0 rounded-3">
+    <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-primary">
+        <i class="fa-solid fa-link fs-4 me-2"></i>
+        <h5 class="fw-bold mb-0 text-dark">Associar Fornecedor/Função a Equipamento</h5>
+    </div>
+    
+    <form action="associar_fornecedor_equipamentos.php" method="POST">
+        <div class="row g-3">
+            
+            <div class="col-12 col-md-4">
+                <label for="equipamento_id" class="form-label fw-semibold">Equipamento Médico</label>
+                <select class="form-select" id="equipamento_id" name="equipamento_id" required>
+                    <option value="" selected disabled>Selecione o Equipamento...</option>
+                    <?php
+                    $conn = mysqli_connect("localhost", "root", "", "medtrack_db");
+                    if ($conn) {
+                        $res_eq = mysqli_query($conn, "SELECT id, designacao, numero_serie FROM equipamentos ORDER BY designacao ASC");
+                        while ($eq = mysqli_fetch_assoc($res_eq)) {
+                            echo "<option value='{$eq['id']}'>" . htmlspecialchars($eq['designacao']) . " (S/N: " . htmlspecialchars($eq['numero_serie']) . ")</option>";
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label for="fornecedor_id" class="form-label fw-semibold">Fornecedor / Entidade</label>
+                <select class="form-select" id="fornecedor_id" name="fornecedor_id" required>
+                    <option value="" selected disabled>Selecione o Fornecedor...</option>
+                    <?php
+                    if ($conn) {
+                        // Nota: Ajuste 'proveedores' para 'fornecedores' se alterou o nome da tabela no passo anterior
+                        $res_forn = mysqli_query($conn, "SELECT id, nome_empresa FROM fornecedores ORDER BY nome_empresa ASC");
+                        while ($forn = mysqli_fetch_assoc($res_forn)) {
+                            echo "<option value='{$forn['id']}'>" . htmlspecialchars($forn['nome_empresa']) . "</option>";
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label for="tipo_fornecedor" class="form-label fw-semibold">Classificação </label>
+                <select class="form-select" id="tipo_fornecedor" name="tipo_fornecedor" required>
+                    <option value="" selected disabled>Selecione o Tipo/Função...</option>
+                    <option value="Fabricante">Fabricante</option>
+                    <option value="Distribuidor ou fornecedor comercial">Distribuidor ou fornecedor comercial</option>
+                    <option value="Empresa de assistência técnica">Empresa de assistência técnica</option>
+                    <option value="Fornecedor de consumíveis ou acessórios">Fornecedor de consumíveis ou acessórios</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end gap-2">
+            <button type="reset" class="btn btn-outline-secondary px-4 fw-semibold">Limpar</button>
+            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                <i class="fa-solid fa-plus me-1"></i> Criar Associação
+            </button>
+        </div>
+    </form>
+</div>
+<?php if(isset($conn)) mysqli_close($conn); ?>
 </body>
 </html>
