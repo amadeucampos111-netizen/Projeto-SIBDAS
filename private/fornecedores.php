@@ -78,7 +78,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
     <div class="card p-4 mb-4 shadow-sm border-0 rounded-3">
     <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-success">
         <i class="fa-solid fa-truck-field fs-4 me-2"></i>
-        <h5 class="fw-bold mb-0 text-dark">Registar Novo Fornecedor / Parceiro</h5>
+        <h5 class="fw-bold mb-0 text-dark">Registar Novo Fornecedor</h5>
     </div>
     
     <form action="inserir_fornecedor.php" method="POST">
