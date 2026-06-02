@@ -76,6 +76,14 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
         </div>
     </nav>
     <div class="card p-4 mb-4 shadow-sm border-0 rounded-3">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-1">Gestão de Fornecedores de Equipamentos</h2>
+                <p class="text-muted mb-0">Registo, acompanhamento e controlo de fornecedores.</p>
+            </div>
+            <!-- Botão de Atalho para Scroll -->
+            <a href="#listagem" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-list me-1"></i> Ir para Lista</a>
+        </div>
     <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-success">
         <i class="fa-solid fa-truck-field fs-4 me-2"></i>
         <h5 class="fw-bold mb-0 text-dark">Registar Novo Fornecedor</h5>
@@ -157,7 +165,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
         </div>
     <?php endif; ?>
 
-    <div class="card card-custom p-4">
+    <div class="card card-custom p-4" id="listagem">
         <div class="border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
                 <i class="fa-solid fa-truck-field fs-4 me-2 text-success"></i>

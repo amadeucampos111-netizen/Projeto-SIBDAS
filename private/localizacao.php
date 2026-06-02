@@ -75,6 +75,16 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
             </div>
         </div>
     </nav>
+
+    <div class="card p-4 mb-4 shadow-sm border-0 rounded-3">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-1">Gestão de Localizações Hospitalares</h2>
+                <p class="text-muted mb-0">Registo, acompanhamento e controlo das localizações dos equipamentos.</p>
+            </div>
+            <!-- Botão de Atalho para Scroll -->
+            <a href="#listagem" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-list me-1"></i> Ir para Lista</a>
+        </div>
     
     <!-- Inserir nova localização -->
     <div class="card card-custom p-4 mb-4 shadow-sm border-0 rounded-3">
@@ -118,7 +128,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
 </div>
 
 <!-- Listagem das localizações já registadas -->
-<div class="container mt-5 mb-5">
+<div class="container mt-5 mb-5" id="listagem">
 
     <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
