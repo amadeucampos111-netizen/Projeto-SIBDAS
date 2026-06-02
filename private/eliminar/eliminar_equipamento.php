@@ -41,6 +41,6 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 }
 
 // 4. Redirecionar sempre de volta para a página principal de equipamentos
-header("Location: gestao_equip.php");
+header("Location: ../gestao_equip.php");
 exit;
 ?>

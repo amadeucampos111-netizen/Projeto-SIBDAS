@@ -34,7 +34,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     }
     mysqli_stmt_close($stmt);
 } else if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: gestao_equip.php");
+    header("Location: ../gestao_equip.php");
     exit;
 }
 
@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if (mysqli_stmt_execute($stmt_update)) {
             $_SESSION['mensagem_sucesso'] = "Ficha do equipamento atualizada com sucesso!";
-            header("Location: gestao_equip.php");
+            header("Location: ../gestao_equip.php");
             exit;
         } else {
             $erro = mysqli_stmt_error($stmt_update);
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="card shadow-sm border-0 rounded-3 p-4">
                 <div class="border-bottom pb-2 mb-4 d-flex justify-content-between align-items-center">
                     <h4 class="fw-bold text-dark mb-0"><i class="fa-solid fa-pen-to-square me-2 text-warning"></i>Editar Equipamento Técnico</h4>
-                    <a href="gestao_equip.php" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Voltar</a>
+                    <a href="../gestao_equip.php" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Voltar</a>
                 </div>
 
                 <?php if (isset($erro)): ?>
@@ -187,15 +187,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold">Localização Hospitalar</label>
-                            <select class="form-select" name="localizacao_id" required>
-                                <!-- Aqui idealmente faria um loop à tabela 'localizaciones'. Para fins de teste mantemos os IDs mapeados -->
-                                <option value="1" <?php if($equipamento['localizacao_id'] == 1) echo 'selected'; ?>>Urgência Geral (Sala Reanimação 1)</option>
-                                <option value="2" <?php if($equipamento['localizacao_id'] == 2) echo 'selected'; ?>>Bloco Operatório Central (Sala 3)</option>
-                                <option value="3" <?php if($equipamento['localizacao_id'] == 3) echo 'selected'; ?>>UCI (Box 5)</option>
-                                <option value="4" <?php if($equipamento['localizacao_id'] == 4) echo 'selected'; ?>>Imagiologia (Sala TAC)</option>
-                            </select>
-                        </div>
+    <label class="form-label fw-semibold">Localização Hospitalar</label>
+    <select class="form-select" name="localizacao_id" required>
+        <option value="" disabled <?php if(!isset($equipamento['localizacao_id'])) echo 'selected'; ?>>Selecione uma localização...</option>
+        
+        <?php
+        
+        if ($conn) {
+            // 2. Executar a consulta para trazer as localizações ordenadas alfabeticamente
+            // Nota: Altere 'localizacoes' e 'nome' para os nomes exatos da sua tabela/coluna se forem diferentes
+            $sql_loc = "SELECT id, nome FROM localizacoes ORDER BY nome ASC";
+            $res_loc = mysqli_query($conn, $sql_loc);
+            
+            if ($res_loc) {
+                // 3. Percorrer cada linha de localização encontrada
+                while ($loc = mysqli_fetch_assoc($res_loc)) {
+                    
+                    // Verifica se o equipamento atual já pertence a esta localização (Modo Edição)
+                    $selected = (isset($equipamento['localizacao_id']) && $equipamento['localizacao_id'] == $loc['id']) ? 'selected' : '';
+                    
+                    // Imprime a opção HTML dinamicamente
+                    echo "<option value='{$loc['id']}' {$selected}>" . htmlspecialchars($loc['nome'], ENT_QUOTES, 'UTF-8') . "</option>";
+                }
+            } else {
+                echo "<option value='' disabled>Erro ao carregar localizações: " . mysqli_error($conn) . "</option>";
+            }
+            
+            // Opcional: fechar a ligação se não for usada mais abaixo na página
+            // mysqli_close($conn);
+        } else {
+            echo "<option value='' disabled>Falha na ligação à Base de Dados</option>";
+        }
+        ?>
+    </select>
+</div>
 
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Estado Técnico</label>
@@ -230,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="mt-4 d-flex justify-content-end gap-2">
-                        <a href="gestao_equip.php" class="btn btn-light px-4">Cancelar</a>
+                        <a href="../gestao_equip.php" class="btn btn-light px-4">Cancelar</a>
                         <button type="submit" class="btn bg-custom-verde text-white px-4">
                             <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Alterações
                         </button>

@@ -93,7 +93,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
         <h5 class="fw-bold mb-0 text-dark">Inserir Nova Localização Hospitalar</h5>
     </div>
     
-    <form action="inserir_localizacao.php" method="POST">
+    <form action="inserir/inserir_localizacao.php" method="POST">
         <div class="row g-3">
             
             <div class="col-12 col-md-3">
@@ -196,10 +196,10 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                                 
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm">
-                                        <a href="editar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Localização">
+                                        <a href="editar/editar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Localização">
                                             <i class="fa-solid fa-pen"></i>
                                         </a>
-                                        <a href="eliminar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar" onclick="return confirm('Tem a certeza que deseja eliminar esta localização? Se existirem equipamentos associados a ela, poderá causar erros.');">
+                                        <a href="eliminar/eliminar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar" onclick="return confirm('Tem a certeza que deseja eliminar esta localização? Se existirem equipamentos associados a ela, poderá causar erros.');">
                                             <i class="fa-solid fa-trash"></i>
                                         </a>
                                     </div>

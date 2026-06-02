@@ -117,7 +117,7 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
                 <h5 class="fw-bold mb-0">Inserir Novo Equipamento no Inventário</h5>
             </div>
             
-            <form action="inserir_equipamento.php" method="POST">
+            <form action="inserir/inserir_equipamento.php" method="POST">
                 <div class="row g-3">
                     
                     <!-- Código Interno Único -->
@@ -358,10 +358,10 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
                                     <a href="ver_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-info" title="Consultar Detalhes">
                                         <i class="fa-solid fa-eye"></i>
                                      </a>
-                                    <a href="editar_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Ficha">
+                                    <a href="editar/editar_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Ficha">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <a href="eliminar_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Abater/Apagar" onclick="return confirm('Tem a certeza que deseja eliminar este equipamento?');">
+                                    <a href="eliminar/eliminar_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Abater/Apagar" onclick="return confirm('Tem a certeza que deseja eliminar este equipamento?');">
                                         <i class="fa-solid fa-trash"></i>
                                     </a>
                                 </div>

@@ -97,7 +97,7 @@ $result = mysqli_query($conn, $sql);
                     <h5 class="fw-bold mb-0 text-dark">Upload de Documentação Técnica</h5>
                 </div>
 
-                <form action="inserir_documento.php" method="POST" enctype="multipart/form-data">
+                <form action="inserir/inserir_documento.php" method="POST" enctype="multipart/form-data">
                     <div class="row g-3">
                         
                         <div class="col-12 col-md-6">
@@ -257,7 +257,7 @@ $result = mysqli_query($conn, $sql);
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm">
 
-                                        <a href="editar_documentacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Documentação">
+                                        <a href="editar/editar_documentacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Documentação">
                                             <i class="fa-solid fa-pen"></i>
                                         </a>
 
@@ -266,7 +266,7 @@ $result = mysqli_query($conn, $sql);
                                             <i class="fa-solid fa-copy"></i>
                                         </button>
                                         
-                                        <a href="eliminar_documentacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar Registo" 
+                                        <a href="eliminar/eliminar_documentacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar Registo" 
                                            onclick="return confirm('Tem a certeza que deseja remover o índice deste documento? Isto não apagará o ficheiro no vosso computador, apenas remove o registo no MedTrack.');">
                                             <i class="fa-solid fa-trash"></i>
                                         </a>

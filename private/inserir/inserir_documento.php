@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 2. Validações de consistência de dados
     if ($equipamento_id <= 0 || empty($nome_documento) || empty($nome_ficheiro_caminho) || empty($data_documento) || !in_array($tipo_documento, $enums_validos)) {
         $_SESSION['mensagem_erro'] = "Erro: Todos os campos obrigatórios (incluindo o caminho do ficheiro) devem ser preenchidos.";
-        header("Location: registo_documentacao.php");
+        header("Location: ../documentacao.php");
         exit;
     }
 
@@ -62,10 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     mysqli_close($conn);
-    header("Location: documentacao.php");
+    header("Location: ../documentacao.php");
     exit;
 
 } else {
-    header("Location: documentacao.php");
+    header("Location: ../documentacao.php");
     exit;
 }

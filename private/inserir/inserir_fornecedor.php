@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 2. Validação dos campos obrigatórios (os que têm 'required' no seu HTML)
     if (empty($nome_empresa) || empty($nif) || empty($email)) {
         $_SESSION['mensagem_erro'] = "Os campos Nome da Empresa, NIF e Email são de preenchimento obrigatório.";
-        header("Location: fornecedores.php");
+        header("Location: ../fornecedores.php");
         exit;
     }
 
@@ -73,11 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_close($conn);
     
     // Redireciona de volta para a sua página de listagem/gestão
-    header("Location: fornecedores.php");
+    header("Location: ../fornecedores.php");
     exit;
 
 } else {
     // Se tentarem aceder diretamente ao script pelo URL, são redirecionados
-    header("Location: fornecedores.php");
+    header("Location: ../fornecedores.php");
     exit;
 }

@@ -29,18 +29,18 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         $fornecedor = mysqli_fetch_assoc($result);
     } else {
         $_SESSION['mensagem_erro'] = "Fornecedor não encontrado.";
-        header("Location: fornecedores.php");
+        header("Location: ../fornecedores.php");
         exit;
     }
     mysqli_stmt_close($stmt);
 } else if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: fornecedores.php");
+    header("Location: ../fornecedores.php");
     exit;
 }
 
 // Verificação de Segurança Extra
 if (!$fornecedor && $_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: fornecedores.php");
+    header("Location: ../fornecedores.php");
     exit;
 }
 
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if (mysqli_stmt_execute($stmt_update)) {
                 $_SESSION['mensagem_sucesso'] = "Dados do fornecedor atualizados com sucesso!";
-                header("Location: fornecedores.php");
+                header("Location: ../fornecedores.php");
                 exit;
             } else {
                 // Capturar erro se o utilizador tentar mudar o NIF para um que já existe noutro fornecedor

@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validação simples para garantir que nenhum campo obrigatório vai vazio
     if (empty($edificio) || empty($piso) || empty($servico_departamento) || empty($sala_gabinete)) {
         $_SESSION['mensagem_erro'] = "Todos os campos do formulário são obrigatórios.";
-        header("Location: localizacao.php"); // Altera para o nome da tua página
+        header("Location: ../localizacao.php"); // Altera para o nome da tua página
         exit;
     }
 
@@ -64,11 +64,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_close($conn);
 
     // 7. Redirecionar de volta para a página de gestão de localizações
-    header("Location: localizacao.php"); // Altera para o nome da tua página
+    header("Location: ../localizacao.php"); // Altera para o nome da tua página
     exit;
 
 } else {
     // Se alguém tentar aceder ao ficheiro diretamente pelo URL, é expulso para a página principal
-    header("Location: localizacao.php"); // Altera para o nome da tua página
+    header("Location: ../localizacao.php"); // Altera para o nome da tua página
     exit;
 }

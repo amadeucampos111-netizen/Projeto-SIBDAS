@@ -29,18 +29,18 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         $localizacao = mysqli_fetch_assoc($result);
     } else {
         $_SESSION['mensagem_erro'] = "Localização não encontrada.";
-        header("Location: localizacao.php");
+        header("Location: ../localizacao.php");
         exit;
     }
     mysqli_stmt_close($stmt);
 } else if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: localizacao.php");
+    header("Location: ../localizacao.php");
     exit;
 }
 
 // Security Check: Se não houver dados e não for POST, bloqueia a renderização do HTML
 if (!$localizacao && $_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: localizacao.php");
+    header("Location: ../localizacao.php");
     exit;
 }
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if (mysqli_stmt_execute($stmt_update)) {
                 $_SESSION['mensagem_sucesso'] = "Localização hospitalar atualizada com sucesso!";
-                header("Location: localizacao.php");
+                header("Location: ../localizacao.php");
                 exit;
             } else {
                 // Capturar o erro caso fira a regra UNIQUE KEY (duplicado)
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h4 class="fw-bold text-dark mb-0">
                         <i class="fa-solid fa-map-location-dot me-2 text-primary"></i>Editar Localização Hospitalar
                     </h4>
-                    <a href="localizacao.php" class="btn btn-outline-secondary btn-sm">
+                    <a href="../localizacao.php" class="btn btn-outline-secondary btn-sm">
                         <i class="fa-solid fa-arrow-left me-1"></i> Voltar
                     </a>
                 </div>
@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="mt-4 d-flex justify-content-end gap-2">
-                        <a href="localizacao.php" class="btn btn-light px-4">Cancelar</a>
+                        <a href="../localizacao.php" class="btn btn-light px-4">Cancelar</a>
                         <button type="submit" class="btn btn-primary px-4">
                             <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Alterações
                         </button>

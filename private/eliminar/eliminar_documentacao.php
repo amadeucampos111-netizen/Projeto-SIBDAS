@@ -46,5 +46,5 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 }
 
 // 4. Redirecionar de volta para o Arquivo de Documentação (Tabela de Listagem)
-header("Location: documentacao.php");
+header("Location: ../documentacao.php");
 exit;

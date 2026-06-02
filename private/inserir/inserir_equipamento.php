@@ -79,11 +79,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_close($conn);
 
     // 8. Redirecionar o utilizador de volta para a página de Equipamentos
-    header("Location: gestao_equip.php");
+    header("Location: ../gestao_equip.php");
     exit;
 
 } else {
     // Se tentarem aceder a este script diretamente via URL, bloqueia e redireciona
-    header("Location: gestao_equip.php");
+    header("Location: ../gestao_equip.php");
     exit;
 }

@@ -19,10 +19,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     }
 
     // =================================================================
-    // VERIFICAÇÃO DE SEGURANÇA: Existem equipamentos vinculados a este fornecedor?
+    // VERIFICAÇÃO DE SEGURANÇA: Existem equipamentos nesta localização?
     // =================================================================
-    // Nota: Altere 'fornecedor_id' para o nome exato da coluna na sua tabela 'equipamento_fornecedor'
-    $sql_check = "SELECT COUNT(*) as total FROM equipamento_fornecedor WHERE fornecedor_id = ?";
+    $sql_check = "SELECT COUNT(*) as total FROM equipamentos WHERE localizacao_id = ?";
     $stmt_check = mysqli_prepare($conn, $sql_check);
     
     if ($stmt_check) {
@@ -33,27 +32,27 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         mysqli_stmt_close($stmt_check);
 
         if ($row_check['total'] > 0) {
-            // Se houver equipamentos dependentes deste fornecedor, a eliminação é abortada
-            $_SESSION['mensagem_erro'] = "Não é possível eliminar este fornecedor porque ele está associado a " . $row_check['total'] . " equipamento(s). Altere o fornecedor desses equipamentos antes de o remover.";
-            header("Location: fornecedores.php");
+            // Se existirem equipamentos associados, impede a eliminação
+            $_SESSION['mensagem_erro'] = "Não é possível eliminar esta localização porque existem " . $row_check['total'] . " equipamento(s) associado(s) a ela. Transfira os equipamentos primeiro.";
+            header("Location: ../localizacao.php");
             mysqli_close($conn);
             exit;
         }
     }
 
     // =================================================================
-    // AÇÃO DE ELIMINAÇÃO (Executada apenas se passar na validação acima)
+    // AÇÃO DE ELIMINAÇÃO (Apenas se passar a validação acima)
     // =================================================================
-    $sql_delete = "DELETE FROM fornecedores WHERE id = ?";
+    $sql_delete = "DELETE FROM localizaciones WHERE id = ?";
     $stmt_delete = mysqli_prepare($conn, $sql_delete);
 
     if ($stmt_delete) {
         mysqli_stmt_bind_param($stmt_delete, "i", $id);
         
         if (mysqli_stmt_execute($stmt_delete)) {
-            $_SESSION['mensagem_sucesso'] = "Fornecedor removido do sistema com sucesso!";
+            $_SESSION['mensagem_sucesso'] = "Localização hospitalar removida do sistema com sucesso!";
         } else {
-            $_SESSION['mensagem_erro'] = "Erro técnico ao tentar eliminar o fornecedor da base de dados.";
+            $_SESSION['mensagem_erro'] = "Erro técnico ao tentar eliminar a localização da base de dados.";
         }
         mysqli_stmt_close($stmt_delete);
     } else {
@@ -62,9 +61,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
     mysqli_close($conn);
 } else {
-    $_SESSION['mensagem_erro'] = "ID de fornecedor inválido ou não fornecido.";
+    $_SESSION['mensagem_erro'] = "ID de localização inválido ou não fornecido.";
 }
 
-// 3. Redirecionar de volta para a listagem principal
-header("Location: fornecedores.php");
+// 3. Redirecionar de volta para a página de listagem
+header("Location: ../localizacao.php");
 exit;
