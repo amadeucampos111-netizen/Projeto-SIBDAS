@@ -256,7 +256,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="mt-4 d-flex justify-content-end gap-2">
-                        <a href="../gestao_equip.php" class="btn btn-light px-4">Cancelar</a>
+                        <a href="../listar/listar_equipamentos.php" class="btn btn-light px-4">Cancelar</a>
                         <button type="submit" class="btn bg-custom-verde text-white px-4">
                             <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Alterações
                         </button>

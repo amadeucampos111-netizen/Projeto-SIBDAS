@@ -29,12 +29,12 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         $documento = mysqli_fetch_assoc($result);
     } else {
         $_SESSION['mensagem_erro'] = "Registo de documentação não encontrado.";
-        header("Location: ../documentacao.php");
+        header("Location: ../listar/lista_documentos.php");
         exit;
     }
     mysqli_stmt_close($stmt);
 } else if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../documentacao.php");
+    header("Location: ../listar/lista_documentos.php");
     exit;
 }
 
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if (mysqli_stmt_execute($stmt_update)) {
                 $_SESSION['mensagem_sucesso'] = "Índice de documentação atualizado com sucesso!";
-                header("Location: ../documentacao.php");
+                header("Location: ../listar/lista_documentos.php");
                 exit;
             } else {
                 $erro = "Erro técnico ao atualizar na base de dados: " . mysqli_stmt_error($stmt_update);
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h4 class="fw-bold text-dark mb-0">
                         <i class="fa-solid fa-file-pen me-2 text-warning"></i>Editar Registo de Documentação
                     </h4>
-                    <a href="../documentacao.php" class="btn btn-outline-secondary btn-sm">
+                    <a href="../listar/lista_documentos.php" class="btn btn-outline-secondary btn-sm">
                         <i class="fa-solid fa-arrow-left me-1"></i> Voltar
                     </a>
                 </div>
@@ -184,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="mt-4 d-flex justify-content-end gap-2">
-                        <a href="documentacao.php" class="btn btn-light px-4">Cancelar</a>
+                        <a href="../listar/lista_documentos.php" class="btn btn-light px-4">Cancelar</a>
                         <button type="submit" class="btn btn-warning text-dark px-4 fw-semibold">
                             <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Alterações
                         </button>

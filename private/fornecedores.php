@@ -149,7 +149,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                 <p class="text-muted mb-0">Registos, acompanhamentos e controlo de fornecedores.</p>
             </div>
             <!-- Botão de Atalho para Scroll -->
-            <a href="#listagem" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-list me-1"></i> Ir para Lista</a>
+            <a href="listar/lista_fornecedores.php" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-list me-1"></i> Ir para Lista</a>
         </div>
     <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-success">
         <i class="fa-solid fa-truck-field fs-4 me-2"></i>
@@ -216,135 +216,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
     </form>
 </div>
 
-<div class="container mt-5 mb-5">
 
-    <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-circle-check me-2"></i> <?php echo $_SESSION['mensagem_sucesso']; unset($_SESSION['mensagem_sucesso']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-
-    <?php if (isset($_SESSION['mensagem_erro'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-circle-exclamation me-2"></i> <?php echo $_SESSION['mensagem_erro']; unset($_SESSION['mensagem_erro']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-
-    <div class="card card-custom p-4" id="listagem">
-        <div class="border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center">
-                <i class="fa-solid fa-truck-field fs-4 me-2 text-success"></i>
-                <h5 class="fw-bold mb-0 text-dark">Fornecedores & Parceiros de Assistência</h5>
-            </div>
-            <span class="badge bg-success text-white">Contactos Ativos</span>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Empresa / Entidade</th>
-                        <th>NIF</th>
-                        <th>Contactos Gerais</th>
-                        <th>Pessoa de Contacto</th>
-                        <th>Observações / SLAs</th>
-                        <th class="text-center" style="width: 120px;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    // 3. Validar se existem fornecedores registados
-                    if (mysqli_num_rows($result_tabela) > 0):
-                        
-                        // 4. Correr o loop para listar cada fornecedor
-                        while ($row = mysqli_fetch_assoc($result_tabela)): 
-                    ?>
-                            <tr>
-                                <td>
-                                    <div class="fw-bold text-dark"><?php echo htmlspecialchars($row['nome_empresa'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                    <?php if (!empty($row['website'])): ?>
-                                        <small class="text-muted">
-                                            <i class="fa-solid fa-globe me-1 text-primary"></i>
-                                            <a href="http://<?php echo str_replace(['http://', 'https://'], '', $row['website']); ?>" target="_blank" class="text-decoration-none">
-                                                <?php echo htmlspecialchars($row['website'], ENT_QUOTES, 'UTF-8'); ?>
-                                            </a>
-                                        </small>
-                                    <?php endif; ?>
-                                </td>
-                                
-                                <td>
-                                    <span class="badge bg-light text-secondary border fw-semibold">
-                                        <?php echo htmlspecialchars($row['nif'], ENT_QUOTES, 'UTF-8'); ?>
-                                    </span>
-                                </td>
-                                
-                                <td>
-                                    <div class="small mb-1">
-                                        <i class="fa-solid fa-envelope text-muted me-1"></i> 
-                                        <a href="mailto:<?php echo $row['email']; ?>" class="text-decoration-none"><?php echo htmlspecialchars($row['email'], ENT_QUOTES, 'UTF-8'); ?></a>
-                                    </div>
-                                    <?php if (!empty($row['contacto_telefonico'])): ?>
-                                        <div class="small text-secondary">
-                                            <i class="fa-solid fa-phone text-muted me-1"></i> 
-                                            <?php echo htmlspecialchars($row['contacto_telefonico'], ENT_QUOTES, 'UTF-8'); ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </td>
-                                
-                                <td>
-                                    <?php if (!empty($row['pessoa_contacto'])): ?>
-                                        <div class="fw-semibold text-dark small"><?php echo htmlspecialchars($row['pessoa_contacto'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                        <?php if (!empty($row['telefone_pessoa_contacto'])): ?>
-                                            <small class="text-muted">
-                                                <i class="fa-solid fa-mobile-screen text-muted me-1"></i> 
-                                                <?php echo htmlspecialchars($row['telefone_pessoa_contacto'], ENT_QUOTES, 'UTF-8'); ?>
-                                            </small>
-                                        <?php endif; ?>
-                                    <?php else: ?>
-                                        <span class="text-muted small"><em>Não especificado</em></span>
-                                    <?php endif; ?>
-                                </td>
-                                
-                                <td>
-                                    <div class="text-muted text-obs" title="<?php echo htmlspecialchars($row['observacoes'], ENT_QUOTES, 'UTF-8'); ?>">
-                                        <?php echo !empty($row['observacoes']) ? htmlspecialchars($row['observacoes'], ENT_QUOTES, 'UTF-8') : 'Sem observações.'; ?>
-                                    </div>
-                                </td>
-                                
-                                <td class="text-center">
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="editar/editar_fornecedor.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Fornecedor">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </a>
-                                        <a href="eliminar/eliminar_fornecedor.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar Fornecedor" onclick="return confirm('Tem a certeza que deseja eliminar este fornecedor? Verifique se existem equipamentos vinculados a ele para evitar inconsistências.');">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                    <?php 
-                        endwhile; 
-                    else: 
-                    ?>
-                        <tr>
-                            <td colspan="6" class="text-center p-5 text-muted">
-                                <i class="fa-solid fa-truck-ramp-box fs-2 d-block mb-2 text-secondary"></i>
-                                Nenhum fornecedor ou parceiro técnico foi registado até ao momento.
-                            </td>
-                        </tr>
-                    <?php 
-                    endif; 
-                    
-                    mysqli_close($conn);
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-</div>
 
 <div class="card p-4 mb-4 shadow-sm border-0 rounded-3">
     <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-primary">

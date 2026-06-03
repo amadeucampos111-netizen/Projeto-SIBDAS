@@ -112,7 +112,7 @@ $result = mysqli_query($conn, $sql);
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-menu-item dropdown-item" href="../documentacao.php"><i class="fa-solid fa-folder-tree me-2"></i> Registo de Documentação</a></li>
-                        <li><a class="dropdown-menu-item dropdown-item" href="lista_documentos.php"><i class="fa-solid fa-folder-plus me-2"></i> Indexar Novo Caminho</a></li>
+                        <li><a class="dropdown-menu-item dropdown-item" href="lista_documentos.php"><i class="fa-solid fa-folder-plus me-2"></i> Listagem de Documentos</a></li>
                     </ul>
                 </li>
                 
