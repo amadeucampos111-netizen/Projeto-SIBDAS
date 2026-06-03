@@ -22,5 +22,5 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $_SESSION['msg_erro'] = "Pedido inválido.";
 }
 
-header("Location: ../garantia_contratos.php");
+header("Location: ../lista_garantias.php");
 exit;

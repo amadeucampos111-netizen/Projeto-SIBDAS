@@ -2,6 +2,7 @@
 session_start();
 $conn = mysqli_connect("localhost", "root", "", "medtrack_db");
 
+
 ?>
 
 <!DOCTYPE html>
