@@ -24,7 +24,7 @@ mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 
 if (mysqli_num_rows($result) !== 1) {
-    header("Location: gestao_equip.php");
+    header("Location: listar/listar_equipamentos.php");
     exit;
 }
 
@@ -63,7 +63,7 @@ mysqli_close($conn);
                         </h3>
                         <small class="text-muted">Código de Inventário: <strong><?php echo htmlspecialchars($eq['codigo_interno']); ?></strong></small>
                     </div>
-                    <a href="gestao_equip.php" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left me-1"></i> Voltar à Lista</a>
+                    <a href="listar/listar_equipamentos.php" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left me-1"></i> Voltar à Lista</a>
                 </div>
 
                 <!-- Grelha de Informações -->

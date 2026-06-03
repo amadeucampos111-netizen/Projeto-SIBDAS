@@ -26,13 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $contrato) {
         mysqli_stmt_bind_param($stmt, "issssissi", $equipamento_id, $data_inicio_garantia, $data_fim_garantia, $tem_contrato_manutencao, $tipo_contrato, $entidade_responsavel_id, $periodicidade, $observacoes, $id);
         if(mysqli_stmt_execute($stmt)) {
             $_SESSION['msg_sucesso'] = "Alterações gravadas com sucesso!";
-            header("Location: ../lista_garantias.php");
+            header("Location: ../listar/lista_garantias.php");
             exit;
         } else { $erro = "Erro ao atualizar: " . mysqli_stmt_error($stmt); }
     }
 }
 
-if(!$contrato) { header("Location: ../lista_garantias.php"); exit; }
+if(!$contrato) { header("Location: ../listar/lista_garantias.php"); exit; }
 ?>
 <!DOCTYPE html>
 <html lang="pt">
@@ -110,7 +110,7 @@ if(!$contrato) { header("Location: ../lista_garantias.php"); exit; }
 
             <div class="mb-3"><label class="form-label fw-semibold">Observações</label><textarea class="form-control" name="observacoes" rows="2"><?php echo htmlspecialchars($contrato['observacoes'] ?? ''); ?></textarea></div>
             <div class="d-flex justify-content-end gap-2">
-                <a href="listar_garantias.php" class="btn btn-light">Cancelar</a>
+                <a href="../listar/lista_garantias.php" class="btn btn-light">Cancelar</a>
                 <button type="submit" class="btn btn-warning text-dark fw-semibold">Atualizar Registo</button>
             </div>
         </form>

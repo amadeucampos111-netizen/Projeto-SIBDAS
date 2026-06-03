@@ -29,12 +29,12 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         $equipamento = mysqli_fetch_assoc($result);
     } else {
         $_SESSION['mensagem_erro'] = "Equipamento não encontrado.";
-        header("Location: gestao_equip.php");
+        header("Location: ../listar/listar_equipamentos.php");
         exit;
     }
     mysqli_stmt_close($stmt);
 } else if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../gestao_equip.php");
+    header("Location: ../listar/listar_equipamentos.php");
     exit;
 }
 
@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if (mysqli_stmt_execute($stmt_update)) {
             $_SESSION['mensagem_sucesso'] = "Ficha do equipamento atualizada com sucesso!";
-            header("Location: ../gestao_equip.php");
+            header("Location: ../listar/listar_equipamentos.php");
             exit;
         } else {
             $erro = mysqli_stmt_error($stmt_update);
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="card shadow-sm border-0 rounded-3 p-4">
                 <div class="border-bottom pb-2 mb-4 d-flex justify-content-between align-items-center">
                     <h4 class="fw-bold text-dark mb-0"><i class="fa-solid fa-pen-to-square me-2 text-warning"></i>Editar Equipamento Técnico</h4>
-                    <a href="../gestao_equip.php" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Voltar</a>
+                    <a href="../listar/listar_equipamentos.php" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Voltar</a>
                 </div>
 
                 <?php if (isset($erro)): ?>

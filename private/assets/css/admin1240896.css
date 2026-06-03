@@ -1,5 +1,5 @@
   body {
-            font-family: 'Titillium Web', sans-serif;
+            font-family: 'Titillium Web', sans-serif !important; 
             background-color: #f8f9fa;
             color: #333333;
         }
@@ -61,3 +61,44 @@
             justify-content: center;
             font-size: 1.5rem;
         }
+
+        /* Ativa o efeito hover apenas em ecrãs médios/grandes (computadores) */
+@media (min-width: 992px) {
+    .navbar-nav .nav-item.dropdown:hover .dropdown-menu {
+        display: block;
+        margin-top: 0; /* Remove o espaço que pode fazer o menu fechar sozinho */
+        animation: fadeInNavbar 0.2s ease-in-out; /* Adiciona uma transição suave */
+    }
+}
+
+/* Pequena animação de surgimento suave */
+@keyframes fadeInNavbar {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Customização visual opcional para os itens do submenu combinarem com o MedTrack */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.dropdown-item {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    color: #495057;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f3f5;
+    color: #198754; /* Cor verde padrão do Bootstrap ou a cor do teu projeto */
+    padding-left: 20px; /* Efeito de ligeiro deslize ao passar o rato */
+}
