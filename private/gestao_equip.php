@@ -104,7 +104,7 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="fw-bold text-dark mb-1">Gestão de Equipamentos Médicos</h2>
-                <p class="text-muted mb-0">Registo, acompanhamento e controlo do ciclo de vida dos dispositivos clínicos.</p>
+                <p class="text-muted mb-0">Registos, acompanhamentos e controlo do ciclo de vida dos dispositivos clínicos.</p>
             </div>
             <!-- Botão de Atalho para Scroll -->
             <a href="#listagem" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-list me-1"></i> Ir para Lista</a>

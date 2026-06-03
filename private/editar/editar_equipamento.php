@@ -196,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($conn) {
             // 2. Executar a consulta para trazer as localizações ordenadas alfabeticamente
             // Nota: Altere 'localizacoes' e 'nome' para os nomes exatos da sua tabela/coluna se forem diferentes
-            $sql_loc = "SELECT id, nome FROM localizacoes ORDER BY nome ASC";
+            $sql_loc = "SELECT id, edificio FROM localizaciones ORDER BY edificio ASC";
             $res_loc = mysqli_query($conn, $sql_loc);
             
             if ($res_loc) {
@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $selected = (isset($equipamento['localizacao_id']) && $equipamento['localizacao_id'] == $loc['id']) ? 'selected' : '';
                     
                     // Imprime a opção HTML dinamicamente
-                    echo "<option value='{$loc['id']}' {$selected}>" . htmlspecialchars($loc['nome'], ENT_QUOTES, 'UTF-8') . "</option>";
+                    echo "<option value='{$loc['id']}' {$selected}>" . htmlspecialchars($loc['edificio'], ENT_QUOTES, 'UTF-8') . "</option>";
                 }
             } else {
                 echo "<option value='' disabled>Erro ao carregar localizações: " . mysqli_error($conn) . "</option>";
@@ -218,6 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo "<option value='' disabled>Falha na ligação à Base de Dados</option>";
         }
+    
         ?>
     </select>
 </div>

@@ -80,7 +80,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="fw-bold text-dark mb-1">Gestão de Localizações Hospitalares</h2>
-                <p class="text-muted mb-0">Registo, acompanhamento e controlo das localizações dos equipamentos.</p>
+                <p class="text-muted mb-0">Registos, acompanhamentos e controlo das localizações dos equipamentos.</p>
             </div>
             <!-- Botão de Atalho para Scroll -->
             <a href="#listagem" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-list me-1"></i> Ir para Lista</a>

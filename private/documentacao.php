@@ -81,6 +81,14 @@ $result = mysqli_query($conn, $sql);
     </nav>
 
 <div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-1">Gestão de Documentação Técnica</h2>
+                <p class="text-muted mb-0">Registos, acompanhamentos e controlo da documentação técnica dos equipamentos.</p>
+            </div>
+            <!-- Botão de Atalho para Scroll -->
+            <a href="#listagem" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-list me-1"></i> Ir para Lista</a>
+        </div>
     <div class="row justify-content-center">
         <div class="col-lg-8">
 
@@ -164,7 +172,7 @@ $result = mysqli_query($conn, $sql);
         </div>
     </div>
 </div>
-<div class="container mt-5 mb-5">
+<div class="container mt-5 mb-5" id="listagem">
 
     <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -290,9 +298,9 @@ $result = mysqli_query($conn, $sql);
                 </tbody>
             </table>
         </div>
-    </div>
-
+    
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>    
 </body>
 </html>
