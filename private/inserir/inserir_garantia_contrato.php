@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql = "INSERT INTO garantias_contratos (equipamento_id, data_inicio_garantia, data_fim_garantia, tem_contrato_manutencao, tipo_contrato, entidade_responsavel_id, periodicidade, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = mysqli_prepare($conn, $sql);
         if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "isssiiss", $equipamento_id, $data_inicio_garantia, $data_fim_garantia, $tem_contrato_manutencao, $tipo_contrato, $entidade_responsavel_id, $periodicidade, $observacoes);
+            mysqli_stmt_bind_param($stmt, "issssiss", $equipamento_id, $data_inicio_garantia, $data_fim_garantia, $tem_contrato_manutencao, $tipo_contrato, $entidade_responsavel_id, $periodicidade, $observacoes);
             if (mysqli_stmt_execute($stmt)) {
                 $_SESSION['msg_sucesso'] = "Garantia/Contrato registado com sucesso!";
                 header("Location: ../garantia_contratos.php");
