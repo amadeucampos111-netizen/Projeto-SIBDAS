@@ -52,6 +52,28 @@ mysqli_stmt_bind_param($stmt_forn, "i", $id);
 mysqli_stmt_execute($stmt_forn);
 $result_forn = mysqli_stmt_get_result($stmt_forn);
 
+$sql_garantia = "SELECT gc.*, f.nome_empresa AS entidade_responsavel_nome 
+                 FROM garantias_contratos gc
+                 LEFT JOIN fornecedores f ON gc.entidade_responsavel_id = f.id
+                 WHERE gc.equipamento_id = ?";
+
+$stmt_gar = mysqli_prepare($conn, $sql_garantia);
+mysqli_stmt_bind_param($stmt_gar, "i", $id);
+mysqli_stmt_execute($stmt_gar);
+$result_gar = mysqli_stmt_get_result($stmt_gar);
+$garantia = mysqli_fetch_assoc($result_gar); // Traz apenas 1 registo (devido ao UNIQUE no equipamento_id)
+mysqli_stmt_close($stmt_gar);
+
+$sql_comp = "SELECT id, codigo_componente, designacao_componente, numero_serie_componente, observacoes 
+             FROM componentes_associados 
+             WHERE equipamento_pai_id = ? 
+             ORDER BY codigo_componente ASC";
+
+$stmt_comp = mysqli_prepare($conn, $sql_comp);
+mysqli_stmt_bind_param($stmt_comp, "i", $id);
+mysqli_stmt_execute($stmt_comp);
+$result_comp = mysqli_stmt_get_result($stmt_comp);
+
 mysqli_close($conn);
 ?>
 
@@ -206,6 +228,113 @@ mysqli_close($conn);
                                         </div>
                                     </div>
                                 <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <div class="border-top pt-3">
+                            <div class="label-detalhe mb-2"><i class="fa-solid fa-file-shield text-primary me-1"></i> Estado da Garantia e Contrato de Manutenção</div>
+                            
+                            <?php if ($garantia): 
+                                $hoje = date('Y-m-d');
+                                $tem_garantia = !empty($garantia['data_fim_garantia']);
+                                $expirada = ($tem_garantia && $garantia['data_fim_garantia'] < $hoje);
+                                
+                                // Define a cor do painel esquerdo com base no estado da garantia
+                                $cor_borda_garantia = $expirada ? "border-danger" : "border-primary";
+                            ?>
+                                <div class="card-cobertura p-3 border-start border-3 <?php echo $cor_borda_garantia; ?> shadow-sm">
+                                    <div class="row g-3">
+                                        <div class="col-md-6 border-end">
+                                            <span class="fw-bold text-secondary small d-block mb-1"><i class="fa-solid fa-shield-halved me-1"></i> Garantia do Fabricante:</span>
+                                            <?php if ($tem_garantia): ?>
+                                                <div class="fs-5 fw-bold text-dark">
+                                                    Até <?php echo date('d/m/Y', strtotime($garantia['data_fim_garantia'])); ?>
+                                                </div>
+                                                <small class="text-muted d-block">Início: <?php echo date('d/m/Y', strtotime($garantia['data_inicio_garantia'])); ?></small>
+                                                <?php echo $expirada ? "<span class='badge bg-danger mt-1'>Garantia Expirada</span>" : "<span class='badge bg-success mt-1'>Garantia Válida / Ativa</span>"; ?>
+                                            <?php else: ?>
+                                                <span class="text-muted"><em>Não especificada ou sem garantia base.</em></span>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <div class="col-md-6 ps-md-4">
+                                            <span class="fw-bold text-secondary small d-block mb-1"><i class="fa-solid fa-screwdriver-wrench me-1"></i> Contrato de Assistência Técnica:</span>
+                                            <?php if ($garantia['tem_contrato_manutencao']): ?>
+                                                <div class="fs-6 fw-bold text-primary mb-1">
+                                                    Modalidade: <?php echo htmlspecialchars($garantia['tipo_contrato'] ?: 'Não definido'); ?>
+                                                </div>
+                                                <div class="small text-muted">
+                                                    <strong>Periodicidade:</strong> <?php echo htmlspecialchars($garantia['periodicidade'] ?: 'Conforme pedido'); ?><br>
+                                                    <strong>Responsável:</strong> <?php echo htmlspecialchars($garantia['entidade_responsavel_nome'] ?: 'Gestão Interna (Eng. Clínica)'); ?>
+                                                </div>
+                                            <?php else: ?>
+                                                <span class="badge bg-light text-secondary border mt-1">Sem Contrato Ativo</span>
+                                                <small class="d-block text-muted mt-1">Intervenções preventivas/corretivas dependem de adjudicação isolada.</small>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <?php if (!empty($garantia['observacoes'])): ?>
+                                            <div class="col-12 border-top pt-2 mt-2">
+                                                <small class="fw-bold text-muted d-block">Cláusulas ou Observações do Contrato:</small>
+                                                <p class="mb-0 text-secondary bg-light p-2 rounded border style-obs" style="font-size: 0.85rem;">
+                                                    <?php echo nl2br(htmlspecialchars($garantia['observacoes'])); ?>
+                                                </p>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <div class="p-3 bg-light rounded text-center text-muted border border-dashed">
+                                    <i class="fa-solid fa-triangle-exclamation text-warning me-1"></i> Nenhuma apólice de garantia ou contrato de manutenção programada foi registado para este dispositivo clínico.
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <div class="border-top pt-3">
+                            <div class="label-detalhe mb-2"><i class="fa-solid fa-puzzle-piece text-warning me-1"></i> Componentes, Módulos e Acessórios Integrados</div>
+                            
+                            <div class="table-responsive bg-white rounded border">
+                                <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 140px;">Cód. Componente</th>
+                                            <th>Designação / Acessório</th>
+                                            <th>Número de Série (S/N)</th>
+                                            <th>Observações Técnicas / Notas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (mysqli_num_rows($result_comp) > 0): ?>
+                                            <?php while ($comp = mysqli_fetch_assoc($result_comp)): ?>
+                                                <tr>
+                                                    <td><code class="text-dark fw-bold"><?php echo htmlspecialchars($comp['codigo_componente']); ?></code></td>
+                                                    <td class="fw-semibold text-dark">
+                                                        <i class="fa-solid fa-circle-dot text-warning me-1" style="font-size: 0.7rem;"></i>
+                                                        <?php echo htmlspecialchars($comp['designacao_componente']); ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo !empty($comp['numero_serie_componente']) ? htmlspecialchars($comp['numero_serie_componente']) : '<span class="text-muted"><em>N/A</em></span>'; ?>
+                                                    </td>
+                                                    <td>
+                                                        <small class="text-muted">
+                                                            <?php echo !empty($comp['observacoes']) ? htmlspecialchars($comp['observacoes']) : '—'; ?>
+                                                        </small>
+                                                    </td>
+                                                </tr>
+                                            <?php endwhile; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted py-3">
+                                                    <i class="fa-solid fa-cubes-solid me-1"></i> Não existem subcomponentes ou acessórios modulares mapeados para este ativo.
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

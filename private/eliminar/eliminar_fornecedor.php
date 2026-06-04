@@ -35,7 +35,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         if ($row_check['total'] > 0) {
             // Se houver equipamentos dependentes deste fornecedor, a eliminação é abortada
             $_SESSION['mensagem_erro'] = "Não é possível eliminar este fornecedor porque ele está associado a " . $row_check['total'] . " equipamento(s). Altere o fornecedor desses equipamentos antes de o remover.";
-            header("Location: fornecedores.php");
+            header("Location: ../listar/lista_fornecedores.php");
             mysqli_close($conn);
             exit;
         }
@@ -66,5 +66,5 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 }
 
 // 3. Redirecionar de volta para a listagem principal
-header("Location: ../fornecedores.php");
+header("Location: ../listar/lista_fornecedores.php");
 exit;

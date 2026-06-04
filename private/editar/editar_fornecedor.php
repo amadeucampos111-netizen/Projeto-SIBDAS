@@ -29,18 +29,18 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         $fornecedor = mysqli_fetch_assoc($result);
     } else {
         $_SESSION['mensagem_erro'] = "Fornecedor não encontrado.";
-        header("Location: ../fornecedores.php");
+        header("Location: ../listar/lista_fornecedores.php");
         exit;
     }
     mysqli_stmt_close($stmt);
 } else if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../fornecedores.php");
+    header("Location: ../listar/lista_fornecedores.php");
     exit;
 }
 
 // Verificação de Segurança Extra
 if (!$fornecedor && $_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../fornecedores.php");
+    header("Location: ../listar/lista_fornecedores.php");
     exit;
 }
 
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if (mysqli_stmt_execute($stmt_update)) {
                 $_SESSION['mensagem_sucesso'] = "Dados do fornecedor atualizados com sucesso!";
-                header("Location: ../fornecedores.php");
+                header("Location: ../listar/lista_fornecedores.php");
                 exit;
             } else {
                 // Capturar erro se o utilizador tentar mudar o NIF para um que já existe noutro fornecedor
@@ -104,6 +104,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+   
+    
+    <link rel="stylesheet" href="../assets/css/admin1240896.css">
     
 </head>
 <body>
@@ -117,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h4 class="fw-bold text-dark mb-0">
                         <i class="fa-solid fa-truck-field me-2 text-primary"></i>Editar Ficha do Fornecedor
                     </h4>
-                    <a href="fornecedores.php" class="btn btn-outline-secondary btn-sm">
+                    <a href="../listar/lista_fornecedores.php" class="btn btn-outline-secondary btn-sm">
                         <i class="fa-solid fa-arrow-left me-1"></i> Voltar
                     </a>
                 </div>
@@ -190,7 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="mt-4 d-flex justify-content-end gap-2">
-                        <a href="fornecedores.php" class="btn btn-light px-4">Cancelar</a>
+                        <a href="../listar/lista_fornecedores.php" class="btn btn-light px-4">Cancelar</a>
                         <button type="submit" class="btn btn-primary px-4">
                             <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Alterações
                         </button>
