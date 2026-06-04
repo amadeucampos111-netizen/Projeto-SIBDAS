@@ -20,6 +20,16 @@ $query_tabela = "SELECT e.*, l.servico_departamento, l.sala_gabinete
 
 $result_tabela = mysqli_query($conn, $query_tabela);
 
+// Query para buscar todas as localizações disponíveis
+$query_loc = "SELECT id, edificio, piso, servico_departamento, sala_gabinete 
+              FROM localizaciones 
+              ORDER BY edificio ASC, piso ASC, servico_departamento ASC";
+$result_loc = mysqli_query($conn, $query_loc);
+
+// Query para alimentar os Selects de Equipamento (usado no formulário de componentes)
+$query_equip_select = "SELECT id, designacao, numero_serie, codigo_interno FROM equipamentos ORDER BY designacao ASC";
+$result_equip_select = mysqli_query($conn, $query_equip_select);
+
 
 // Coloque isto mesmo no topo do ficheiro HTML ou antes do Card do Formulário
 if (session_status() === PHP_SESSION_NONE) {
@@ -41,6 +51,8 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
     </div>
     <?php unset($_SESSION['mensagem_erro']); ?>
 <?php endif; ?>
+
+
 
 <!DOCTYPE html>
 <html lang="pt">
@@ -122,7 +134,7 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
                         <i class="fa-solid fa-microscope me-1"></i> Equipamentos
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-menu-item dropdown-item" href="gestao_equip.php"><i class="fa-solid fa-list me-2"></i> Registar Equipamentos</a></li>
+                        <li><a class="dropdown-menu-item dropdown-item" href="gestao_equip.php"><i class="fa-solid fa-list me-2"></i> Registar Equipamentos e Componentes</a></li>
                         <li><a class="dropdown-menu-item dropdown-item" href="listar/listar_equipamentos.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Equipamentos</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-menu-item dropdown-item" href="garantia_contratos.php"><i class="fa-solid fa-file-shield me-2"></i> Registo de Garantias e Contratos</a></li>
@@ -346,6 +358,60 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
                     <button type="reset" class="btn btn-outline-secondary px-4 fw-semibold">Limpar Campos</button>
                     <button type="submit" class="btn btn-outline-secondary px-4 fw-semibold">
                         <i class="fa-solid fa-floppy-disk me-1"></i> Gravar Equipamento
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="card p-4 mb-4 shadow-sm border-0 rounded-3 bg-white">
+            <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-primary">
+                <i class="fa-solid fa-puzzle-piece fs-4 me-2"></i>
+                <h5 class="fw-bold mb-0 text-dark">Adicionar Componente</h5>
+            </div>
+            
+            <form action="inserir/inserir_componente.php" method="POST">
+                <div class="row g-3">
+                    
+                    <div class="col-12 col-md-5">
+                        <label for="equipamento_pai_id" class="form-label fw-semibold">Equipamento Médico Principal (Vínculo)</label>
+                        <select class="form-select" id="equipamento_pai_id" name="equipamento_pai_id" required>
+                            <option value="" selected disabled>Selecione o dispositivo detentor...</option>
+                            <?php
+                            if ($result_equip_select && mysqli_num_rows($result_equip_select) > 0) {
+                                mysqli_data_seek($result_equip_select, 0); // Reposiciona o ponteiro do array
+                                while ($eq = mysqli_fetch_assoc($result_equip_select)) {
+                                    echo "<option value='{$eq['id']}'>" . htmlspecialchars($eq['designacao']) . " (S/N: " . htmlspecialchars($eq['numero_serie']) . " | Inv: " . htmlspecialchars($eq['codigo_interno']) . ")</option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <label for="designacao_componente" class="form-label fw-semibold">Nome do Componente</label>
+                        <input type="text" class="form-control" id="designacao_componente" name="designacao_componente" placeholder="Ex: Sensor de Fluxo O2, Bateria Interna, Elétrodo" required>
+                    </div>
+
+                    <div class="col-12 col-md-3">
+                        <label for="codigo_componente" class="form-label fw-semibold">Código do Componente</label>
+                        <input type="text" class="form-control" id="codigo_componente" name="codigo_componente" placeholder="Ex: ACC-MON-01" required>
+                    </div>
+
+                    <div class="col-12 col-md-3">
+                        <label for="numero_serie_componente" class="form-label fw-semibold">Nº de Série do componente</label>
+                        <input type="text" class="form-control" id="numero_serie_componente" name="numero_serie_componente" placeholder="Ex: SN-123456" required>
+                    </div>
+
+                    <div class="col-12 col-md-9">
+                        <label for="observacoes" class="form-label fw-semibold">Observações</label>
+                        <input type="text" class="form-control" id="observacoes" name="observacoes" placeholder="Ex: Validade até Dezembro de 2026. Revisado na última preventiva.">
+                    </div>
+
+                </div>
+
+                <div class="mt-4 d-flex justify-content-end gap-2">
+                    <button type="reset" class="btn btn-outline-secondary px-4 fw-semibold">Limpar</button>
+                    <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                        <i class="fa-solid fa-plus me-1"></i> Adicionar Componente
                     </button>
                 </div>
             </form>
