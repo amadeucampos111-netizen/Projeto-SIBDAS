@@ -1,3 +1,130 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 1. Configuração da Base de Dados
+$host = "localhost";
+$user = "root";
+$pass = ""; 
+$dbname = "medtrack_db";
+
+$conn = mysqli_connect($host, $user, $pass, $dbname);
+if (!$conn) {
+    die("Erro na ligação à base de dados: " . mysqli_connect_error());
+}
+
+// 2. Recolha dos Filtros Combinados (via GET para manter o estado na URL)
+$codigo_interno = trim($_GET['codigo_interno'] ?? '');
+$designacao     = trim($_GET['designacao'] ?? '');
+$marca          = trim($_GET['marca'] ?? '');
+$modelo         = trim($_GET['modelo'] ?? '');
+$numero_serie   = trim($_GET['numero_serie'] ?? '');
+$servico        = trim($_GET['servico'] ?? ''); //ESTA ERRADO
+$estado_atual   = trim($_GET['estado_atual'] ?? '');
+$fornecedor     = trim($_GET['fornecedor'] ?? ''); //ESTA ERRADO
+$categoria      = trim($_GET['categoria'] ?? '');
+$criticidade    = trim($_GET['criticidade'] ?? '');
+
+// Preferências de Visualização e Ordenação
+$ordenar_por = $_GET['ordenar_por'] ?? 'designacao';
+$direcao     = $_GET['direcao'] ?? 'ASC';
+$vista       = $_GET['vista'] ?? 'resumo'; // 'resumo' ou 'detalhe'
+
+// 3. Construção Dinâmica da Query SQL (Filtros Combinados)
+$sql = "SELECT e.*, 
+               l.servico_departamento, l.edificio, l.piso, l.sala_gabinete,
+               GROUP_CONCAT(DISTINCT f.nome_empresa SEPARATOR ', ') AS nomes_fornecedores
+        FROM equipamentos e
+        INNER JOIN localizaciones l ON e.localizacao_id = l.id
+        LEFT JOIN equipamento_fornecedor ef ON e.id = ef.equipamento_id
+        LEFT JOIN fornecedores f ON ef.fornecedor_id = f.id
+        WHERE 1=1";
+
+$params = [];
+$types = "";
+
+if (!empty($codigo_interno)) {
+    $sql .= " AND e.codigo_interno LIKE ?";
+    $params[] = "%$codigo_interno%";
+    $types .= "s";
+}
+if (!empty($designacao)) {
+    $sql .= " AND e.designacao LIKE ?";
+    $params[] = "%$designacao%";
+    $types .= "s";
+}
+if (!empty($marca)) {
+    $sql .= " AND e.marca LIKE ?";
+    $params[] = "%$marca%";
+    $types .= "s";
+}
+if (!empty($modelo)) {
+    $sql .= " AND e.modelo LIKE ?";
+    $params[] = "%$modelo%";
+    $types .= "s";
+}
+if (!empty($numero_serie)) {
+    $sql .= " AND e.numero_serie LIKE ?";
+    $params[] = "%$numero_serie%";
+    $types .= "s";
+}
+if (!empty($servico)) {
+    $sql .= " AND l.servico_departamento = ?";
+    $params[] = $servico;
+    $types .= "s";
+}
+if (!empty($estado_atual)) {
+    $sql .= " AND e.estado_atual = ?";
+    $params[] = $estado_atual;
+    $types .= "s";
+}
+if (!empty($categoria)) {
+    $sql .= " AND e.categoria = ?";
+    $params[] = $categoria;
+    $types .= "s";
+}
+if (!empty($criticidade)) {
+    $sql .= " AND e.criticidade = ?";
+    $params[] = $criticidade;
+    $types .= "s";
+}
+
+// Agrupamento obrigatório devido ao uso de GROUP_CONCAT
+$sql .= " GROUP BY e.id, l.id";
+
+// O filtro de Fornecedor aplica-se após o agrupamento utilizando HAVING (ou direto na junção se preferires)
+if (!empty($fornecedor)) {
+    $sql .= " HAVING nomes_fornecedores LIKE ?";
+    $params[] = $fornecedor;
+    $types .= "s";
+}
+
+// Lista de segurança para ordenação
+$colunas_validas = [
+    'designacao' => 'e.designacao',
+    'codigo_interno' => 'e.codigo_interno',
+    'criticidade' => 'e.criticidade',
+    'id' => 'e.id',
+    'servico' => 'l.servico_departamento'
+];
+$coluna_ordenar = $colunas_validas[$ordenar_por] ?? 'e.designacao';
+$direcao = ($direcao === 'DESC') ? 'DESC' : 'ASC';
+
+$sql .= " ORDER BY $coluna_ordenar $direcao";
+
+// Execução com Prepared Statements
+$stmt = mysqli_prepare($conn, $sql);
+if ($stmt) {
+    if (!empty($types)) {
+        mysqli_stmt_bind_param($stmt, $types, ...$params);
+    }
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+} else {
+    die("Erro ao processar consulta de tabelas associadas.");
+}
+?>
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -122,5 +249,233 @@
         </div>
     </div>
 </nav>
+
+<div class="container-fluid px-4 py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1"><i class="fa-solid fa-magnifying-glass me-2 text-primary"></i>Módulo de Consulta e Filtragem</h2>
+            <p class="text-muted mb-0">Pesquise no inventário utilizando filtros combinados e escolha o formato de visualização.</p>
+        </div>
+        <a href="dashboard.php" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Voltar</a>
+    </div>
+
+    <div class="card filter-card bg-white p-4 mb-4">
+        <form method="GET" action="pesq_avan.php">
+            <input type="hidden" name="vista" value="<?php echo htmlspecialchars($vista); ?>">
+
+            <div class="row g-3">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Código Interno</label>
+                    <input type="text" class="form-control form-control-sm" name="codigo_interno" value="<?php echo htmlspecialchars($codigo_interno); ?>">
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Designação</label>
+                    <input type="text" class="form-control form-control-sm" name="designacao" value="<?php echo htmlspecialchars($designacao); ?>">
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Marca</label>
+                    <input type="text" class="form-control form-control-sm" name="marca" value="<?php echo htmlspecialchars($marca); ?>">
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Modelo</label>
+                    <input type="text" class="form-control form-control-sm" name="modelo" value="<?php echo htmlspecialchars($modelo); ?>">
+                </div>
+                
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Número de Série</label>
+                    <input type="text" class="form-control form-control-sm" name="numero_serie" value="<?php echo htmlspecialchars($numero_serie); ?>">
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Serviço Hospitalar</label>
+                    <input type="text" class="form-control form-control-sm" name="servico" value="<?php echo htmlspecialchars($servico); ?>" placeholder="Ex: Urgências">
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Estado</label>
+                    <select class="form-select form-select-sm" name="estado_atual">
+                        <option value="">Todos</option>
+                        <option value="Ativo" <?php echo $estado_atual === 'Ativo' ? 'selected' : ''; ?>>Ativo (Operacional)</option>
+                        <option value="Inativo" <?php echo $estado_atual === 'Inativo' ? 'selected' : ''; ?>>Inativo</option>
+                        <option value="Em manutenção" <?php echo $estado_atual === 'Em manutenção' ? 'selected' : ''; ?>>Em Manutenção</option>
+                        <option value="Em calibração" <?php echo $estado_atual === 'Em calibração' ? 'selected' : ''; ?>>Em Calibração</option>
+                        <option value="Em quarentena" <?php echo $estado_atual === 'Em quarentena' ? 'selected' : ''; ?>>Em Quarentena</option>
+                        <option value="Abatido" <?php echo $estado_atual === 'Abatido' ? 'selected' : ''; ?>>Abatido</option>
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Fornecedor</label>
+                    <input type="text" class="form-control form-control-sm" name="fornecedor" value="<?php echo htmlspecialchars($fornecedor); ?>">
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Categoria</label>
+                    <select class="form-select form-select-sm" name="categoria">
+                        <option value="">Todos</option>
+                        <option value="Monitorização" <?php echo $categoria === 'Monitorização' ? 'selected' : ''; ?>>Monitorização</option>
+                        <option value="Suporte de vida" <?php echo $categoria === 'Suporte de vida' ? 'selected' : ''; ?>>Suporte de vida</option>
+                        <option value="Terapia" <?php echo $categoria === 'Terapia' ? 'selected' : ''; ?>>Terapia</option>
+                        <option value="Diagnóstico" <?php echo $categoria === 'Diagnóstico' ? 'selected' : ''; ?>>Diagnóstico</option>
+                        <option value="Laboratório" <?php echo $categoria === 'Laboratório' ? 'selected' : ''; ?>>Laboratório</option>
+                        <option value="Esterilização" <?php echo $categoria === 'Esterilização' ? 'selected' : ''; ?>>Esterilização</option>
+                        <option value="Reabilitação" <?php echo $categoria === 'Reabilitação' ? 'selected' : ''; ?>>Reabilitação</option>
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Criticidade</label>
+                    <select class="form-select form-select-sm" name="criticidade">
+                        <option value="">Todas</option>
+                         <option value="Suporte de vida" <?php echo $criticidade === 'Suporte de vida' ? 'selected' : ''; ?>>Suporte de vida</option>
+                        <option value="Alta" <?php echo $criticidade === 'Alta' ? 'selected' : ''; ?>>Alta</option>
+                        <option value="Média" <?php echo $criticidade === 'Média' ? 'selected' : ''; ?>>Média</option>
+                        <option value="Baixa" <?php echo $criticidade === 'Baixa' ? 'selected' : ''; ?>>Baixa</option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-4">
+                    <label class="form-label small fw-semibold text-muted">Ordenar por</label>
+                    <div class="input-group input-group-sm">
+                        <select class="form-select" name="ordenar_por">
+                            <option value="designacao" <?php echo $ordenar_por === 'designacao' ? 'selected' : ''; ?>>Designação</option>
+                            <option value="codigo_interno" <?php echo $ordenar_por === 'codigo_interno' ? 'selected' : ''; ?>>Código Interno</option>
+                            <option value="criticidade" <?php echo $ordenar_por === 'criticidade' ? 'selected' : ''; ?>>Criticidade</option>
+                            <option value="id" <?php echo $ordenar_por === 'id' ? 'selected' : ''; ?>>Data de Registo</option>
+                        </select>
+                        <select class="form-select" name="direcao">
+                            <option value="ASC" <?php echo $direcao === 'ASC' ? 'selected' : ''; ?>>Crescente (A-Z)</option>
+                            <option value="DESC" <?php echo $direcao === 'DESC' ? 'selected' : ''; ?>>Decrescente (Z-A)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-12 d-flex justify-content-end gap-2 align-items-end mt-4">
+                    <a href="pesq_avan.php" class="btn btn-sm btn-light border"><i class="fa-solid fa-broom me-1"></i> Limpar Filtros</a>
+                    <button type="submit" class="btn btn-sm btn-primary px-4"><i class="fa-solid fa-filter me-1"></i> Filtrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-muted small">Foram encontrados <strong><?php echo mysqli_num_rows($result); ?></strong> equipamentos.</span>
+        <div class="btn-group shadow-sm">
+            <?php
+            $url_base = $_SERVER['QUERY_STRING'];
+            // Remove o parâmetro antigo da vista para não duplicar na URL
+            parse_str($url_base, $query_array);
+            
+            $query_array['vista'] = 'resumo';
+            $url_resumo = "pesq_avan.php?" . http_build_query($query_array);
+
+            ?>
+            <a href="<?php echo $url_resumo; ?>" class="btn btn-sm btn-outline-secondary <?php echo $vista === 'resumo' ? 'active' : ''; ?>">
+                <i class="fa-solid fa-list me-1"></i> Vista Resumo
+            </a>
+            <a href="ver_equipamento.php" class="btn btn-sm btn-outline-secondary <?php echo $vista === 'detalhe' ? 'active' : ''; ?>">
+                <i class="fa-solid fa-table-cells-large me-1"></i> Vista Detalhe
+            </a>
+        </div>
+    </div>
+
+    <?php if (mysqli_num_rows($result) > 0): ?>
+        
+        <?php if ($vista === 'resumo'): ?>
+            <div class="card filter-card p-3 bg-white">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Cód. Interno</th>
+                                <th>Designação</th>
+                                <th>Marca/Modelo</th>
+                                <th>Nº Série</th>
+                                <th>Serviço</th>
+                                <th>Criticidade</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                                <tr>
+                                    <td class="fw-bold font-monospace text-primary"><?php echo htmlspecialchars($row['codigo_interno']); ?></td>
+                                    <td class="fw-semibold"><?php echo htmlspecialchars($row['designacao']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['marca'] . " / " . $row['modelo']); ?></td>
+                                    <td class="text-muted font-monospace"><?php echo htmlspecialchars($row['numero_serie']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['servico_departamento']); ?></td>
+                                    <td>
+                                        <?php 
+                                        $classe_criticidade = 'bg-secondary';
+                                        if ($row['criticidade'] === 'Suporte de vida') $classe_criticidade = 'bg-danger';
+                                        elseif ($row['criticidade'] === 'Alta') $classe_criticidade = 'bg-warning text-dark';
+                                        elseif ($row['criticidade'] === 'Média') $classe_criticidade = 'bg-info text-dark';
+                                        ?>
+                                        <span class="badge <?php echo $classe_criticidade; ?>"><?php echo htmlspecialchars($row['criticidade']); ?></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge <?php echo ($row['estado_atual'] == 'Operacional') ? 'bg-success' : (($row['estado_atual'] == 'Avariado') ? 'bg-danger' : 'bg-warning text-dark'); ?>">
+                                            <?php echo htmlspecialchars($row['estado_atual']); ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        <?php else: ?>
+            <div class="row g-3">
+                <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <div class="card result-card bg-white p-4 h-100 border-start border-4 <?php echo ($row['estado_atual'] == 'Operacional') ? 'border-success' : (($row['estado_atual'] == 'Avariado') ? 'border-danger' : 'border-warning'); ?>">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <span class="text-muted font-monospace small d-block">INV: <?php echo htmlspecialchars($row['codigo_interno']); ?></span>
+                                    <h5 class="fw-bold text-dark mb-0"><?php echo htmlspecialchars($row['designacao']); ?></h5>
+                                </div>
+                                <span class="badge <?php echo ($row['estado_atual'] == 'Operacional') ? 'bg-success' : (($row['estado_atual'] == 'Avariado') ? 'bg-danger' : 'bg-warning text-dark'); ?>">
+                                    <?php echo htmlspecialchars($row['estado_atual']); ?>
+                                </span>
+                            </div>
+                            
+                            <hr class="text-muted my-2">
+                            
+                            <div class="row g-2 my-1 small">
+                                <div class="col-6"><strong>Marca:</strong> <?php echo htmlspecialchars($row['marca']); ?></div>
+                                <div class="col-6"><strong>Modelo:</strong> <?php echo htmlspecialchars($row['modelo']); ?></div>
+                                <div class="col-6"><strong>Nº Série:</strong> <span class="font-monospace"><?php echo htmlspecialchars($row['numero_serie']); ?></span></div>
+                                <div class="col-6"><strong>Serviço:</strong> <?php echo htmlspecialchars($row['servico_departamento']); ?></div>
+                                <div class="col-6"><strong>Categoria:</strong> <?php echo htmlspecialchars($row['categoria'] ?? 'N/A'); ?></div>
+                                <div class="col-6"><strong>Fornecedor:</strong> <?php echo htmlspecialchars($row['fornecedor'] ?? 'N/A'); ?></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                                <div>
+                                    <span class="small text-muted me-1">Criticidade:</span>
+                                    <?php 
+                                     $classe_criticidade = 'bg-secondary';
+                        if ($row['criticidade'] === 'Suporte de vida') $classe_criticidade = 'bg-danger';
+                        elseif ($row['criticidade'] === 'Alta') $classe_criticidade = 'bg-warning text-dark';
+                        elseif ($row['criticidade'] === 'Média') $classe_criticidade = 'bg-info text-dark';
+                                    ?>
+                                    <span class="badge <?php echo $classe_criticidade; ?>"><?php echo htmlspecialchars($row['criticidade']); ?></span>
+                                </div>
+                                <button class="btn btn-xs btn-link p-0 text-decoration-none small"><i class="fa-solid fa-circle-info"></i> Ficha Completa</button>
+                            </div>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            </div>
+        <?php endif; ?>
+
+    <?php else: ?>
+        <div class="text-center p-5 bg-white rounded shadow-sm">
+            <i class="fa-solid fa-folder-open text-muted fs-1 mb-3"></i>
+            <h5 class="text-dark fw-semibold">Nenhum equipamento corresponde aos filtros aplicados.</h5>
+            <p class="text-muted small">Tente ajustar os critérios de pesquisa combinada.</p>
+        </div>
+    <?php endif; ?>
+
+</div>
 </body>
 </html>
+<?php
+mysqli_close($conn);?>
