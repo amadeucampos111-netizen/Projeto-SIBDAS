@@ -185,7 +185,7 @@ $result_suporte_vida = mysqli_query($conn, $query_suporte_vida);
                         <i class="fa-solid fa-truck-medical me-1"></i> Fornecedores
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-menu-item dropdown-item" href="fornecedores.php"><i class="fa-solid fa-address-book me-2"></i> Registo e Associação de Fornecedores</a></li>
+                        <li><a class="dropdown-menu-item dropdown-item" href="fornecedores.php"><i class="fa-solid fa-address-book me-2"></i> Registo, Associação e Desassociação de Fornecedores</a></li>
                         <li><a class="dropdown-menu-item dropdown-item" href="listar/lista_fornecedores.php"><i class="fa-solid fa-user-plus me-2"></i> Listagem de Fornecedores</a></li>
                     </ul>
                 </li>

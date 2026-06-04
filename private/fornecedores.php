@@ -16,6 +16,16 @@ if (!$conn) {
 // 2. Query para ler todos os fornecedores por ordem alfabética
 $sql_tabela = "SELECT * FROM fornecedores ORDER BY nome_empresa ASC";
 $result_tabela = mysqli_query($conn, $sql_tabela);
+
+// 3. Query para ler as associações atuais (Para alimentar a tabela de remoção de vínculos)
+$sql_assoc = "SELECT ef.equipamento_id, ef.fornecedor_id, ef.tipo_fornecedor, 
+                     e.designacao AS equipamento_nome, e.numero_serie,
+                     f.nome_empresa AS fornecedor_nome
+              FROM equipamento_fornecedor ef
+              INNER JOIN equipamentos e ON ef.equipamento_id = e.id
+              INNER JOIN fornecedores f ON ef.fornecedor_id = f.id
+              ORDER BY e.designacao ASC, ef.tipo_fornecedor ASC";
+$result_assoc = mysqli_query($conn, $sql_assoc);
 ?>
 
 <!DOCTYPE html>
@@ -113,7 +123,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                         <i class="fa-solid fa-truck-medical me-1"></i> Fornecedores
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-menu-item dropdown-item" href="fornecedores.php"><i class="fa-solid fa-address-book me-2"></i> Registo e Associação de Fornecedores</a></li>
+                        <li><a class="dropdown-menu-item dropdown-item" href="fornecedores.php"><i class="fa-solid fa-address-book me-2"></i> Registo, Associação e Desassociação de Fornecedores</a></li>
                         <li><a class="dropdown-menu-item dropdown-item" href="listar/lista_fornecedores.php"><i class="fa-solid fa-user-plus me-2"></i> Listagem de Fornecedores</a></li>
                     </ul>
                 </li>
@@ -279,6 +289,59 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
             </button>
         </div>
     </form>
+
+    <div class="card p-4 mb-4 shadow-sm border-0 rounded-3">
+        <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-danger">
+            <i class="fa-solid fa-network-wired fs-4 me-2"></i>
+            <h5 class="fw-bold mb-0 text-dark">Vínculos Ativos e Desassociação</h5>
+        </div>
+        
+        <div class="table-responsive bg-white rounded border">
+            <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                <thead class="table-light">
+                    <tr>
+                        <th>Equipamento Principal</th>
+                        <th>Nº de Série</th>
+                        <th>Entidade / Parceiro</th>
+                        <th>Classificação do Vínculo</th>
+                        <th class="text-center" style="width: 120px;">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (mysqli_num_rows($result_assoc) > 0): ?>
+                        <?php while ($assoc = mysqli_fetch_assoc($result_assoc)): 
+                            $badge = "bg-secondary";
+                            if ($assoc['tipo_fornecedor'] === 'Fabricante') $badge = "bg-dark";
+                            if ($assoc['tipo_fornecedor'] === 'Distribuidor ou fornecedor comercial') $badge = "bg-primary";
+                            if ($assoc['tipo_fornecedor'] === 'Empresa de assistência técnica') $badge = "bg-warning text-dark";
+                            if ($assoc['tipo_fornecedor'] === 'Fornecedor de consumíveis ou acessórios') $badge = "bg-info text-dark";
+                        ?>
+                            <tr>
+                                <td class="fw-semibold text-dark"><?php echo htmlspecialchars($assoc['equipamento_nome']); ?></td>
+                                <td><small class="text-muted"><?php echo htmlspecialchars($assoc['numero_serie'] ?: '—'); ?></small></td>
+                                <td><?php echo htmlspecialchars($assoc['fornecedor_nome']); ?></td>
+                                <td><span class="badge <?php echo $badge; ?>" style="font-size: 0.75rem;"><?php echo htmlspecialchars($assoc['tipo_fornecedor']); ?></span></td>
+                                <td class="text-center">
+                                    <a href="eliminar/eliminar_associacao_fornecedor.php?equipamento_id=<?php echo $assoc['equipamento_id']; ?>&fornecedor_id=<?php echo $assoc['fornecedor_id']; ?>&tipo=<?php echo urlencode($assoc['tipo_fornecedor']); ?>" 
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Tem a certeza de que deseja quebrar a associação desta entidade com este equipamento?');">
+                                        <i class="fa-solid fa-link-slash"></i> Remover
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fa-solid fa-link-slash me-1"></i> Não existem associações ativas configuradas no sistema.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 <?php if(isset($conn)) mysqli_close($conn); ?>
 </body>
