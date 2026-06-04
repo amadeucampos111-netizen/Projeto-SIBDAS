@@ -23,6 +23,10 @@ $query = "SELECT c.*, e.designacao AS equipamento_nome, e.codigo_interno AS equi
           ORDER BY c.id DESC";
 
 $result = mysqli_query($conn, $query);
+
+$query_equips = "SELECT id, designacao, codigo_interno FROM equipamentos ORDER BY designacao ASC";
+$result_equips = mysqli_query($conn, $query_equips);
+$equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -149,10 +153,11 @@ $result = mysqli_query($conn, $query);
                         <tr>
                             <th width="8%">ID</th>
                             <th width="12%">Cód. Componente</th>
-                            <th width="25%">Designação do Componente</th>
+                            <th width="20%">Designação do Componente</th>
                             <th width="15%">Nº de Série</th>
                             <th width="25%">Equipamento Principal (Vínculo)</th>
                             <th width="15%">Observações</th>
+                            <th width="5%">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -186,6 +191,17 @@ $result = mysqli_query($conn, $query);
                                         <?php echo !empty($row['observacoes']) ? htmlspecialchars($row['observacoes']) : '<em>Sem notas.</em>'; ?>
                                     </small>
                                 </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <a href="../editar/editar_componente.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Ficha">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <a href="../eliminar/eliminar_componentes.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Abater/Apagar" onclick="return confirm('Tem a certeza que deseja eliminar este componente?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+
                             </tr>
                         <?php 
                             endwhile; 
@@ -204,6 +220,7 @@ $result = mysqli_query($conn, $query);
         </div>
 
     </div>
+   
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
