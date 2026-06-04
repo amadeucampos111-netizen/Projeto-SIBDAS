@@ -369,9 +369,6 @@ if ($stmt) {
             <a href="<?php echo $url_resumo; ?>" class="btn btn-sm btn-outline-secondary <?php echo $vista === 'resumo' ? 'active' : ''; ?>">
                 <i class="fa-solid fa-list me-1"></i> Vista Resumo
             </a>
-            <a href="ver_equipamento.php" class="btn btn-sm btn-outline-secondary <?php echo $vista === 'detalhe' ? 'active' : ''; ?>">
-                <i class="fa-solid fa-table-cells-large me-1"></i> Vista Detalhe
-            </a>
         </div>
     </div>
 
@@ -410,10 +407,27 @@ if ($stmt) {
                                         <span class="badge <?php echo $classe_criticidade; ?>"><?php echo htmlspecialchars($row['criticidade']); ?></span>
                                     </td>
                                     <td>
-                                        <span class="badge <?php echo ($row['estado_atual'] == 'Operacional') ? 'bg-success' : (($row['estado_atual'] == 'Avariado') ? 'bg-danger' : 'bg-warning text-dark'); ?>">
+                                        <?php 
+                                        $classe_criticidade = 'bg-secondary';
+                                        if ($row['estado_atual'] === 'Ativo') $classe_criticidade = 'bg-success';
+                                        elseif ($row['estado_atual'] === 'Abatido') $classe_criticidade = 'bg-danger';
+                                        elseif ($row['estado_atual'] === 'Inativo') $classe_criticidade = 'bg-warning text-dark';
+                                        elseif ($row['estado_atual'] === 'Em manutenção') $classe_criticidade = 'bg-warning text-dark';
+                                        elseif ($row['estado_atual'] === 'Em quarentena') $classe_criticidade = 'bg-warning text-dark';
+                                        elseif ($row['estado_atual'] === 'Em calibração') $classe_criticidade = 'bg-warning text-dark';
+                                        ?>
+                                        <span class="badge <?php echo $classe_criticidade; ?>">
                                             <?php echo htmlspecialchars($row['estado_atual']); ?>
                                         </span>
                                     </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <a href="ver_equipamento2.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-info" title="Vista detalhada">
+                                        <i class="fa-solid fa-eye"></i>
+                                     </a>
+                                    
+                                </div>
+                            </td>
                                 </tr>
                             <?php endwhile; ?>
                         </tbody>

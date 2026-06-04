@@ -201,11 +201,15 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
                         if ($row['criticidade'] === 'Suporte de vida') $classe_criticidade = 'bg-danger';
                         elseif ($row['criticidade'] === 'Alta') $classe_criticidade = 'bg-warning text-dark';
                         elseif ($row['criticidade'] === 'Média') $classe_criticidade = 'bg-info text-dark';
+                        elseif ($row['criticidade'] === 'Baixa') $classe_criticidade = 'bg-secondary';
                         
                         // Lógica visual para mudar as cores das Badges de Estado
                         $classe_estado = 'bg-success';
                         if ($row['estado_atual'] === 'Em manutenção') $classe_estado = 'bg-warning text-dark';
                         elseif ($row['estado_atual'] === 'Inativo') $classe_estado = 'bg-danger';
+                        elseif ($row['estado_atual'] === 'Ativo') $classe_estado = 'bg-success';
+                        elseif ($row['estado_atual'] === 'Em calibração') $classe_estado = 'bg-warning text-dark';
+                        elseif ($row['estado_atual'] === 'Em quarentena') $classe_estado = 'bg-warning text-dark';
                         elseif ($row['estado_atual'] === 'Abatido') $classe_estado = 'bg-dark';
                 ?>
                         <tr>
