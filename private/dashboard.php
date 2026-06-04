@@ -46,6 +46,11 @@ $result_equip = mysqli_query($conn, $query_equip);
 $data_equip = mysqli_fetch_assoc($result_equip);
 $total_equipamentos_inativos = $data_equip['total'];
 
+$query_localizacoes = "SELECT COUNT(*) as total FROM localizaciones";
+$result_localizacoes = mysqli_query($conn, $query_localizacoes);
+$data_localizacoes = mysqli_fetch_assoc($result_localizacoes);
+$total_localizacoes = $data_localizacoes['total'];
+
 // Consulta SQL para contar os equipamentos agrupados por serviço/departamento
 $query_servicos = "SELECT l.servico_departamento, COUNT(e.id) as total 
                    FROM localizaciones l
@@ -321,13 +326,27 @@ $result_suporte_vida = mysqli_query($conn, $query_suporte_vida);
                     </div>
                 </div>
             </div>
+
+            <div class="col-12 col-md-4 col-lg-3">
+                <div class="card card-stats border-indicador-azul h-100">
+                    <div class="card-body d-flex align-items-center justify-content-between p-4">
+                        <div>
+                            <h6 class="text-uppercase fw-bold text-muted small mb-1">Total Localizações</h6>
+                            <h3 class="fw-bold mb-0 text-dark"><?php echo isset($total_localizacoes) ? $total_localizacoes : '0'; ?></h3>
+                        </div>
+                        <div class="icon-box bg-info bg-opacity-10 text-info">
+                            <i class="fa-solid fa-building"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
         </div>
 
-        <div class="row mt-4">
+<div class="row mt-4 g-4"> 
+    
     <div class="col-12 col-lg-6">
-        <div class="card card-stats p-4 shadow-sm border-0">
-            <div class="d-flex align-items-center mb-3">
+        <div class="card card-stats p-4 shadow-sm border-0 h-100"> <div class="d-flex align-items-center mb-3">
                 <div class="icon-box bg-success bg-opacity-10 text-custom-verde me-3">
                     <i class="fa-solid fa-hospital"></i>
                 </div>
@@ -363,12 +382,9 @@ $result_suporte_vida = mysqli_query($conn, $query_suporte_vida);
             </div>
         </div>
     </div>
-</div>
 
-<div class="row mt-4">
     <div class="col-12 col-lg-6">
-        <div class="card card-stats p-4 shadow-sm border-0">
-            <div class="d-flex align-items-center mb-3">
+        <div class="card card-stats p-4 shadow-sm border-0 h-100"> <div class="d-flex align-items-center mb-3">
                 <div class="icon-box bg-danger bg-opacity-10 text-danger me-3">
                     <i class="fa-solid fa-heart-pulse"></i>
                 </div>
@@ -411,6 +427,7 @@ $result_suporte_vida = mysqli_query($conn, $query_suporte_vida);
             </div>
         </div>
     </div>
+
 </div>
 
         
