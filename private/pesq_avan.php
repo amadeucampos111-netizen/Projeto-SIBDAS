@@ -14,24 +14,43 @@ if (!$conn) {
     die("Erro na ligação à base de dados: " . mysqli_connect_error());
 }
 
-// 2. Recolha dos Filtros Combinados (via GET para manter o estado na URL)
-$codigo_interno = trim($_GET['codigo_interno'] ?? '');
-$designacao     = trim($_GET['designacao'] ?? '');
-$marca          = trim($_GET['marca'] ?? '');
-$modelo         = trim($_GET['modelo'] ?? '');
-$numero_serie   = trim($_GET['numero_serie'] ?? '');
-$servico        = trim($_GET['servico'] ?? ''); //ESTA ERRADO
-$estado_atual   = trim($_GET['estado_atual'] ?? '');
-$fornecedor     = trim($_GET['fornecedor'] ?? ''); //ESTA ERRADO
-$categoria      = trim($_GET['categoria'] ?? '');
-$criticidade    = trim($_GET['criticidade'] ?? '');
+// CRUCIAL: Força a ligação a usar UTF-8 correto. 
+// Isto garante que os acentos enviados pelo formulário combinem com o que está na BD.
+mysqli_set_charset($conn, "utf8mb4");
+
+// 2. Recolha e Tratamento Rigoroso dos Filtros
+// Criamos uma função interna para limpar e normalizar o texto inserido pelo utilizador
+function tratar_input_pesquisa($campo) {
+    if (!isset($_GET[$campo])) return '';
+    
+    // 1. Trim remove espaços em branco inúteis no início e no fim (ex: "  Urgência " vira "Urgência")
+    $valor = trim($_GET[$campo]);
+    
+    // 2. Remove quebras de linha ou caracteres de controlo invisíveis que quebram queries
+    $valor = str_replace(array("\r", "\n", "\t"), '', $valor);
+    
+    return $valor;
+}
+
+$codigo_interno = tratar_input_pesquisa('codigo_interno');
+$designacao     = tratar_input_pesquisa('designacao');
+$marca          = tratar_input_pesquisa('marca');
+$modelo         = tratar_input_pesquisa('modelo');
+$numero_serie   = tratar_input_pesquisa('numero_serie');
+$servico        = tratar_input_pesquisa('servico'); 
+$estado_atual   = tratar_input_pesquisa('estado_atual');
+$fornecedor     = tratar_input_pesquisa('fornecedor'); 
+$categoria      = tratar_input_pesquisa('categoria');
+$criticidade    = tratar_input_pesquisa('criticidade');
 
 // Preferências de Visualização e Ordenação
 $ordenar_por = $_GET['ordenar_por'] ?? 'designacao';
 $direcao     = $_GET['direcao'] ?? 'ASC';
-$vista       = $_GET['vista'] ?? 'resumo'; // 'resumo' ou 'detalhe'
+$vista       = $_GET['vista'] ?? 'resumo';
 
-// 3. Construção Dinâmica da Query SQL (Filtros Combinados)
+// 3. Construção Dinâmica da Query SQL
+// Nota: Adicionamos "COLLATE utf8mb4_general_ci" nas buscas por texto.
+// O "_ci" significa Case Insensitive E Accent Insensitive (Ignora Maiúsculas/Minúsculas E Acentos automaticamente).
 $sql = "SELECT e.*, 
                l.servico_departamento, l.edificio, l.piso, l.sala_gabinete,
                GROUP_CONCAT(DISTINCT f.nome_empresa SEPARATOR ', ') AS nomes_fornecedores
@@ -45,33 +64,33 @@ $params = [];
 $types = "";
 
 if (!empty($codigo_interno)) {
-    $sql .= " AND e.codigo_interno LIKE ?";
+    $sql .= " AND e.codigo_interno COLLATE utf8mb4_general_ci LIKE ?";
     $params[] = "%$codigo_interno%";
     $types .= "s";
 }
 if (!empty($designacao)) {
-    $sql .= " AND e.designacao LIKE ?";
+    $sql .= " AND e.designacao COLLATE utf8mb4_general_ci LIKE ?";
     $params[] = "%$designacao%";
     $types .= "s";
 }
 if (!empty($marca)) {
-    $sql .= " AND e.marca LIKE ?";
+    $sql .= " AND e.marca COLLATE utf8mb4_general_ci LIKE ?";
     $params[] = "%$marca%";
     $types .= "s";
 }
 if (!empty($modelo)) {
-    $sql .= " AND e.modelo LIKE ?";
+    $sql .= " AND e.modelo COLLATE utf8mb4_general_ci LIKE ?";
     $params[] = "%$modelo%";
     $types .= "s";
 }
 if (!empty($numero_serie)) {
-    $sql .= " AND e.numero_serie LIKE ?";
+    $sql .= " AND e.numero_serie COLLATE utf8mb4_general_ci LIKE ?";
     $params[] = "%$numero_serie%";
     $types .= "s";
 }
 if (!empty($servico)) {
-    $sql .= " AND l.servico_departamento = ?";
-    $params[] = $servico;
+    $sql .= " AND l.servico_departamento COLLATE utf8mb4_general_ci LIKE ?";
+    $params[] = "%$servico%";
     $types .= "s";
 }
 if (!empty($estado_atual)) {
@@ -93,10 +112,9 @@ if (!empty($criticidade)) {
 // Agrupamento obrigatório devido ao uso de GROUP_CONCAT
 $sql .= " GROUP BY e.id, l.id";
 
-// O filtro de Fornecedor aplica-se após o agrupamento utilizando HAVING (ou direto na junção se preferires)
 if (!empty($fornecedor)) {
-    $sql .= " HAVING nomes_fornecedores LIKE ?";
-    $params[] = $fornecedor;
+    $sql .= " HAVING nomes_fornecedores COLLATE utf8mb4_general_ci LIKE ?";
+    $params[] = "%$fornecedor%";
     $types .= "s";
 }
 
@@ -113,7 +131,7 @@ $direcao = ($direcao === 'DESC') ? 'DESC' : 'ASC';
 
 $sql .= " ORDER BY $coluna_ordenar $direcao";
 
-// Execução com Prepared Statements
+// Execução segura com Prepared Statements
 $stmt = mysqli_prepare($conn, $sql);
 if ($stmt) {
     if (!empty($types)) {
@@ -122,9 +140,10 @@ if ($stmt) {
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
 } else {
-    die("Erro ao processar consulta de tabelas associadas.");
+    die("Erro ao processar consulta: " . mysqli_error($conn));
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
