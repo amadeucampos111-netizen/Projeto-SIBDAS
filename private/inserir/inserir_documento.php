@@ -8,8 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = "1240896";
     $pass = "campos_896";
     $dbname = "db1240896";
+    $port = 10464;
 
-    $conn = mysqli_connect($host, $user, $pass, $dbname);
+    $conn = mysqli_connect($host, $user, $pass, $dbname, $port);
     if (!$conn) { die("Falha na ligação: " . mysqli_connect_error()); }
 
     // 1. Recolha e Higienização de todos os campos (agora todos via $_POST)

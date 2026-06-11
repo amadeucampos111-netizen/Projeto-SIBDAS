@@ -9,8 +9,9 @@ $host = "vsgate-s1.dei.isep.ipp.pt";
 $user = "1240896";
 $pass = "campos_896";
 $dbname = "db1240896";
+$port = 10464;
 
-$conn = mysqli_connect($host, $user, $pass, $dbname);
+$conn = mysqli_connect($host, $user, $pass, $dbname, $port);
 if (!$conn) {
     die("Erro na ligação à base de dados: " . mysqli_connect_error());
 }

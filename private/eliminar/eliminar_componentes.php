@@ -13,8 +13,9 @@ if ($id > 0) {
     $user = "1240896";
     $pass = "campos_896";
     $dbname = "db1240896";
+    $port = 10464;
 
-    $conn = mysqli_connect($host, $user, $pass, $dbname);
+    $conn = mysqli_connect($host, $user, $pass, $dbname, $port);
 
     if ($conn) {
         // 4. Query de eliminação direta usando Prepared Statement (Segurança contra SQL Injection)

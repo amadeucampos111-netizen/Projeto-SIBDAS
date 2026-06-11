@@ -12,8 +12,8 @@ $fornecedor_id = intval($_GET['fornecedor_id']);
 $tipo_fornecedor = $_GET['tipo']; // String correspondente ao ENUM
 
 // Ligação à Base de Dados
-$host = "vsgate-s1.dei.isep.ipp.pt"; $user = "1240896"; $pass = "campos_896"; $dbname = "db1240896";
-$conn = mysqli_connect($host, $user, $pass, $dbname);
+$host = "vsgate-s1.dei.isep.ipp.pt"; $user = "1240896"; $pass = "campos_896"; $dbname = "db1240896"; $port = 10464;
+$conn = mysqli_connect($host, $user, $pass, $dbname, $port);
 
 if (!$conn) {
     die("Falha na ligação: " . mysqli_connect_error());

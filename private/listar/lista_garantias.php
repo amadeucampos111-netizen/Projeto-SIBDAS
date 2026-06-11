@@ -1,6 +1,7 @@
 <?php
 session_start();
-$conn = mysqli_connect("vsgate-s1.dei.isep.ipp.pt", "1240896", "campos_896", "db1240896");
+$port = 10464;
+$conn = mysqli_connect("vsgate-s1.dei.isep.ipp.pt", "1240896", "campos_896", "db1240896", $port);
 
 $sql = "SELECT gc.*, e.designacao AS eq_nome, e.numero_serie, f.nome_empresa AS forn_nome 
         FROM garantias_contratos gc
