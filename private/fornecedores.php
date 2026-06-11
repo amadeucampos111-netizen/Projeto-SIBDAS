@@ -244,7 +244,6 @@ $result_assoc = mysqli_query($conn, $sql_assoc);
                 <select class="form-select" id="equipamento_id" name="equipamento_id" required>
                     <option value="" selected disabled>Selecione o Equipamento...</option>
                     <?php
-                    $conn = mysqli_connect("localhost", "root", "", "medtrack_db");
                     if ($conn) {
                         $res_eq = mysqli_query($conn, "SELECT id, designacao, numero_serie FROM equipamentos ORDER BY designacao ASC");
                         while ($eq = mysqli_fetch_assoc($res_eq)) {
