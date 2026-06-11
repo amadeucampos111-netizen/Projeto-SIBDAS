@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conn = mysqli_connect("localhost", "root", "", "medtrack_db");
+$conn = mysqli_connect("vsgate-s1.dei.isep.ipp.pt", "1240896", "campos_896", "db1240896");
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : intval($_POST['id'] ?? 0);
 $contrato = null;

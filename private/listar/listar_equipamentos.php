@@ -1,8 +1,8 @@
 <?php
-$host = "localhost";
-$user = "root";
-$pass = ""; // Senha do Laragon é vazia por padrão
-$dbname = "medtrack_db";
+$host = "vsgate-s1.dei.isep.ipp.pt";
+$user = "1240896";
+$pass = "campos_896";
+$dbname = "db1240896";
 
 // Criar a ligação
 $conn = mysqli_connect($host, $user, $pass, $dbname);

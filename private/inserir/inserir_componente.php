@@ -8,10 +8,10 @@ if (session_status() === PHP_SESSION_NONE) {
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     
     // 3. Configurações da Base de Dados
-    $host = "localhost";
-    $user = "root";
-    $pass = ""; // Senha padrão do Laragon é vazia
-    $dbname = "medtrack_db";
+    $host = "vsgate-s1.dei.isep.ipp.pt";
+    $user = "1240896";
+    $pass = "campos_896";
+    $dbname = "db1240896";
 
     $conn = mysqli_connect($host, $user, $pass, $dbname);
 

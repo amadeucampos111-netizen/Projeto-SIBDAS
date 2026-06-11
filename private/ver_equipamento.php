@@ -9,7 +9,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $id = intval($_GET['id']);
 
 // Ligação à Base de Dados
-$host = "localhost"; $user = "root"; $pass = ""; $dbname = "medtrack_db";
+$host = "vsgate-s1.dei.isep.ipp.pt"; $user = "1240896"; $pass = "campos_896"; $dbname = "db1240896";
 $conn = mysqli_connect($host, $user, $pass, $dbname);
 
 // Query com INNER JOIN para trazer a localização real por extenso
