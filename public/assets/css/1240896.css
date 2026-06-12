@@ -1,26 +1,80 @@
 
 
-.hero {
-    background: linear-gradient(to right, #2f3c4b, #223e46);
-    color: white;
-    padding: 80px 20px;
-   text-align: center;
- }
- .card:hover {
-   transform: scale(1.03);
-   transition: 0.3s;
+
+
+ body {
+            font-family: 'Titillium Web', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #1e7225 0%, #289224 100%);
+            color: white;
+            padding: 100px 0;
         }
 
-footer {
-   background: #222;
-    color: white;
-    padding: 20px;
-    text-align: center;
+        .section-padding {
+            padding: 80px 0;
         }
 
-.equip-img{
-    width: 100%;
-    height: 325px;
-    object-fit: cover;
-    border-radius: 10px;
-}
+        .bg-light-blue {
+            background-color: #f0f4f8;
+        }
+
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
+        .feature-card a {
+            text-decoration: none;
+            color: #2a5298;
+        }
+
+        .equip-img {
+            height: 180px;
+            object-fit: contain;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        footer {
+            background-color: #289224;
+            color: #a0a0a0;
+            padding: 30px 0;
+        }
+
+        .section-padding {
+            padding: 60px 0;
+        }
+
+        /* Força todas as imagens do carrossel a terem exatamente a mesma altura e proporção */
+        .carousel-img-ajustada {
+            height: 450px; /* Define a altura fixa ideal para o carrossel */
+            object-fit: cover; /* Faz com que a imagem preencha o espaço sem distorcer, cortando as bordas se necessário */
+            object-position: center; /* Mantém o centro da imagem sempre visível */
+            width: 100%;
+        }
+
+        /* Adiciona um fundo escuro e redondo atrás das setas para garantir visibilidade em fotos claras */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 50%;
+            background-size: 50%; /* Ajusta o tamanho da seta dentro do círculo */
+        }
+
+        /* Linha decorativa abaixo do título */
+        .h-line {
+            width: 60px;
+            height: 3px;
+        }

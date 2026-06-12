@@ -31,55 +31,14 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="assets/css/admin1240896.css">
-     <style> 
-    @media (min-width: 992px) {
-    .navbar-nav .nav-item.dropdown:hover .dropdown-menu {
-        display: block;
-        margin-top: 0; /* Remove o espaço que pode fazer o menu fechar sozinho */
-        animation: fadeInNavbar 0.2s ease-in-out; /* Adiciona uma transição suave */
-    }
-}
-
-/* Pequena animação de surgimento suave */
-@keyframes fadeInNavbar {
-    from {
-        opacity: 0;
-        transform: translateY(5px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Customização visual opcional para os itens do submenu combinarem com o MedTrack */
-.dropdown-menu {
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-.dropdown-item {
-    font-size: 0.9rem;
-    padding: 8px 16px;
-    color: #495057;
-    transition: all 0.2s ease;
-}
-
-.dropdown-item:hover {
-    background-color: #f1f3f5;
-    color: #198754; /* Cor verde padrão do Bootstrap ou a cor do teu projeto */
-    padding-left: 20px; /* Efeito de ligeiro deslize ao passar o rato */
-}
-    </style>
-    
+ 
 </head>
 <body>
 
    <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="dashboard.php">
-            <i class="fa-solid fa-square-heart me-2"></i> MedTrack
+            <img src="assets/img/hosp_icon_branco.png" alt="Logo" width="150" height="100" class="d-inline-block align-text-top me-2">
         </a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

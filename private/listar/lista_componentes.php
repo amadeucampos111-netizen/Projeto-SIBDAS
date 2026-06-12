@@ -42,34 +42,14 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    <style>
-        body {
-            font-family: 'Titillium Web', sans-serif;
-            background-color: #f8f9fa;
-        }
-        .card-custom {
-            border: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-        }
-        .table th {
-            background-color: #f1f3f5;
-            color: #495057;
-            font-weight: 600;
-        }
-        .badge-equip {
-            background-color: #e2f0d9;
-            color: #385723;
-            font-size: 0.85rem;
-        }
-    </style>
+    
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="../dashboard.php">
-            <i class="fa-solid fa-square-heart me-2"></i> MedTrack
+            <img src="../assets/img/hosp_icon_branco.png" alt="Logo" width="150" height="100" class="d-inline-block align-text-top me-2">
         </a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -90,7 +70,7 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-menu-item dropdown-item" href="../gestao_equip.php"><i class="fa-solid fa-list me-2"></i> Registar Equipamentos e Componentes</a></li>
                         <li><a class="dropdown-menu-item dropdown-item" href="listar_equipamentos.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Equipamentos</a></li>
-                        <li><a class="dropdown-menu-item dropdown-item" href="listar_componentes.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Componentes</a></li>
+                        <li><a class="dropdown-menu-item dropdown-item" href="lista_componentes.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Componentes</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-menu-item dropdown-item" href="../garantia_contratos.php"><i class="fa-solid fa-file-shield me-2"></i> Registo de Garantias e Contratos</a></li>
                         <li><a class="dropdown-menu-item dropdown-item" href="lista_garantias.php"><i class="fa-solid fa-file-alt me-2"></i> Lista de Garantias e Contratos</a></li>
