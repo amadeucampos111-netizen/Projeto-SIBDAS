@@ -1,26 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-    // Destrói qualquer resíduo de sessão inválida
-    session_unset();
-    session_destroy();
-    
-    // Manda de volta para o formulário
-    header("Location: ../public/login.html");
-    exit;
-}
 
-// 2. Opcional: Expiração automática por inatividade (Ex: 10 minutos = 600 segundos)
-$tempo_maximo_inatividade = 600; 
-if (isset($_SESSION['ultimo_acesso']) && (time() - $_SESSION['ultimo_acesso'] > $tempo_maximo_inatividade)) {
-    session_unset();
-    session_destroy();
-    header("Location: ../public/login.html?status=sessao_expirada");
-    exit;
-}
-// Atualiza o relógio do último clique se ele continuar ativo
-$_SESSION['ultimo_acesso'] = time();
 
 // 1. Configurações da Base de Dados
 $host = "vsgate-s1.dei.isep.ipp.pt";
