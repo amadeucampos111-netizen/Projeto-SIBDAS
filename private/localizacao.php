@@ -1,7 +1,17 @@
 <?php
 session_start();
 
-
+if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
+    
+    // Por segurança, limpa qualquer resíduo de sessão que possa existir
+    session_unset();
+    session_destroy();
+    
+    // 3. Expulsar o intruso de volta para o formulário de login
+    // Ajusta o caminho se o teu login.php estiver numa pasta acima (ex: ../login.php)
+    header("Location: ../public/login.php?erro=restrito");
+    exit; // Interrompe imediatamente a execução do resto da página
+}
 
 // 1. Configurações da Base de Dados
 $host = "vsgate-s1.dei.isep.ipp.pt";
@@ -98,7 +108,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
             </ul>
             
             <div class="d-flex">
-                <a href="../public/index.html" class="btn btn-outline-light btn-sm px-3 fw-semibold">
+                <a href="logout.php" class="btn btn-outline-light btn-sm px-3 fw-semibold">
                     <i class="fa-solid fa-right-from-bracket me-1"></i> Sair
                 </a>
             </div>
