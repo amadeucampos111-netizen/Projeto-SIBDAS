@@ -82,6 +82,12 @@ CREATE TABLE `documentacao` (
   `criado_em` timestamp DEFAULT (CURRENT_TIMESTAMP)
 );
 
+CREATE TABLE `utilizadores` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `username` varchar(50) UNIQUE NOT NULL,
+  `password_hash` varchar(255) NOT NULL
+);
+
 -- ============================================================================
 -- 2. ÍNDICES E RESTRIÇÕES DE INTEGRIDADE (CHAVES ESTRANGEIRAS)
 -- ============================================================================
@@ -148,3 +154,10 @@ INSERT INTO documentacao (tipo_documento, nome_documento, nome_ficheiro_caminho,
 ('Certificado de calibração', 'Certificado de Calibração Inicial - Ventilador', 'uploads/certificados/calib_init_vent_01.pdf', '2025-01-12', '2026-01-12', 1),
 ('Manual de serviço', 'Mindray BeneVision Service Manual', 'uploads/manuais/service_manual_n17_en.pdf', '2023-11-15', NULL, 2),
 ('Relatório técnico', 'Relatório de Avaria de Bateria - Desfibrilhador', 'uploads/relatorios/rel_avaria_desf_15.pdf', '2026-05-18', NULL, 3);
+
+--3.8. Utilizadores (Independente)
+INSERT INTO utilizadores (username, password_hash) 
+VALUES (
+  'administrador', 
+  '$2y$10$WRvqT5HHyT4JgXQx.E94Q.ZMpfZDAIi8mC6.1fKUjCjBmdDCq6WHK' 
+); -- Hash BCRYPT gerada para: PasseSegura123!

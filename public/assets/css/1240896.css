@@ -59,7 +59,7 @@
         /* Força todas as imagens do carrossel a terem exatamente a mesma altura e proporção */
         .carousel-img-ajustada {
             height: 450px; /* Define a altura fixa ideal para o carrossel */
-            object-fit: cover; /* Faz com que a imagem preencha o espaço sem distorcer, cortando as bordas se necessário */
+            object-fit: contain; /* Faz com que a imagem preencha o espaço sem distorcer, cortando as bordas se necessário */
             object-position: center; /* Mantém o centro da imagem sempre visível */
             width: 100%;
         }
@@ -77,4 +77,65 @@
         .h-line {
             width: 60px;
             height: 3px;
+        }
+         /* Cartão de login flutuante com sombra suave */
+        .login-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            background-color: #ffffff;
+        }
+
+        /* Estilização suave para os inputs */
+        .form-control {
+            border-radius: 8px;
+            padding: 10px 12px 10px 40px; /* Espaço à esquerda para o ícone */
+            border: 1px solid #ced4da;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #2a7542;
+            box-shadow: 0 0 0 0.25rem rgba(42, 117, 66, 0.25);
+        }
+
+        /* Posicionamento dos ícones dentro dos inputs */
+        .input-group-custom {
+            position: relative;
+        }
+
+        .input-group-custom i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 10;
+        }
+
+        /* Botão de Entrar personalizado com tons verdes */
+        .btn-green {
+            background-color: #2a7542;
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 10px 0;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-green:hover {
+            background-color: #1e4d2b;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+        
+        .logo-img {
+            width: 70px;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-img:hover {
+            transform: scale(1.05);
         }
