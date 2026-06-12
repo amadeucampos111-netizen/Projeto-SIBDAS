@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
    
     
-    <link rel="stylesheet" href="../assets/css/admin1240896.css">
+    <link rel="stylesheet" href="../../assets/css/admin1240896.css">
     
 </head>
 <body>

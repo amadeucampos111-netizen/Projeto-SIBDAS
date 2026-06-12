@@ -48,8 +48,8 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listagem de Componentes | MedTrack</title>
-    <link rel="shortcut icon" href="../assets/img/hosp_icon.png" type="image/png">
-    <link href="../assets/css/admin1240896.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../assets/img/hosp_icon.png" type="image/png">
+    <link href="../../assets/css/admin1240896.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -61,7 +61,7 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
     <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="../dashboard.php">
-            <img src="../assets/img/hosp_icon_branco.png" alt="Logo" width="150" height="100" class="d-inline-block align-text-top me-2">
+            <img src="../../assets/img/hosp_icon_branco.png" alt="Logo" width="150" height="100" class="d-inline-block align-text-top me-2">
         </a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

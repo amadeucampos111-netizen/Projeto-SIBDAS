@@ -117,7 +117,7 @@ $result_equips = mysqli_query($conn, $query_equips);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link href="../assets/css/admin1240896.css" rel="stylesheet">
+    <link href="../../assets/css/admin1240896.css" rel="stylesheet">
     <style>
         body { font-family: 'Titillium Web', sans-serif; background-color: #f8f9fa; }
         .card-custom { border: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border-radius: 10px; }
