@@ -13,3 +13,22 @@ Após extrair o zip dentro do diretório já será possível conectar-se ao proj
 De seguida aparecerá um link chamado public/ que deve clicar para aceder à parte do frontend do projeto sem necessidade de autenticação.
 Desta forma conseguirá executar a aplicação.
 
+Instruções para realização dos principais testes da aplicação:
+
+Para realizar os pricipais testes da aplicação é necessário realizar o login e entrar no backend.
+Ao entrar no backend o dashboard estará logo disposto, para adicionar equipamentos terá de escolher equipamentos--> registar equipamentos e componentes. Neste módulo pode adicionar equipamentos e componentes de equipamentos.
+Em equipamentos --> listagem de equipamentos pode ver a lista de equipamentos, as suas vistas resumidas, as suas vistas detalhadas e ainda pode editar e remover equipamentos.
+Em equipamentos --> listagem de componentes pode ver a lista de componentes, as suas vistas resumidas e ainda pode editar e remover componentes.
+Em equipamentos --> registo de garantias e contratos pode adicionar uma garantia a algum equipamento.
+Em equipamentos --> lista de garantias e contratos pode ver as vistas resumidas das garantias dos equipamentos e ainda pode editar e remover garantias.
+Em localizações pode encontrar um formulário para adicionar uma localização e uma lista de localizações hospitalares registadas com a opção de editar e remover localizações.
+Em fornecedores --> registo, associação e desassociação de fornecedores pode inserir um fornecedor, associar e desassociar fornecedores a equipamentos.
+Em fornecedores --> listagem de fornecedores pode ver a lista de fornecedores e editar ou remover fornecedores.
+Em documentação --> registo de documentação pode inserir documentação para algum equipamento.
+Em documentação --> listagem de documentos pode ver a lista de documentos, editar e remover documentos.
+Em pesquisa pode utilizar filtros para pesquisar os equipamentos que queira e será lhe mostrado a vista resumida e pode ainda ver a vista detalhada.
+
+Para aceder ao backend através do login precisará de colocar as seguintes credenciais sem espaços:
+
+Utilizador: administrador
+Palavra-passe: PasseSegura123!
