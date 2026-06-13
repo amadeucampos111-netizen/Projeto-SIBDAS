@@ -116,7 +116,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
     </div>
 </nav>
 
-    <div class="card p-4 mb-4 shadow-sm border-0 rounded-3">
+    <div class=" container mt-5 mb-5 card p-4 mb-4 shadow-sm border-0 rounded-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="fw-bold text-dark mb-1">Gestão de Localizações Hospitalares</h2>

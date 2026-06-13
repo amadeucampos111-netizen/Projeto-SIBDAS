@@ -130,7 +130,7 @@ $result = mysqli_query($conn, $sql);
             <a href="listar/lista_documentos.php" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-list me-1"></i> Ir para Lista</a>
         </div>
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="container mt-5 mb-5 card p-4 mb-4 shadow-sm border-0 rounded-3">
 
             <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
                 <div class="alert alert-success"><?php echo $_SESSION['mensagem_sucesso']; unset($_SESSION['mensagem_sucesso']); ?></div>

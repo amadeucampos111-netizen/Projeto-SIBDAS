@@ -126,7 +126,7 @@ $result_assoc = mysqli_query($conn, $sql_assoc);
     </div>
 </nav>
     
-    <div class="card p-4 mb-4 shadow-sm border-0 rounded-3">
+    <div class="container mt-5 mb-5 card p-4 mb-4 shadow-sm border-0 rounded-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="fw-bold text-dark mb-1">Gestão de Fornecedores de Equipamentos</h2>
@@ -202,7 +202,7 @@ $result_assoc = mysqli_query($conn, $sql_assoc);
 
 
 
-<div class="card p-4 mb-4 shadow-sm border-0 rounded-3">
+<div class="container mt-5 mb-5 card p-4 mb-4 shadow-sm border-0 rounded-3">
     <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-primary">
         <i class="fa-solid fa-link fs-4 me-2"></i>
         <h5 class="fw-bold mb-0 text-dark">Associar Fornecedor/Função a Equipamento</h5>
