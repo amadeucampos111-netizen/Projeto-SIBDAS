@@ -1,0 +1,137 @@
+// ============================================================================
+// 1. TABELA DE LOCALIZAÇÕES
+// ============================================================================
+Table localizaciones {
+  id int [pk, increment]
+  edificio varchar(50) [not null]
+  piso varchar(20) [not null]
+  servico_departamento varchar(100) [not null] // Ex: UCI, Urgência, Bloco Operatório
+  sala_gabinete varchar(50) [not null]
+
+  Indexes {
+    (edificio, piso, servico_departamento, sala_gabinete) [unique, name: "uq_localizacao"]
+  }
+}
+
+// ============================================================================
+// 2. TABELA DE FORNECEDORES
+// ============================================================================
+Table fornecedores {
+  id int [pk, increment]
+  nome_empresa varchar(150) [not null]
+  nif varchar(20) [unique, not null]
+  contacto_telefonico varchar(20)
+  email varchar(100)
+  morada text
+  website varchar(255)
+  pessoa_contacto varchar(100)
+  telefone_pessoa_contacto varchar(20)
+  observacoes text
+}
+
+// ============================================================================
+// 3. TABELA DE EQUIPAMENTOS MÉDICOS (Core)
+// ============================================================================
+Table equipamentos {
+  id int [pk, increment]
+  codigo_interno varchar(50) [unique, not null]
+  designacao varchar(150) [not null]
+  categoria "enum('Monitorização','Suporte de vida','Terapia','Diagnóstico','Laboratório','Esterilização','Reabilitação')" [not null]
+  marca varchar(100) [not null]
+  modelo varchar(100) [not null]
+  numero_serie varchar(100) [not null]
+  fabricante varchar(150) [not null]
+  data_aquisicao date [not null]
+  ano_fabrico int [not null]
+  custo_aquisicao decimal(10,2) [not null]
+  tipo_entrada "enum('Compra','Doação','Aluguer','Empréstimo')" [not null]
+  estado_atual "enum('Ativo','Em manutenção','Inativo','Em calibração','Em quarentena','Abatido')" [not null]
+  criticidade "enum('Baixa','Média','Alta','Suporte de vida')" [not null]
+  localizacao_id int [not null]
+  observacoes text
+  criado_em timestamp [default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (marca, modelo, numero_serie) [unique, name: "uq_fabricante_modelo_serie"]
+  }
+}
+
+// ============================================================================
+// 4. TABELA DE LIGAÇÃO: EQUIPAMENTOS <-> FORNECEDORES (N:M)
+// ============================================================================
+Table equipamento_fornecedor {
+  equipamento_id int [not null]
+  fornecedor_id int [not null]
+  tipo_fornecedor "enum('Fabricante','Distribuidor ou fornecedor comercial','Empresa de assistência técnica','Fornecedor de consumíveis ou acessórios')" [not null]
+
+  Indexes {
+    (equipamento_id, fornecedor_id, tipo_fornecedor) [pk]
+  }
+}
+
+// ============================================================================
+// 5. TABELA DE GARANTIAS E CONTRATOS
+// ============================================================================
+Table garantias_contratos {
+  id int [pk, increment]
+  equipamento_id int [unique, not null]
+  data_inicio_garantia date
+  data_fim_garantia date
+  tem_contrato_manutencao boolean [default: false]
+  tipo_contrato varchar(100)
+  entidade_responsavel_id int
+  periodicidade varchar(50)
+  observacoes text
+}
+
+// ============================================================================
+// 6. TABELA DE COMPONENTES E ACESSÓRIOS (1:N Hierárquico)
+// ============================================================================
+Table componentes_associados {
+  id int [pk, increment]
+  equipamento_pai_id int [not null]
+  codigo_componente varchar(50) [not null]
+  designacao_componente varchar(150) [not null]
+  numero_serie_componente varchar(100)
+  observacoes text
+}
+
+// ============================================================================
+// 7. TABELA DE DOCUMENTAÇÃO MÓDULO
+// ============================================================================
+Table documentacao {
+  id int [pk, increment]
+  tipo_documento "enum('Manual de utilizador','Manual de serviço','Certificado de calibração','Contrato de manutenção','Fatura ou guia de aquisição','Declaração de conformidade','Relatório técnico')" [not null]
+  nome_documento varchar(150) [not null]
+  nome_ficheiro_caminho varchar(255) [not null]
+  data_documento date [not null]
+  data_validade date
+  equipamento_id int [not null]
+  criado_em timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+// ============================================================================
+// TABELA DE UTILIZADORES (Para o Sistema de Autenticação)
+// ============================================================================
+Table utilizadores {
+  id int [pk, increment]
+  username varchar(50) [unique, not null]
+  password_hash varchar(255) [not null] // Tamanho 255 é obrigatório para o BCRYPT do PHP
+}
+
+// ============================================================================
+// RELACIONAMENTOS / CHAVES ESTRANGEIRAS (Relational Integrity)
+// ============================================================================
+
+
+Ref: equipamentos.localizacao_id > localizaciones.id [update: cascade, delete: restrict]
+
+Ref: equipamento_fornecedor.equipamento_id > equipamentos.id [update: cascade, delete: cascade]
+Ref: equipamento_fornecedor.fornecedor_id > fornecedores.id [update: cascade, delete: restrict]
+
+Ref: garantias_contratos.equipamento_id - equipamentos.id [update: cascade, delete: cascade] // Relação 1:1 estrita devido ao UNIQUE
+Ref: garantias_contratos.entidade_responsavel_id > fornecedores.id [update: cascade, delete: set null]
+
+Ref: componentes_associados.equipamento_pai_id > equipamentos.id [update: cascade, delete: cascade]
+
+Ref: documentacao.equipamento_id > equipamentos.id [update: cascade, delete: cascade]

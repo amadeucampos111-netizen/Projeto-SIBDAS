@@ -33,28 +33,18 @@ mysqli_set_charset($conn, "utf8mb4");
 
 // 2. Recolha e Tratamento Rigoroso dos Filtros
 // Criamos uma função interna para limpar e normalizar o texto inserido pelo utilizador
-function tratar_input_pesquisa($campo) {
-    if (!isset($_GET[$campo])) return '';
-    
-    // 1. Trim remove espaços em branco inúteis no início e no fim (ex: "  Urgência " vira "Urgência")
-    $valor = trim($_GET[$campo]);
-    
-    // 2. Remove quebras de linha ou caracteres de controlo invisíveis que quebram queries
-    $valor = str_replace(array("\r", "\n", "\t"), '', $valor);
-    
-    return $valor;
-}
 
-$codigo_interno = tratar_input_pesquisa('codigo_interno');
-$designacao     = tratar_input_pesquisa('designacao');
-$marca          = tratar_input_pesquisa('marca');
-$modelo         = tratar_input_pesquisa('modelo');
-$numero_serie   = tratar_input_pesquisa('numero_serie');
-$servico        = tratar_input_pesquisa('servico'); 
-$estado_atual   = tratar_input_pesquisa('estado_atual');
-$fornecedor     = tratar_input_pesquisa('fornecedor'); 
-$categoria      = tratar_input_pesquisa('categoria');
-$criticidade    = tratar_input_pesquisa('criticidade');
+
+$codigo_interno = isset($_GET['codigo_interno']) ? mysqli_real_escape_string($conn, trim($_GET['codigo_interno'])) : '';
+$designacao     = isset($_GET['designacao'])     ? mysqli_real_escape_string($conn, trim($_GET['designacao'])) : '';
+$marca          = isset($_GET['marca'])          ? mysqli_real_escape_string($conn, trim($_GET['marca'])) : '';
+$modelo         = isset($_GET['modelo'])         ? mysqli_real_escape_string($conn, trim($_GET['modelo'])) : '';
+$numero_serie   = isset($_GET['numero_serie'])   ? mysqli_real_escape_string($conn, trim($_GET['numero_serie'])) : '';
+$servico        = isset($_GET['servico'])        ? mysqli_real_escape_string($conn, trim($_GET['servico'])) : ''; 
+$estado_atual   = $_GET['estado_atual'] ?? '';
+$fornecedor     = isset($_GET['fornecedor'])     ? mysqli_real_escape_string($conn, trim($_GET['fornecedor'])) : ''; 
+$categoria      = $_GET['categoria'] ?? '';
+$criticidade    = $_GET['criticidade'] ?? '';
 
 // Preferências de Visualização e Ordenação
 $ordenar_por = $_GET['ordenar_por'] ?? 'designacao';
@@ -252,7 +242,7 @@ if ($stmt) {
     </div>
 
     <div class="card filter-card bg-white p-4 mb-4">
-        <form method="GET" action="pesq_avan.php">
+        <form method="GET" action="pesq_avan.php" id="formPesquisa">
             <input type="hidden" name="vista" value="<?php echo htmlspecialchars($vista); ?>">
 
             <div class="row g-3">
@@ -482,6 +472,7 @@ if ($stmt) {
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/1240896.js"></script>
 </body>
 </html>
 <?php
