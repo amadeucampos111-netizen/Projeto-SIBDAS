@@ -142,7 +142,7 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
         </div>
     </div>
 </nav>
-<div class="card card-custom p-4" id="listagem">
+<div class=" container mt-5 mb-5 card card-custom p-4" id="listagem">
     <div class="border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between text-secondary">
         <div class="d-flex align-items-center">
             <i class="fa-solid fa-table-list fs-4 me-2 text-dark"></i>
