@@ -55,22 +55,23 @@ if (!$equipamento) {
 // ==========================================
 // PASSO 2: SE O UTILIZADOR CLICOU EM "SIM" (SUBMETEU O FORMULÁRIO)
 // ==========================================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_desativar'])) {
     
-    $sql_delete = "DELETE FROM equipamentos WHERE id = ?";
-    $stmt_delete = mysqli_prepare($conn, $sql_delete);
+    // ALTERADO: Em vez de DELETE, fazemos UPDATE para mudar o estado para "Inativo"
+    $sql_update = "UPDATE equipamentos SET estado_atual = 'Inativo' WHERE id = ?";
+    $stmt_update = mysqli_prepare($conn, $sql_update);
 
-    if ($stmt_delete) {
-        mysqli_stmt_bind_param($stmt_delete, "i", $id);
+    if ($stmt_update) {
+        mysqli_stmt_bind_param($stmt_update, "i", $id);
         
-        if (mysqli_stmt_execute($stmt_delete)) {
-            $_SESSION['mensagem_sucesso'] = "Equipamento removido do inventário com sucesso!";
+        if (mysqli_stmt_execute($stmt_update)) {
+            $_SESSION['mensagem_sucesso'] = "Equipamento desativado no inventário com sucesso!";
         } else {
-            $_SESSION['mensagem_erro'] = "Não foi possível eliminar o equipamento devido a restrições de dados (ex: registos associados noutras tabelas).";
+            $_SESSION['mensagem_erro'] = "Erro ao alterar o estado do equipamento para Inativo.";
         }
-        mysqli_stmt_close($stmt_delete);
+        mysqli_stmt_close($stmt_update);
     } else {
-        $_SESSION['mensagem_erro'] = "Erro interno ao preparar a eliminação.";
+        $_SESSION['mensagem_erro'] = "Erro interno ao preparar a desativação.";
     }
 
     mysqli_close($conn);
@@ -83,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>MedTrack | Confirmar Eliminação</title>
+    <title>MedTrack | Confirmar Desativação</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -95,15 +96,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])
             
             <div class="card shadow-sm border-0 rounded-3 text-center p-4">
                 <div class="card-body">
-                    <div class="text-danger mb-3">
+                    <div class="text-warning mb-3">
                         <i class="fa-solid fa-triangle-exclamation fa-4x animate__animated animate__pulse animate__infinite"></i>
                     </div>
                     
-                    <h4 class="fw-bold text-dark mb-3">Eliminar Equipamento?</h4>
+                    <h4 class="fw-bold text-dark mb-3">Desativar Equipamento?</h4>
                     
                     <p class="text-muted mb-4">
-                        Tem a certeza que deseja remover permanentemente do inventário o seguinte equipamento? 
-                        Esta ação <strong>não pode ser revertida</strong>.
+                        Tem a certeza que deseja alterar o estado deste equipamento para <strong>Inativo</strong>? 
+                        Ele deixará de aparecer nas listagens ativas do inventário principal.
                     </p>
 
                     <div class="bg-light p-3 rounded border text-start mb-4">
@@ -119,8 +120,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])
                                 <i class="fa-solid fa-xmark me-1"></i> Não, Cancelar
                             </a>
                             
-                            <button type="submit" name="confirmar_eliminar" class="btn btn-danger px-4fw-semibold">
-                                <i class="fa-solid fa-trash me-1"></i> Sim, Eliminar
+                            <button type="submit" name="confirmar_desativar" class="btn btn-warning text-dark px-4 fw-semibold">
+                                <i class="fa-solid fa-power-off me-1"></i> Sim, Desativar
                             </button>
                         </div>
                     </form>
