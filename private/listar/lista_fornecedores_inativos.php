@@ -2,38 +2,28 @@
 session_start();
 
 if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-    
-    // Por segurança, limpa qualquer resíduo de sessão que possa existir
     session_unset();
     session_destroy();
-    
-    // 3. Expulsar o intruso de volta para o formulário de login
-    // Ajusta o caminho se o teu login.php estiver numa pasta acima (ex: ../login.php)
     header("Location: ../../public/login.php?erro=restrito");
-    exit; // Interrompe imediatamente a execução do resto da página
+    exit;
 }
 
+// 1. Configurações da Base de Dados
 $host = "vsgate-s1.dei.isep.ipp.pt";
-    $user = "1240896";
-    $pass = "campos_896";
-    $dbname = "db1240896";
-    $port = 10464;
+$user = "1240896";
+$pass = "campos_896";
+$dbname = "db1240896";
+$port = 10464;
 
-    $conn = mysqli_connect($host, $user, $pass, $dbname, $port);
+$conn = mysqli_connect($host, $user, $pass, $dbname, $port);
 
 if (!$conn) {
     die("Falha na ligação: " . mysqli_connect_error());
 }
 
-// 2. Query que junta a documentação ao respetivo equipamento
-$sql = "SELECT d.*, e.designacao AS nome_equipamento, e.numero_serie 
-        FROM documentacao d
-        INNER JOIN equipamentos e ON d.equipamento_id = e.id
-        ORDER BY e.designacao ASC, d.tipo_documento ASC";
-
-$result = mysqli_query($conn, $sql);
-
-
+// 2. Query alterada para listar APENAS os fornecedores Inativos
+$sql_tabela = "SELECT * FROM fornecedores WHERE estado = 'Inativo' ORDER BY nome_empresa ASC";
+$result_tabela = mysqli_query($conn, $sql_tabela);
 ?>
 
 <!DOCTYPE html>
@@ -41,19 +31,16 @@ $result = mysqli_query($conn, $sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentação | Apoio ao Inventário Hospitalar</title>
+    <title>Arquivo de Fornecedores | MedTrack</title>
     <link rel="shortcut icon" href="../../assets/img/hosp_icon.png" type="image/png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="../../assets/css/admin1240896.css">
-    
-    
 </head>
-
 <body class="bg-light">
- <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container-fluid px-lg-4"> 
         <a class="navbar-brand d-flex align-items-center py-0" href="../dashboard.php">
             <img src="../../assets/img/hosp_icon_branco.png" alt="Logo" width="105" height="70" class="d-inline-block align-text-top me-2">
@@ -103,7 +90,7 @@ $result = mysqli_query($conn, $sql);
     </div>
 </nav>
 
-<div class="container mt-5 mb-5" id="listagem">
+<div class="container mt-5 mb-5">
 
     <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -114,99 +101,92 @@ $result = mysqli_query($conn, $sql);
 
     <?php if (isset($_SESSION['mensagem_erro'])): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i> <?php echo $_SESSION['mensagem_erro']; unset($_SESSION['mensagem_erro']); ?>
+            <i class="fa-solid fa-circle-exclamation me-2"></i> <?php echo $_SESSION['mensagem_erro']; unset($_SESSION['mensagem_erro']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
-    <div class="card card-custom p-4">
+    <div class="mb-3">
+        <a href="lista_fornecedores.php" class="btn btn-sm btn-secondary fw-semibold">
+            <i class="fa-solid fa-arrow-left me-1"></i> Voltar aos Fornecedores Ativos
+        </a>
+    </div>
+
+    <div class="card card-custom p-4 border-warning shadow-sm" id="listagem">
         <div class="border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
-                <i class="fa-solid fa-folder-tree fs-4 me-2 text-success"></i>
-                <h5 class="fw-bold mb-0 text-dark">Arquivo Digitalizado & Índice de Manuais</h5>
+                <i class="fa-solid fa-box-archive fs-4 me-2 text-warning"></i>
+                <h5 class="fw-bold mb-0 text-dark">Arquivo Histórico de Fornecedores</h5>
             </div>
+            <span class="badge bg-warning text-dark fw-bold">Inativos / Desativados</span>
         </div>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Equipamento Destino</th>
-                        <th>Documento / Categoria</th>
-                        <th>Localização no PC / Rede</th>
-                        <th>Data Emissão</th>
-                        <th>Validade</th>
-                        <th class="text-center" style="width: 100px;">Ações</th>
+                        <th>Empresa / Entidade</th>
+                        <th>NIF</th>
+                        <th>Contactos Gerais</th>
+                        <th>Pessoa de Contacto</th>
+                        <th>Observações / SLAs</th>
+                        <th class="text-center" style="width: 120px;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php 
-                    if (mysqli_num_rows($result) > 0):
-                        while ($row = mysqli_fetch_assoc($result)): 
-                            
-                            // Determinar se o documento está caducado ou prestes a caducar (se houver validade)
-                            $classe_validade = "text-dark";
-                            if (!empty($row['data_validade'])) {
-                                $hoje = date('Y-m-d');
-                                if ($row['data_validade'] < $hoje) {
-                                    $classe_validade = "text-danger fw-bold"; // Expirado
-                                }
-                            }
+                    if (mysqli_num_rows($result_tabela) > 0):
+                        while ($row = mysqli_fetch_assoc($result_tabela)): 
                     ?>
-                            <tr>
+                            <tr class="table-light text-muted">
                                 <td>
-                                    <div class="fw-bold text-dark"><?php echo htmlspecialchars($row['nome_equipamento'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                    <small class="text-muted">S/N: <?php echo htmlspecialchars($row['numero_serie'], ENT_QUOTES, 'UTF-8'); ?></small>
+                                    <div class="fw-bold text-secondary"><?php echo htmlspecialchars($row['nome_empresa'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                    <?php if (!empty($row['website'])): ?>
+                                        <small class="text-muted">
+                                            <i class="fa-solid fa-globe me-1"></i>
+                                            <span class="text-decoration-none text-muted"><?php echo htmlspecialchars($row['website'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                        </small>
+                                    <?php endif; ?>
                                 </td>
                                 
                                 <td>
-                                    <div class="fw-semibold text-dark mb-1"><?php echo htmlspecialchars($row['nome_documento'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                    <span class="badge bg-light text-dark border">
-                                        <i class="fa-solid fa-file-lines me-1 text-secondary"></i>
-                                        <?php echo htmlspecialchars($row['tipo_documento'], ENT_QUOTES, 'UTF-8'); ?>
+                                    <span class="badge bg-white text-secondary border fw-semibold">
+                                        <?php echo htmlspecialchars($row['nif'], ENT_QUOTES, 'UTF-8'); ?>
                                     </span>
                                 </td>
                                 
                                 <td>
-                                    <span class="caminho-local text-secondary" title="<?php echo htmlspecialchars($row['nome_ficheiro_caminho'], ENT_QUOTES, 'UTF-8'); ?>">
-                                        <i class="fa-solid fa-computer me-1"></i>
-                                        <?php echo htmlspecialchars($row['nome_ficheiro_caminho'], ENT_QUOTES, 'UTF-8'); ?>
-                                    </span>
+                                    <div class="small mb-1">
+                                        <i class="fa-solid fa-envelope me-1"></i> <?php echo htmlspecialchars($row['email'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </div>
+                                    <?php if (!empty($row['contacto_telefonico'])): ?>
+                                        <div class="small">
+                                            <i class="fa-solid fa-phone me-1"></i> <?php echo htmlspecialchars($row['contacto_telefonico'], ENT_QUOTES, 'UTF-8'); ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </td>
                                 
                                 <td>
-                                    <small><?php echo date('d/m/Y', strtotime($row['data_documento'])); ?></small>
+                                    <?php if (!empty($row['pessoa_contacto'])): ?>
+                                        <div class="fw-semibold small"><?php echo htmlspecialchars($row['pessoa_contacto'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                    <?php else: ?>
+                                        <span class="text-muted small"><em>Não especificado</em></span>
+                                    <?php endif; ?>
                                 </td>
                                 
-                                <td class="<?php echo $classe_validade; ?>">
-                                    <small>
-                                        <?php 
-                                        if (!empty($row['data_validade'])) {
-                                            echo date('d/m/Y', strtotime($row['data_validade']));
-                                            if ($row['data_validade'] < date('Y-m-d')) {
-                                                echo " <span class='badge bg-danger ms-1 text-white' style='font-size:0.65rem;'>Expirado</span>";
-                                            }
-                                        } else {
-                                            echo "<span class='text-muted'><em>Permanente</em></span>";
-                                        }
-                                        ?>
-                                    </small>
+                                <td>
+                                    <div class="text-muted text-obs small" title="<?php echo htmlspecialchars($row['observacoes'], ENT_QUOTES, 'UTF-8'); ?>">
+                                        <?php echo !empty($row['observacoes']) ? htmlspecialchars($row['observacoes'], ENT_QUOTES, 'UTF-8') : 'Sem observações.'; ?>
+                                    </div>
                                 </td>
                                 
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm">
-
-                                        <a href="../editar/editar_documentacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Documentação">
-                                            <i class="fa-solid fa-pen"></i>
+                                        <a href="../editar/editar_fornecedor.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-secondary" title="Ver/Editar Dados">
+                                            <i class="fa-solid fa-eye"></i>
                                         </a>
-
-                                        <button type="button" class="btn btn-outline-secondary" title="Copiar Caminho" 
-                                                onclick="navigator.clipboard.writeText('<?php echo addslashes($row['nome_ficheiro_caminho']); ?>'); alert('Caminho copiado para a área de transferência!');">
-                                            <i class="fa-solid fa-copy"></i>
-                                        </button>
-                                        
-                                        <a href="../eliminar/eliminar_documentacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar Registo">
-                                            <i class="fa-solid fa-trash"></i>
+                                        <a href="../eliminar/reativar_fornecedor.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-success" title="Reativar Fornecedor">
+                                            <i class="fa-solid fa-arrows-rotate"></i>
                                         </a>
                                     </div>
                                 </td>
@@ -217,8 +197,8 @@ $result = mysqli_query($conn, $sql);
                     ?>
                         <tr>
                             <td colspan="6" class="text-center p-5 text-muted">
-                                <i class="fa-solid fa-folder-minus fs-2 d-block mb-2 text-secondary"></i>
-                                Nenhuma documentação técnica foi indexada até ao momento.
+                                <i class="fa-solid fa-folder-open fs-2 d-block mb-2 text-secondary"></i>
+                                Não existem fornecedores inativos no histórico de arquivo.
                             </td>
                         </tr>
                     <?php 
@@ -228,9 +208,9 @@ $result = mysqli_query($conn, $sql);
                 </tbody>
             </table>
         </div>
-    
-</div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>    
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

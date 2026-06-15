@@ -1,4 +1,6 @@
-<?php
+
+
+    <?php
 session_start();
 
 // 1. Proteção de Sessão contra acessos diretos
@@ -30,26 +32,40 @@ if ($id <= 0) {
     exit;
 }
 
-// =================================================================
-// VERIFICAÇÃO DE SEGURANÇA: Existem equipamentos vinculados a este fornecedor?
-// =================================================================
 $sql_check = "SELECT COUNT(*) as total FROM equipamento_fornecedor WHERE fornecedor_id = ?";
+
 $stmt_check = mysqli_prepare($conn, $sql_check);
 
+
+
 if ($stmt_check) {
+
     mysqli_stmt_bind_param($stmt_check, "i", $id);
+
     mysqli_stmt_execute($stmt_check);
+
     $result_check = mysqli_stmt_get_result($stmt_check);
+
     $row_check = mysqli_fetch_assoc($result_check);
+
     mysqli_stmt_close($stmt_check);
 
+
+
     if ($row_check['total'] > 0) {
+
         // Bloqueia imediatamente se houver dependências
+
         $_SESSION['mensagem_erro'] = "Não é possível eliminar este fornecedor porque ele está associado a " . $row_check['total'] . " equipamento(s). Altere o fornecedor desses equipamentos antes de o remover.";
+
         mysqli_close($conn);
+
         header("Location: ../listar/lista_fornecedores.php");
+
         exit;
+
     }
+
 }
 
 $fornecedor = null;
@@ -65,6 +81,7 @@ if ($stmt_busca) {
     $resultado = mysqli_stmt_get_result($stmt_busca);
     $fornecedor = mysqli_fetch_assoc($resultado);
     mysqli_stmt_close($stmt_busca);
+
 }
 
 // Se o fornecedor não existir na base de dados, volta para a listagem
@@ -75,24 +92,29 @@ if (!$fornecedor) {
 }
 
 // ==========================================
-// PASSO 2: SE O UTILIZADOR CONFIRMOU A ELIMINAÇÃO (CLICOU EM "SIM")
+// PASSO 2: SE O UTILIZADOR CONFIRMOU A INATIVAÇÃO (CLICOU EM "SIM")
 // ==========================================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_inativar'])) {
     
-    $sql_delete = "DELETE FROM fornecedores WHERE id = ?";
-    $stmt_delete = mysqli_prepare($conn, $sql_delete);
+    // ALTERADO: Query mudada de DELETE para UPDATE de estado
+    $sql_update = "UPDATE fornecedores SET estado = 'Inativo' WHERE id = ?";
+    $stmt_update = mysqli_prepare($conn, $sql_update);
 
-    if ($stmt_delete) {
-        mysqli_stmt_bind_param($stmt_delete, "i", $id);
+    if ($stmt_update) {
+        mysqli_stmt_bind_param($stmt_update, "i", $id);
         
-        if (mysqli_stmt_execute($stmt_delete)) {
-            $_SESSION['mensagem_sucesso'] = "Fornecedor removido do sistema com sucesso!";
+        if (mysqli_stmt_execute($stmt_update)) {
+            $_SESSION['mensagem_sucesso'] = "Fornecedor movido para o arquivo de inativos com sucesso!";
+            mysqli_close($conn);
+            // Redireciona diretamente para a lista de fornecedores inativos
+            header("Location: ../listar/lista_fornecedores_inativos.php");
+            exit;
         } else {
-            $_SESSION['mensagem_erro'] = "Erro técnico ao tentar eliminar o fornecedor da base de dados.";
+            $_SESSION['mensagem_erro'] = "Erro técnico ao tentar alterar o estado do fornecedor.";
         }
-        mysqli_stmt_close($stmt_delete);
+        mysqli_stmt_close($stmt_update);
     } else {
-        $_SESSION['mensagem_erro'] = "Erro interno ao preparar a eliminação.";
+        $_SESSION['mensagem_erro'] = "Erro interno ao preparar a desativação.";
     }
 
     mysqli_close($conn);
@@ -105,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>MedTrack | Confirmar Eliminação de Fornecedor</title>
+    <title>MedTrack | Confirmar Desativação de Fornecedor</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -117,15 +139,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])
             
             <div class="card shadow-sm border-0 rounded-3 text-center p-4">
                 <div class="card-body">
-                    <div class="text-danger mb-3">
-                        <i class="fa-solid fa-building-circle-xmark fa-4x"></i>
+                    <div class="text-warning mb-3">
+                        <i class="fa-solid fa-box-archive fa-4x"></i>
                     </div>
                     
-                    <h4 class="fw-bold text-dark mb-3">Eliminar Fornecedor?</h4>
+                    <h4 class="fw-bold text-dark mb-3">Arquivar Fornecedor?</h4>
                     
                     <p class="text-muted mb-4">
-                        Tem a certeza que deseja remover permanentemente do ecossistema esta entidade comercial? 
-                        Todos os dados deste registo serão limpos e esta operação é <strong>irreversível</strong>.
+                        Tem a certeza que deseja alterar o estado desta entidade comercial para <strong>Inativo</strong>? 
+                        O registo será removido das listagens operacionais diárias e enviado para a lista de inativos.
                     </p>
 
                     <div class="bg-light p-3 rounded border text-start mb-4">
@@ -133,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])
                         <div><strong>NIF / Identificação Fiscal:</strong> <?php echo htmlspecialchars($fornecedor['nif'] ?? 'N/D'); ?></div>
                     </div>
 
-                    <form action="eliminar_fornecedor.php" method="POST">
+                    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                         <input type="hidden" name="id" value="<?php echo $id; ?>">
                         
                         <div class="d-flex justify-content-center gap-3">
@@ -141,8 +163,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])
                                 <i class="fa-solid fa-xmark me-1"></i> Não, Cancelar
                             </a>
                             
-                            <button type="submit" name="confirmar_eliminar" class="btn btn-danger px-4 fw-semibold">
-                                <i class="fa-solid fa-trash me-1"></i> Sim, Eliminar
+                            <button type="submit" name="confirmar_inativar" class="btn btn-warning text-dark px-4 fw-semibold">
+                                <i class="fa-solid fa-archive me-1"></i> Sim, Inativar
                             </button>
                         </div>
                     </form>
