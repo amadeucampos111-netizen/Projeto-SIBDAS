@@ -8,7 +8,6 @@ if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
     session_destroy();
     
     // 3. Expulsar o intruso de volta para o formulário de login
-    // Ajusta o caminho se o teu login.php estiver numa pasta acima (ex: ../login.php)
     header("Location: ../../public/login.php?erro=restrito");
     exit; // Interrompe imediatamente a execução do resto da página
 }
@@ -70,10 +69,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'Declaração de conformidade', 'Relatório técnico'
     ];
 
-    // Validar se os campos obrigatórios foram mantidos preenchidos
+    // Array para gerir erros específicos de data
+    $erros_data = [];
+    $d_doc = null;
+    $d_val = null;
+
+    // 1. Validar estrutura e integridade da data_documento (Obrigatória)
+    if (!empty($data_documento)) {
+        $d_doc = DateTime::createFromFormat('Y-m-d', $data_documento);
+        if (!$d_doc || $d_doc->format('Y-m-d') !== $data_documento) {
+            $erros_data[] = "A data do documento introduzida é inválida.";
+        } elseif ($d_doc > new DateTime()) {
+            $erros_data[] = "A data do documento não pode ser uma data futura.";
+        }
+    }
+
+    // 2. Validar estrutura da data_validade (Opcional)
+    if ($data_validade !== null) {
+        $d_val = DateTime::createFromFormat('Y-m-d', $data_validade);
+        if (!$d_val || $d_val->format('Y-m-d') !== $data_validade) {
+            $erros_data[] = "A data de validade introduzida é inválida.";
+        }
+    }
+
+    // 3. Validar a coerência cronológica entre as duas datas
+    if ($d_doc && $d_val) {
+        if ($d_val < $d_doc) {
+            $erros_data[] = "A data de validade não pode ser anterior à data do documento.";
+        }
+    }
+
+    // Verificar se os campos obrigatórios foram mantidos preenchidos ou se existem erros de data
     if ($equipamento_id <= 0 || empty($nome_documento) || empty($nome_ficheiro_caminho) || empty($data_documento) || !in_array($tipo_documento, $enums_validos)) {
         $erro = "Todos os campos obrigatórios devem estar corretamente preenchidos.";
+    } elseif (!empty($erros_data)) {
+        // Se houver erros nas datas, junta-os para mostrar no alert do HTML
+        $erro = implode("<br>", $erros_data);
     } else {
+        // Sem erros: Procede para a atualização segura
         $sql_update = "UPDATE documentacao SET 
                         tipo_documento=?, nome_documento=?, nome_ficheiro_caminho=?, 
                         data_documento=?, data_validade=?, equipamento_id=? 
@@ -108,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
-    
 </head>
 <body>
 

@@ -35,6 +35,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // ==========================================
+    // NOVA SECÇÃO: VALIDAÇÃO DAS DATAS
+    // ==========================================
+    $d_doc = null;
+    $d_val = null;
+
+    // 1. Validar data_documento (Obrigatória)
+    if (!empty($data_documento)) {
+        $d_doc = DateTime::createFromFormat('Y-m-d', $data_documento);
+        if (!$d_doc || $d_doc->format('Y-m-d') !== $data_documento) {
+            $erros[] = "A data do documento introduzida é inválida.";
+        } elseif ($d_doc > new DateTime()) {
+            $erros[] = "A data do documento não pode ser uma data futura.";
+        }
+    }
+
+    // 2. Validar data_validade (Opcional - só valida se o utilizador preencheu)
+    if ($data_validade !== null) {
+        $d_val = DateTime::createFromFormat('Y-m-d', $data_validade);
+        if (!$d_val || $d_val->format('Y-m-d') !== $data_validade) {
+            $erros[] = "A data de validade introduzida é inválida.";
+        }
+    }
+
+    // 3. Validar a relação entre ambas (se ambas forem objetos DateTime válidos)
+    if ($d_doc && $d_val) {
+        if ($d_val < $d_doc) {
+            $erros[] = "A data de validade não pode ser anterior à data do documento.";
+        }
+    }
+    // ==========================================
+
     // 3. Query SQL direcionada à estrutura exata da vossa tabela
     $sql = "INSERT INTO documentacao (tipo_documento, nome_documento, nome_ficheiro_caminho, data_documento, data_validade, equipamento_id) 
             VALUES (?, ?, ?, ?, ?, ?)";

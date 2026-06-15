@@ -35,6 +35,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $criticidade      = $_POST['criticidade'];
     $observacoes      = trim($_POST['observacoes']);
 
+    // ==========================================
+    // NOVA SECÇÃO: VALIDAÇÃO DE DATAS
+    // ==========================================
+    $erros = [];
+    $ano_atual = intval(date('Y'));
+
+    // 1. Validar o formato e existência real da data_aquisicao (Formato esperado: Y-m-d)
+    $d = DateTime::createFromFormat('Y-m-d', $data_aquisicao);
+    $data_valida = $d && $d->format('Y-m-d') === $data_aquisicao;
+
+    if (!$data_valida) {
+        $erros[] = "A data de aquisição introduzida é inválida.";
+    } else {
+        // Obter o ano da data de aquisição para comparações futuras
+        $ano_aquisicao = intval($d->format('Y'));
+        
+        // Opcional: Impedir que a data de aquisição seja no futuro
+        if ($d > new DateTime()) {
+            $erros[] = "A data de aquisição não pode ser uma data futura.";
+        }
+    }
+
+    // 2. Validar o ano_fabrico
+    if ($ano_fabrico < 1900 || $ano_fabrico > $ano_atual) {
+        $erros[] = "O ano de fabrico deve ser entre 1900 e " . $ano_atual . ".";
+    }
+
+    // 3. Validar a relação entre as duas datas (só avança se as individuais estiverem corretas)
+    if (empty($erros)) {
+        if ($ano_aquisicao < $ano_fabrico) {
+            $erros[] = "A data de aquisição não pode ser anterior ao ano de fabrico do equipamento.";
+        }
+    }
+
+    // 4. Se existirem erros, interrompe e volta ao formulário
+    if (!empty($erros)) {
+        // Junta todos os erros numa string ou lida com eles conforme preferires na tua UI
+        $_SESSION['mensagem_erro'] = implode("<br>", $erros);
+        
+        // Fecha a ligação que foi aberta no início
+        mysqli_close($conn);
+        
+        // Redireciona de volta
+        header("Location: ../gestao_equip.php");
+        exit;
+    }
+    // ==========================================
+    // FIM DA VALIDAÇÃO
+    // ==========================================
+
     // 5. Preparar a Query SQL utilizando placeholders (?) para segurança total
     $sql = "INSERT INTO equipamentos (
                 codigo_interno, designacao, categoria, marca, modelo, 

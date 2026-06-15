@@ -72,6 +72,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $criticidade     = $_POST['criticidade'];
     $observacoes     = trim($_POST['observacoes']);
 
+    // ==========================================
+    // NOVA SECÇÃO: VALIDAÇÃO DAS DATAS
+    // ==========================================
+    $erros_data = [];
+    $ano_atual = intval(date('Y'));
+
+    // 1. Validar a estrutura real da data de aquisição
+    $d = DateTime::createFromFormat('Y-m-d', $data_aquisicao);
+    $data_valida = $d && $d->format('Y-m-d') === $data_aquisicao;
+
+    if (!$data_valida) {
+        $erros_data[] = "A data de aquisição introduzida é inválida.";
+    } else {
+        $ano_aquisicao = intval($d->format('Y'));
+        
+        // Impedir que a data de aquisição seja no futuro
+        if ($d > new DateTime()) {
+            $erros_data[] = "A data de aquisição não pode ser uma data futura.";
+        }
+    }
+
+    // 2. Validar o ano de fabrico
+    if ($ano_fabrico < 1900 || $ano_fabrico > $ano_atual) {
+        $erros_data[] = "O ano de fabrico deve ser um ano válido entre 1900 e " . $ano_atual . ".";
+    }
+
+    // 3. Validar a coerência cronológica entre ambas
+    if (empty($erros_data)) {
+        if ($ano_aquisicao < $ano_fabrico) {
+            $erros_data[] = "A data de aquisição não pode ser anterior ao ano de fabrico do equipamento.";
+        }
+    }
+    // ==========================================
+
     $sql_update = "UPDATE equipamentos SET 
                     codigo_interno=?, designacao=?, categoria=?, marca=?, modelo=?, 
                     numero_serie=?, fabricante=?, data_aquisicao=?, ano_fabrico=?, 
