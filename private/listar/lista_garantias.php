@@ -150,7 +150,7 @@ $result = mysqli_query($conn, $sql);
                         <td class="text-center">
                             <div class="btn-group btn-group-sm">
                                 <a href="../editar/editar_garantia.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-warning text-dark"><i class="fa-solid fa-pen"></i></a>
-                                <a href="../eliminar/eliminar_garantia.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" onclick="return confirm('Apagar este registo de cobertura técnica?');"><i class="fa-solid fa-trash"></i></a>
+                                <a href="../eliminar/eliminar_garantia.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
                             </div>
                         </td>
                     </tr>

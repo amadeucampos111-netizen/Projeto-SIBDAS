@@ -224,8 +224,7 @@ $result = mysqli_query($conn, $sql);
                                             <i class="fa-solid fa-copy"></i>
                                         </button>
                                         
-                                        <a href="../eliminar/eliminar_documentacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar Registo" 
-                                           onclick="return confirm('Tem a certeza que deseja remover o índice deste documento? Isto não apagará o ficheiro no vosso computador, apenas remove o registo no MedTrack.');">
+                                        <a href="../eliminar/eliminar_documentacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar Registo">
                                             <i class="fa-solid fa-trash"></i>
                                         </a>
                                     </div>

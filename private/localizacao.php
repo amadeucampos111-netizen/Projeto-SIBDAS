@@ -239,7 +239,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                                         <a href="editar/editar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Localização">
                                             <i class="fa-solid fa-pen"></i>
                                         </a>
-                                        <a href="eliminar/eliminar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar" onclick="return confirm('Tem a certeza que deseja eliminar esta localização? Se existirem equipamentos associados a ela, poderá causar erros.');">
+                                        <a href="eliminar/eliminar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar">
                                             <i class="fa-solid fa-trash"></i>
                                         </a>
                                     </div>

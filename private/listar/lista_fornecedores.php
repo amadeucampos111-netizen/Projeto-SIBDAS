@@ -218,7 +218,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                                         <a href="../editar/editar_fornecedor.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Fornecedor">
                                             <i class="fa-solid fa-pen"></i>
                                         </a>
-                                        <a href="../eliminar/eliminar_fornecedor.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar Fornecedor" onclick="return confirm('Tem a certeza que deseja eliminar este fornecedor? Verifique se existem equipamentos vinculados a ele para evitar inconsistências.');">
+                                        <a href="../eliminar/eliminar_fornecedor.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar Fornecedor">
                                             <i class="fa-solid fa-trash"></i>
                                         </a>
                                     </div>

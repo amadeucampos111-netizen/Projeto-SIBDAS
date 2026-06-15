@@ -296,8 +296,7 @@ $result_assoc = mysqli_query($conn, $sql_assoc);
                                 <td><span class="badge <?php echo $badge; ?>" style="font-size: 0.75rem;"><?php echo htmlspecialchars($assoc['tipo_fornecedor']); ?></span></td>
                                 <td class="text-center">
                                     <a href="eliminar/eliminar_associacao_fornecedor.php?equipamento_id=<?php echo $assoc['equipamento_id']; ?>&fornecedor_id=<?php echo $assoc['fornecedor_id']; ?>&tipo=<?php echo urlencode($assoc['tipo_fornecedor']); ?>" 
-                                       class="btn btn-sm btn-outline-danger"
-                                       onclick="return confirm('Tem a certeza de que deseja quebrar a associação desta entidade com este equipamento?');">
+                                       class="btn btn-sm btn-outline-danger">
                                         <i class="fa-solid fa-link-slash"></i> Remover
                                     </a>
                                 </td>

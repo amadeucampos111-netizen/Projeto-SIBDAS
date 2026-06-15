@@ -223,7 +223,7 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
                                     <a href="../editar/editar_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Ficha">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <a href="../eliminar/eliminar_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Abater/Apagar" onclick="return confirm('Tem a certeza que deseja eliminar este equipamento?');">
+                                    <a href="../eliminar/eliminar_equipamento.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Abater/Apagar">
                                         <i class="fa-solid fa-trash"></i>
                                     </a>
                                 </div>

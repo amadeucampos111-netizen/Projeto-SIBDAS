@@ -189,7 +189,7 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
                                     <a href="../editar/editar_componente.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Ficha">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <a href="../eliminar/eliminar_componentes.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Abater/Apagar" onclick="return confirm('Tem a certeza que deseja eliminar este componente?');">
+                                    <a href="../eliminar/eliminar_componentes.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Abater/Apagar" >
                                         <i class="fa-solid fa-trash"></i>
                                     </a>
                                 </div>

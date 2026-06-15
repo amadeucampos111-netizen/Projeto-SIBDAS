@@ -1,49 +1,84 @@
 <?php
 session_start();
 
-// 1. Verificar se o ID foi passado na URL e não está vazio
-if (isset($_GET['id']) && !empty($_GET['id'])) {
-    
-    $id = intval($_GET['id']); // Garante que o ID é tratado estritamente como um número inteiro
+// 1. Proteção de Sessão contra acessos diretos
+if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
+    session_unset();
+    session_destroy();
+    header("Location: ../../public/login.php?erro=restrito");
+    exit;
+}
 
-    // 2. Configurações da Base de Dados
-    $host = "vsgate-s1.dei.isep.ipp.pt";
-    $user = "1240896";
-    $pass = "campos_896";
-    $dbname = "db1240896";
-    $port = 10464;
+// 2. Configurações da Base de Dados
+$host = "vsgate-s1.dei.isep.ipp.pt";
+$user = "1240896";
+$pass = "campos_896";
+$dbname = "db1240896";
+$port = 10464;
 
-    $conn = mysqli_connect($host, $user, $pass, $dbname, $port);
+$conn = mysqli_connect($host, $user, $pass, $dbname, $port);
+if (!$conn) { 
+    die("Falha na ligação: " . mysqli_connect_error()); 
+}
 
-    if (!$conn) {
-        die("Falha na ligação: " . mysqli_connect_error());
+// Recuperar o ID enviado (via GET no clique inicial ou via POST no formulário de confirmação)
+$id = isset($_GET['id']) ? intval($_GET['id']) : intval($_POST['id'] ?? 0);
+
+if ($id <= 0) {
+    $_SESSION['mensagem_erro'] = "ID de localização inválido ou não fornecido.";
+    header("Location: ../localizacao.php");
+    exit;
+}
+
+// =================================================================
+// VERIFICAÇÃO DE SEGURANÇA: Existem equipamentos nesta localização?
+// =================================================================
+$sql_check = "SELECT COUNT(*) as total FROM equipamentos WHERE localizacao_id = ?";
+$stmt_check = mysqli_prepare($conn, $sql_check);
+
+if ($stmt_check) {
+    mysqli_stmt_bind_param($stmt_check, "i", $id);
+    mysqli_stmt_execute($stmt_check);
+    $result_check = mysqli_stmt_get_result($stmt_check);
+    $row_check = mysqli_fetch_assoc($result_check);
+    mysqli_stmt_close($stmt_check);
+
+    if ($row_check['total'] > 0) {
+        // Bloqueia e aborta a eliminação se existirem dependências na BD
+        $_SESSION['mensagem_erro'] = "Não é possível eliminar esta localização porque existem " . $row_check['total'] . " equipamento(s) associado(s) a ela. Transfira os equipamentos primeiro.";
+        mysqli_close($conn);
+        header("Location: ../localizacao.php");
+        exit;
     }
+}
 
-    // =================================================================
-    // VERIFICAÇÃO DE SEGURANÇA: Existem equipamentos nesta localização?
-    // =================================================================
-    $sql_check = "SELECT COUNT(*) as total FROM equipamentos WHERE localizacao_id = ?";
-    $stmt_check = mysqli_prepare($conn, $sql_check);
+$localizacao = null;
+
+// ==========================================
+// PASSO 1: PROCURAR A LOCALIZAÇÃO PARA MOSTRAR OS DETALHES
+// ==========================================
+$sql_busca = "SELECT edificio FROM localizaciones WHERE id = ?";
+$stmt_busca = mysqli_prepare($conn, $sql_busca);
+if ($stmt_busca) {
+    mysqli_stmt_bind_param($stmt_busca, "i", $id);
+    mysqli_stmt_execute($stmt_busca);
+    $resultado = mysqli_stmt_get_result($stmt_busca);
+    $localizacao = mysqli_fetch_assoc($resultado);
+    mysqli_stmt_close($stmt_busca);
+}
+
+// Se a localização não existir na base de dados, regressa à lista
+if (!$localizacao) {
+    $_SESSION['mensagem_erro'] = "Localização hospitalar não encontrada.";
+    header("Location: ../localizacao.php");
+    exit;
+}
+
+// ==========================================
+// PASSO 2: SE O UTILIZADOR CONFIRMOU A ELIMINAÇÃO (CLICOU EM "SIM")
+// ==========================================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])) {
     
-    if ($stmt_check) {
-        mysqli_stmt_bind_param($stmt_check, "i", $id);
-        mysqli_stmt_execute($stmt_check);
-        $result_check = mysqli_stmt_get_result($stmt_check);
-        $row_check = mysqli_fetch_assoc($result_check);
-        mysqli_stmt_close($stmt_check);
-
-        if ($row_check['total'] > 0) {
-            // Se existirem equipamentos associados, impede a eliminação
-            $_SESSION['mensagem_erro'] = "Não é possível eliminar esta localização porque existem " . $row_check['total'] . " equipamento(s) associado(s) a ela. Transfira os equipamentos primeiro.";
-            header("Location: ../localizacao.php");
-            mysqli_close($conn);
-            exit;
-        }
-    }
-
-    // =================================================================
-    // AÇÃO DE ELIMINAÇÃO (Apenas se passar a validação acima)
-    // =================================================================
     $sql_delete = "DELETE FROM localizaciones WHERE id = ?";
     $stmt_delete = mysqli_prepare($conn, $sql_delete);
 
@@ -61,10 +96,63 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     }
 
     mysqli_close($conn);
-} else {
-    $_SESSION['mensagem_erro'] = "ID de localização inválido ou não fornecido.";
+    header("Location: ../localizacao.php");
+    exit;
 }
+?>
 
-// 3. Redirecionar de volta para a página de listagem
-header("Location: ../localizacao.php");
-exit;
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>MedTrack | Confirmar Eliminação de Localização</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            
+            <div class="card shadow-sm border-0 rounded-3 text-center p-4">
+                <div class="card-body">
+                    <div class="text-danger mb-3">
+                        <i class="fa-solid fa-map-location-dot fa-4x"></i>
+                    </div>
+                    
+                    <h4 class="fw-bold text-dark mb-3">Eliminar Localização?</h4>
+                    
+                    <p class="text-muted mb-4">
+                        Tem a certeza que deseja remover permanentemente esta área hospitalar do inventário? 
+                        Esta ação removerá o registo de forma definitiva da base de dados.
+                    </p>
+
+                    <div class="bg-light p-3 rounded border text-start mb-4">
+                        <div class="mb-1"><strong>Edifício / Sala / Serviço:</strong> <?php echo htmlspecialchars($localizacao['edificio']); ?></div>
+                        <div><strong>Estado de Vínculos:</strong> <span class="text-success">Livre (0 equipamentos associados)</span></div>
+                    </div>
+
+                    <form action="eliminar_localizacao.php" method="POST">
+                        <input type="hidden" name="id" value="<?php echo $id; ?>">
+                        
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="../localizacao.php" class="btn btn-light px-4 border">
+                                <i class="fa-solid fa-xmark me-1"></i> Não, Cancelar
+                            </a>
+                            
+                            <button type="submit" name="confirmar_eliminar" class="btn btn-danger px-4 fw-semibold">
+                                <i class="fa-solid fa-trash me-1"></i> Sim, Eliminar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<?php mysqli_close($conn); ?>
