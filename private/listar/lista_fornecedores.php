@@ -47,7 +47,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
     
 </head>
 <body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
+ <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container-fluid px-lg-4"> 
         <a class="navbar-brand d-flex align-items-center py-0" href="../dashboard.php">
             <img src="../../assets/img/hosp_icon_branco.png" alt="Logo" width="105" height="70" class="d-inline-block align-text-top me-2">
@@ -67,6 +67,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="../garantia_contratos.php"><i class="fa-solid fa-file-shield me-2"></i> Registo de Garantias</a></li>
                         <li><a class="dropdown-item" href="lista_garantias.php"><i class="fa-solid fa-file-alt me-2"></i> Lista de Garantias</a></li>
+                        <li><a class="dropdown-item" href="lista_garantias_inativas.php"><i class="fa-solid fa-file-alt me-2"></i> Lista de Garantias Inativas</a></li>
                     </ul>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="../localizacao.php"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a></li>
@@ -79,7 +80,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle " href="../documentacao.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-file-invoice me-1"></i> Documentação</a>
+                    <a class="nav-link dropdown-toggle" href="../documentacao.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-file-invoice me-1"></i> Documentação</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="../documentacao.php"><i class="fa-solid fa-folder-tree me-2"></i> Registo de Documentação</a></li>
                         <li><a class="dropdown-item" href="lista_documentos.php"><i class="fa-solid fa-folder-plus me-2"></i> Listagem de Documentos</a></li>

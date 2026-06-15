@@ -151,6 +151,7 @@ $result_suporte_vida = mysqli_query($conn, $query_suporte_vida);
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="garantia_contratos.php"><i class="fa-solid fa-file-shield me-2"></i> Registo de Garantias e Contratos</a></li>
                         <li><a class="dropdown-item" href="listar/lista_garantias.php"><i class="fa-solid fa-file-alt me-2"></i> Lista de Garantias e Contratos</a></li>
+                        <li><a class="dropdown-item" href="listar/lista_garantias_inativas.php"><i class="fa-solid fa-file-alt me-2"></i> Lista de Garantias e Contratos Inativos</a></li>
                     </ul>
                 </li>
                 

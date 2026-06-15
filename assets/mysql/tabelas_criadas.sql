@@ -112,8 +112,11 @@ ALTER TABLE `documentacao` ADD FOREIGN KEY (`equipamento_id`) REFERENCES `equipa
 -- NOTA: A FK que criava ciclo entre 'equipamentos' e 'garantias_contratos' foi removida.
 -- Esta linha abaixo é a única necessária para estabelecer a relação 1:1 de forma correta:
 ALTER TABLE `garantias_contratos` ADD FOREIGN KEY (`equipamento_id`) REFERENCES `equipamentos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 ALTER TABLE fornecedores ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
 ALTER TABLE documentacao ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
+ALTER TABLE garantias_contratos ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
+
 
 -- ============================================================================
 -- 3. INSERÇÃO DOS DADOS (ORDEM DE DEPENDÊNCIA RESPEITADA)
