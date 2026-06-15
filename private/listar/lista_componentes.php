@@ -63,11 +63,9 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
         <a class="navbar-brand d-flex align-items-center py-0" href="../dashboard.php">
             <img src="../../assets/img/hosp_icon_branco.png" alt="Logo" width="105" height="70" class="d-inline-block align-text-top me-2">
         </a>
-        
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        
         <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
             <ul class="navbar-nav mb-2 mb-lg-0 ms-3 small text-nowrap">
                 <li class="nav-item"><a class="nav-link" href="../dashboard.php"><i class="fa-solid fa-chart-pie me-1"></i> Dashboard</a></li>
@@ -84,7 +82,7 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
                 </li>
                 <li class="nav-item"><a class="nav-link" href="../localizacao.php"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a></li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle " href="../fornecedores.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-truck-medical me-1"></i> Fornecedores</a>
+                    <a class="nav-link dropdown-toggle" href="../fornecedores.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-truck-medical me-1"></i> Fornecedores</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="../fornecedores.php"><i class="fa-solid fa-address-book me-2"></i> Registo e Associação</a></li>
                         <li><a class="dropdown-item" href="lista_fornecedores.php"><i class="fa-solid fa-user-plus me-2"></i> Listagem de Fornecedores</a></li>
@@ -92,10 +90,11 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="../documentacao.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-file-invoice me-1"></i> Documentação</a>
+                    <a class="nav-link dropdown-toggle " href="../documentacao.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-file-invoice me-1"></i> Documentação</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="../documentacao.php"><i class="fa-solid fa-folder-tree me-2"></i> Registo de Documentação</a></li>
                         <li><a class="dropdown-item" href="lista_documentos.php"><i class="fa-solid fa-folder-plus me-2"></i> Listagem de Documentos</a></li>
+                        <li><a class="dropdown-item" href="lista_documentos_inativos.php"><i class="fa-solid fa-folder-minus me-2"></i> Listagem de Documentos Inativos</a></li>
                     </ul>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="../editar_texto_frontend.php"><i class="fa-solid fa-edit me-1"></i> Editar Textos</a></li>

@@ -88,7 +88,7 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
 </head>
 <body>
 
- <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container-fluid px-lg-4"> <a class="navbar-brand d-flex align-items-center py-0" href="dashboard.php">
             <img src="../assets/img/hosp_icon_branco.png" alt="Logo" width="105" height="70" class="d-inline-block align-text-top me-2">
         </a>
@@ -140,6 +140,7 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="documentacao.php"><i class="fa-solid fa-folder-tree me-2"></i> Registo de Documentação</a></li>
                         <li><a class="dropdown-item" href="listar/lista_documentos.php"><i class="fa-solid fa-folder-plus me-2"></i> Listagem de Documentos</a></li>
+                        <li><a class="dropdown-item" href="listar/lista_documentos_inativos.php"><i class="fa-solid fa-folder-minus me-2"></i> Listagem de Documentos Inativos</a></li>
                     </ul>
                 </li>
 

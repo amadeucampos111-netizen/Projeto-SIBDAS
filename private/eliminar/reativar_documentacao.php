@@ -26,7 +26,7 @@ $id = isset($_GET['id']) ? intval($_GET['id']) : intval($_POST['id'] ?? 0);
 
 if ($id <= 0) {
     $_SESSION['mensagem_erro'] = "ID de documentação inválido ou não fornecido.";
-    header("Location: ../listar/lista_documentos.php");
+    header("Location: ../listar/lista_documentos_inativos.php");
     exit;
 }
 
@@ -35,7 +35,7 @@ $documento = null;
 // ==========================================
 // PASSO 1: PROCURAR O DOCUMENTO PARA MOSTRAR OS DETALHES
 // ==========================================
-$sql_busca = "SELECT nome_documento, tipo_documento FROM documentacao WHERE id = ?";
+$sql_busca = "SELECT nome_documento, tipo_documento FROM documentacao WHERE id = ? AND estado = 'Inativo'";
 $stmt_busca = mysqli_prepare($conn, $sql_busca);
 if ($stmt_busca) {
     mysqli_stmt_bind_param($stmt_busca, "i", $id);
@@ -45,45 +45,41 @@ if ($stmt_busca) {
     mysqli_stmt_close($stmt_busca);
 }
 
-// Se o documento já não existir na base de dados, regressa imediatamente à lista
+// Se o documento não for encontrado ou já não estiver Inativo, regressa à lista de inativos
 if (!$documento) {
-    $_SESSION['mensagem_erro'] = "O documento indicado não foi encontrado no sistema.";
-    header("Location: ../listar/lista_documentos.php");
+    $_SESSION['mensagem_erro'] = "O documento indicado não foi encontrado no arquivo ou já se encontra ativo.";
+    header("Location: ../listar/lista_documentos_inativos.php");
     exit;
 }
 
 // ==========================================
-// PASSO 2: SE O UTILIZADOR CONFIRMOU A INATIVAÇÃO (CLICOU EM "SIM")
+// PASSO 2: SE O UTILIZADOR CONFIRMOU A REATIVAÇÃO (CLICOU EM "SIM")
 // ==========================================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_inativar'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_reativacao'])) {
     
-    // ALTERADO: Query mudada de DELETE para UPDATE de estado
-    $sql_update = "UPDATE documentacao SET estado = 'Inativo' WHERE id = ?";
+    // UPDATE para restaurar o documento alterando o estado para 'Ativo'
+    $sql_update = "UPDATE documentacao SET estado = 'Ativo' WHERE id = ?";
     $stmt_update = mysqli_prepare($conn, $sql_update);
 
     if ($stmt_update) {
         mysqli_stmt_bind_param($stmt_update, "i", $id);
         
         if (mysqli_stmt_execute($stmt_update)) {
-            if (mysqli_stmt_affected_rows($stmt_update) > 0) {
-                $_SESSION['mensagem_sucesso'] = "O documento foi movido para o arquivo de inativos com sucesso!";
-                mysqli_close($conn);
-                // Redireciona diretamente para a lista de documentos inativos
-                header("Location: ../listar/lista_documentos_inativos.php");
-                exit;
-            } else {
-                $_SESSION['mensagem_erro'] = "O documento indicado já se encontrava inativo ou não foi alterado.";
-            }
+            $_SESSION['mensagem_sucesso'] = "O documento '" . $documento['nome_documento'] . "' foi reativado e devolvido ao índice de manuais operacionais!";
+            mysqli_close($conn);
+            // Redireciona para a lista principal de documentos ativos
+            header("Location: ../listar/lista_documentos.php");
+            exit;
         } else {
-            $_SESSION['mensagem_erro'] = "Erro técnico ao tentar inativar o registo: " . mysqli_stmt_error($stmt_update);
+            $_SESSION['mensagem_erro'] = "Erro técnico ao tentar reativar o documento.";
         }
         mysqli_stmt_close($stmt_update);
     } else {
-        $_SESSION['mensagem_erro'] = "Erro interno ao preparar a inativação dos dados.";
+        $_SESSION['mensagem_erro'] = "Erro interno ao preparar a reativação dos dados.";
     }
 
     mysqli_close($conn);
-    header("Location: ../listar/lista_documentos.php");
+    header("Location: ../listar/lista_documentos_inativos.php");
     exit;
 }
 ?>
@@ -92,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_inativar'])
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>MedTrack | Confirmar Arquivamento de Documento</title>
+    <title>MedTrack | Confirmar Reativação de Documento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -104,15 +100,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_inativar'])
             
             <div class="card shadow-sm border-0 rounded-3 text-center p-4">
                 <div class="card-body">
-                    <div class="text-warning mb-3">
-                        <i class="fa-solid fa-box-archive fa-4x"></i>
+                    <div class="text-success mb-3">
+                        <i class="fa-solid fa-arrows-rotate fa-4x"></i>
                     </div>
                     
-                    <h4 class="fw-bold text-dark mb-3">Arquivar Documento?</h4>
+                    <h4 class="fw-bold text-dark mb-3">Reativar Documento Técnico?</h4>
                     
                     <p class="text-muted mb-4">
-                        Tem a certeza que deseja alterar o estado deste registo documental para <strong>Inativo</strong>? 
-                        Ele será removido das listagens operacionais e guardado no histórico de arquivo de documentos.
+                        Tem a certeza que deseja restaurar este registo documental? O manual/documento voltará a ficar visível no índice operacional e associado ao respetivo equipamento.
                     </p>
 
                     <div class="bg-light p-3 rounded border text-start mb-4">
@@ -124,12 +119,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_inativar'])
                         <input type="hidden" name="id" value="<?php echo $id; ?>">
                         
                         <div class="d-flex justify-content-center gap-3">
-                            <a href="../listar/lista_documentos.php" class="btn btn-light px-4 border">
+                            <a href="../listar/lista_documentos_inativos.php" class="btn btn-light px-4 border">
                                 <i class="fa-solid fa-xmark me-1"></i> Não, Cancelar
                             </a>
                             
-                            <button type="submit" name="confirmar_inativar" class="btn btn-warning text-dark px-4 fw-semibold">
-                                <i class="fa-solid fa-archive me-1"></i> Sim, Arquivar
+                            <button type="submit" name="confirmar_reativacao" class="btn btn-success px-4 fw-semibold">
+                                <i class="fa-solid fa-check me-1"></i> Sim, Reativar
                             </button>
                         </div>
                     </form>
