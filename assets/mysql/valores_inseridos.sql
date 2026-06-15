@@ -221,3 +221,9 @@ INSERT INTO `documentacao` (`id`, `tipo_documento`, `nome_documento`, `nome_fich
 (28, 'Manual de utilizador', 'Instructions Manual Sysmex XN1000 PT', '/docs/manuais/sysmex_xn1000_user.pdf', '2020-01-15', NULL, 23),
 (29, 'Manual de utilizador', 'Manual de Operação Ecógrafo Portátil M9', '/docs/manuais/mindray_m9_user.pdf', '2022-01-20', NULL, 26),
 (30, 'Relatório técnico', 'Auto de Abate Técnico por Obsolescência Funcional', '/docs/relatorios/abate/abate_faco_centurion.pdf', '2026-01-15', NULL, 30);
+
+INSERT INTO `textos_interface` (`chave`, `conteudo`) VALUES
+('hero_titulo', 'Gestão Inteligente de Equipamentos Médicos'),
+('hero_subtitulo', 'Sistema web avançado para inventário hospitalar com rastreabilidade, relatórios e controlo total do parque tecnológico.'),
+('sobre_titulo', 'Sobre o Sistema'),
+('sobre_descricao', 'O MedTrack é uma solução web moderna desenvolvida para apoiar instituições de saúde na gestão rigorosa do ciclo de vida de dispositivos médicos, otimizando a localização, documentação e assistência técnica.');

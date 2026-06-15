@@ -1,3 +1,4 @@
+<?php include '../private/exibir_texto.php'; ?>
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -6,21 +7,17 @@
     <title>MedTrack</title>
     <link rel="shortcut icon" href="../assets/img/hosp_icon.png" type="image/png">
 
-    <!-- Bootstrap 5.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/1240896.css">
-   
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-            <img src ="../assets/img/hosp_icon.png" width="150" height="100">
+            <img src="../assets/img/hosp_icon.png" width="150" height="100">
         </a>
         
         <button class="navbar-dark navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
@@ -40,43 +37,44 @@
     </div>
 </nav>
 
-<!-- HERO -->
 <header class="hero-section text-center">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <h1 class="display-4 fw-bold mb-3">Gestão Inteligente de Equipamentos Médicos</h1>
-                <p class="lead mb-4">Sistema web avançado para inventário hospitalar com rastreabilidade, relatórios e controlo total do parque tecnológico.</p>
+                <h1 class="display-4 fw-bold mb-3">
+                    <?php echo exibir_texto('hero_titulo', 'Gestão Inteligente de Equipamentos Médicos'); ?>
+                </h1>
+                <p class="lead mb-4">
+                    <?php echo exibir_texto('hero_subtitulo', 'Sistema web avançado para inventário hospitalar com rastreabilidade...'); ?>
+                </p>
                 <a href="login.html" class="btn btn-light btn-lg px-4 fw-bold text-primary shadow">Aceder ao Sistema</a>
             </div>
         </div>
     </div>
 </header>
 
-<!-- SOBRE -->
 <section class="section-padding" id="sobre">
     <div class="container">
         <div class="row justify-content-center text-center">
             <div class="col-md-8">
-                <h2 class="fw-bold mb-3">Sobre o Sistema</h2>
+                <h2 class="fw-bold mb-3">
+                    <?php echo exibir_texto('sobre_titulo', 'Sobre o Sistema'); ?>
+                </h2>
                 <div class="h-line bg-primary mx-auto mb-4" style="width: 60px; height: 3px;"></div>
                 <p class="text-secondary fs-5">
-                    O MedTrack é uma solução web moderna desenvolvida para apoiar instituições de saúde na gestão rigorosa do ciclo de vida de dispositivos médicos, otimizando a localização, documentação e assistência técnica.
+                    <?php echo exibir_texto('sobre_descricao', 'O MedTrack é uma solução web moderna desenvolvida para apoiar...'); ?>
                 </p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- FUNCIONALIDADES -->
 <section class="section-padding bg-light-blue" id="funcionalidades">
     <div class="container">
         <h2 class="text-center fw-bold mb-2">Funcionalidades</h2>
         <div class="h-line bg-primary mx-auto mb-5" style="width: 60px; height: 3px;"></div>
 
-        <!-- Corrigido o espaçamento das colunas usando as classes g-4 do Bootstrap -->
         <div class="row g-4">
-
             <div class="col-md-4">
                 <div class="card p-4 shadow-sm h-100 feature-card">
                     <div class="text-primary mb-3"><i class="fas fa-microscope fa-2x"></i></div>
@@ -84,7 +82,6 @@
                     <p class="text-secondary mb-0">Registo, edição e consulta detalhada de dispositivos médicos.</p>
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="card p-4 shadow-sm h-100 feature-card">
                     <div class="text-primary mb-3"><i class="fas fa-map-marker-alt fa-2x"></i></div>
@@ -92,7 +89,6 @@
                     <p class="text-secondary mb-0">Organização em tempo real por serviço, sala e edifício.</p>
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="card p-4 shadow-sm h-100 feature-card">
                     <div class="text-primary mb-3"><i class="fas fa-truck fa-2x"></i></div>
@@ -100,7 +96,6 @@
                     <p class="text-secondary mb-0">Gestão de fabricantes e histórico de assistência técnica externa.</p>
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="card p-4 shadow-sm h-100 feature-card">
                     <div class="text-primary mb-3"><i class="fas fa-file-medical fa-2x"></i></div>
@@ -108,7 +103,6 @@
                     <p class="text-secondary mb-0">Armazenamento seguro de manuais, contratos e certificados de calibração.</p>
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="card p-4 shadow-sm h-100 feature-card">
                     <div class="text-primary mb-3"><i class="fas fa-search fa-2x"></i></div>
@@ -116,7 +110,6 @@
                     <p class="text-secondary mb-0">Filtros inteligentes para encontrar qualquer equipamento em segundos.</p>
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="card p-4 shadow-sm h-100 feature-card">
                     <div class="text-primary mb-3"><i class="fas fa-chart-pie fa-2x"></i></div>
@@ -124,19 +117,16 @@
                     <p class="text-secondary mb-0">Indicadores globais e métricas do estado do parque hospitalar.</p>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
 
-<!-- EQUIPAMENTOS EXEMPLO -->
 <section class="section-padding" id="equipamentos">
     <div class="container">
         <h2 class="text-center fw-bold mb-2">Equipamentos Suportados</h2>
         <div class="h-line bg-primary mx-auto mb-5"></div>
 
         <div id="carouselEquipamentos" class="carousel slide shadow mx-auto rounded overflow-hidden" data-bs-ride="carousel" style="max-width: 750px;">
-            
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#carouselEquipamentos" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                 <button type="button" data-bs-target="#carouselEquipamentos" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -145,35 +135,30 @@
             </div>
 
             <div class="carousel-inner">
-                
                 <div class="carousel-item active" data-bs-interval="4000">
                     <img src="../assets/img/monitor_sinalvital.jpg" class="d-block w-100 carousel-img-ajustada" alt="Monitor de Sinais Vitais">
                     <div class="carousel-caption bg-dark bg-opacity-50 rounded p-2 mb-3 mx-4">
                         <h5 class="fw-bold mb-0 text-white">Monitor de Sinais Vitais</h5>
                     </div>
                 </div>
-
                 <div class="carousel-item" data-bs-interval="4000">
                     <img src="../assets/img/vent_pulmonar.jpeg" class="d-block w-100 carousel-img-ajustada" alt="Ventilador Pulmonar">
                     <div class="carousel-caption bg-dark bg-opacity-50 rounded p-2 mb-3 mx-4">
                         <h5 class="fw-bold mb-0 text-white">Ventilador Pulmonar</h5>
                     </div>
                 </div>
-
                 <div class="carousel-item" data-bs-interval="4000">
                     <img src="../assets/img/bomb_infus.jpg" class="d-block w-100 carousel-img-ajustada" alt="Bomba de Infusão">
                     <div class="carousel-caption bg-dark bg-opacity-50 rounded p-2 mb-3 mx-4">
                         <h5 class="fw-bold mb-0 text-white">Bomba de Infusão</h5>
                     </div>
                 </div>
-
                 <div class="carousel-item" data-bs-interval="4000">
                     <img src="../assets/img/desfibrilhador.png" class="d-block w-100 carousel-img-ajustada" alt="Desfibrilhador">
                     <div class="carousel-caption bg-dark bg-opacity-50 rounded p-2 mb-3 mx-4">
                         <h5 class="fw-bold mb-0 text-white">Desfibrilhador</h5>
                     </div>
                 </div>
-
             </div>
 
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselEquipamentos" data-bs-slide="prev">
@@ -184,12 +169,10 @@
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Seguinte</span>
             </button>
-
         </div>
     </div>
 </section>
 
-<!-- CONTACTO -->
 <section class="section-padding bg-light-blue" id="contacto">
     <div class="container">
         <h2 class="text-center fw-bold mb-2">Contacto</h2>
@@ -219,14 +202,12 @@
     </div>
 </section>
 
-<!-- FOOTER -->
 <footer class="text-center">
     <div class="container">
         <p class="mb-0">© 2026 MedTrack - Projeto SIBDAS. Todos os direitos reservados.</p>
     </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.1240896.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

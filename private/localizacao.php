@@ -47,7 +47,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
 </head>
 <body>
 
-   <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="dashboard.php">
             <img src="../assets/img/hosp_icon_branco.png" alt="Logo" width="150" height="100" class="d-inline-block align-text-top me-2">
@@ -100,6 +100,10 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                         <li><a class="dropdown-menu-item dropdown-item" href="documentacao.php"><i class="fa-solid fa-folder-tree me-2"></i> Registo de Documentação</a></li>
                         <li><a class="dropdown-menu-item dropdown-item" href="listar/lista_documentos.php"><i class="fa-solid fa-folder-plus me-2"></i> Listagem de Documentos</a></li>
                     </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="editar_texto_frontend.php"><i class="fa-solid fa-edit me-1"></i> Editar Textos no Frontend</a>
                 </li>
                 
                 <li class="nav-item">

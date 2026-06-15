@@ -107,6 +107,10 @@ $result = mysqli_query($conn, $sql);
                         <li><a class="dropdown-menu-item dropdown-item" href="lista_documentos.php"><i class="fa-solid fa-folder-plus me-2"></i> Listagem de Documentos</a></li>
                     </ul>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../editar_texto_frontend.php"><i class="fa-solid fa-edit me-1"></i> Editar Textos no Frontend</a>
+                </li>
                 
                 <li class="nav-item">
                     <a class="nav-link" href="../pesq_avan.php"><i class="fa-solid fa-magnifying-glass me-1"></i> Pesquisa</a>

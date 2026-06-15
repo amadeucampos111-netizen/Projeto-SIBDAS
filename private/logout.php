@@ -8,5 +8,5 @@ session_unset();
 session_destroy();
 
 // Redireciona de volta para o login com uma mensagem de sucesso
-header("Location: ../public/index.html?status=desconectado");
+header("Location: ../public/index.php?status=desconectado");
 exit; ?>

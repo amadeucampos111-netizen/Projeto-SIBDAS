@@ -32,7 +32,7 @@ $conn = mysqli_connect("vsgate-s1.dei.isep.ipp.pt", "1240896", "campos_896", "db
     
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="dashboard.php">
             <img src="../assets/img/hosp_icon_branco.png" alt="Logo" width="150" height="100" class="d-inline-block align-text-top me-2">
@@ -42,7 +42,7 @@ $conn = mysqli_connect("vsgate-s1.dei.isep.ipp.pt", "1240896", "campos_896", "db
             <span class="navbar-toggler-icon"></span>
         </button>
         
-        <div class="collapse navbar-collapse " id="navbarNav">
+        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
                 
                 <li class="nav-item">
@@ -85,6 +85,10 @@ $conn = mysqli_connect("vsgate-s1.dei.isep.ipp.pt", "1240896", "campos_896", "db
                         <li><a class="dropdown-menu-item dropdown-item" href="documentacao.php"><i class="fa-solid fa-folder-tree me-2"></i> Registo de Documentação</a></li>
                         <li><a class="dropdown-menu-item dropdown-item" href="listar/lista_documentos.php"><i class="fa-solid fa-folder-plus me-2"></i> Listagem de Documentos</a></li>
                     </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="editar_texto_frontend.php"><i class="fa-solid fa-edit me-1"></i> Editar Textos no Frontend</a>
                 </li>
                 
                 <li class="nav-item">

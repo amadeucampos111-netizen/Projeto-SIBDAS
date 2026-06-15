@@ -88,6 +88,13 @@ CREATE TABLE `utilizadores` (
   `password_hash` varchar(255) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS `textos_interface` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `chave` VARCHAR(100) UNIQUE NOT NULL,
+  `conteudo` TEXT NOT NULL,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 -- ============================================================================
 -- 2. ÍNDICES E RESTRIÇÕES DE INTEGRIDADE (CHAVES ESTRANGEIRAS)
 -- ============================================================================
