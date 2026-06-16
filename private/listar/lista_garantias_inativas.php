@@ -8,6 +8,12 @@ if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
     exit;
 }
 
+if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
+    $_SESSION['mensagem_erro'] = "Acesso negado. Esta área está reservada exclusivamente a Administradores.";
+    header("Location: ../dashboard.php");
+    exit;
+}
+
 $port = 10464;
 $conn = mysqli_connect("vsgate-s1.dei.isep.ipp.pt", "1240896", "campos_896", "db1240896", $port);
 

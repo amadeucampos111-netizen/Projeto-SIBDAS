@@ -8,6 +8,12 @@ if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
     exit;
 }
 
+if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
+    $_SESSION['mensagem_erro'] = "Acesso negado. Esta área está reservada exclusivamente a Administradores.";
+    header("Location: ../dashboard.php");
+    exit;
+}
+
 // 1. Configurações da Base de Dados
 $host = "vsgate-s1.dei.isep.ipp.pt";
 $user = "1240896";

@@ -44,8 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($input_user) && !empty($input_pass)) {
         
-        // Procurar o utilizador na base de dados usando Prepared Statements
-        $stmt = $pdo->prepare("SELECT id, username, password_hash FROM utilizadores WHERE username = :username LIMIT 1");
+        // ALTERADO: Procurar o utilizador fazendo LEFT JOIN para verificar se ele consta na tabela de administradores
+        $sql = "SELECT u.id, u.username, u.password_hash, 
+                       (a.utilizador_id IS NOT NULL) AS eh_administrador
+                FROM utilizadores u
+                LEFT JOIN administradores a ON u.id = a.utilizador_id
+                WHERE u.username = :username 
+                LIMIT 1";
+
+        $stmt = $pdo->prepare($sql);
         $stmt->execute(['username' => $input_user]);
         $utilizador = $stmt->fetch();
 
@@ -61,6 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario_id']    = $utilizador['id'];
             $_SESSION['usuario_nome']  = $utilizador['username'];
             $_SESSION['logado']        = true;
+            
+            // ADICIONADO: Guardar o privilégio de administrador na sessão (true/false)
+            $_SESSION['is_admin']      = (bool)$utilizador['eh_administrador'];
+            
             $_SESSION['ultimo_acesso'] = time(); // Grava a hora atual para controlo de timeout
 
             // Redirecionar o utilizador para a página restrita do sistema
@@ -69,13 +80,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } else {
             // Mensagem genérica para evitar dar pistas (Segurança por Obscuridade)
-            // Não deves dizer se o erro foi no utilizador ou na senha especificamente.
             $erro = "Utilizador ou palavra-passe incorretos.";
             header("Location: ../public/login.html?erro=" . urlencode($erro));
+            exit;
         }
     } else {
         $erro = "Por favor, preencha todos os campos obrigatórios.";
         header("Location: ../public/login.html?erro=" . urlencode($erro));
+        exit;
     }
 }
 ?>

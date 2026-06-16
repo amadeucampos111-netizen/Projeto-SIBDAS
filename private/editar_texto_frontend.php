@@ -13,6 +13,20 @@ if (!$conn) {
     die("Falha na ligação: " . mysqli_connect_error());
 }
 
+if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
+    session_unset();
+    session_destroy();
+    header("Location: ../../public/login.php?erro=restrito");
+    exit;
+}
+
+// 2. Bloqueio Administrativo: Se não for administrador, é expulso para a dashboard com um aviso
+if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
+    $_SESSION['mensagem_erro'] = "Acesso negado. Esta área está reservada exclusivamente a Administradores.";
+    header("Location: ../dashboard.php");
+    exit;
+}
+
 $mensagem = "";
 
 // 1. PROCESSAR O FORMULÁRIO QUANDO FOR SUBMETIDO (MÉTODO POST)

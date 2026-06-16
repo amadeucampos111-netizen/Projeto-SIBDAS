@@ -88,6 +88,12 @@ CREATE TABLE `utilizadores` (
   `password_hash` varchar(255) NOT NULL
 );
 
+CREATE TABLE `administradores` (
+  `utilizador_id` INT PRIMARY KEY,
+  `criado_em` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`utilizador_id`) REFERENCES `utilizadores`(`id`) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS `textos_interface` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `chave` VARCHAR(100) UNIQUE NOT NULL,
@@ -128,3 +134,11 @@ VALUES (
   'administrador', 
   '$2y$10$WRvqT5HHyT4JgXQx.E94Q.ZMpfZDAIi8mC6.1fKUjCjBmdDCq6WHK' 
 ); -- Hash BCRYPT gerada para: PasseSegura123!
+
+INSERT INTO utilizadores (username, password_hash) 
+VALUES (
+  'utilizador', 
+  '$2y$10$C.yK/xi9ZXITaxSWdbG.8eceGu679U7fMv7mQg2PzR13POGsUZRGy'
+); -- Hash BCRYPT gerada para: 1234
+
+INSERT INTO administradores (utilizador_id) VALUES (1);
