@@ -20,7 +20,7 @@ if (!$conn) {
     die("Falha na ligação: " . mysqli_connect_error());
 }
 
-// ALTERADO: Adicionado filtro "WHERE d.estado = 'Ativo'" para ocultar os inativos
+// SQL com filtro de Ativos e recolha de metadados
 $sql = "SELECT d.*, e.designacao AS nome_equipamento, e.numero_serie 
         FROM documentacao d
         INNER JOIN equipamentos e ON d.equipamento_id = e.id
@@ -100,6 +100,7 @@ $result = mysqli_query($conn, $sql);
         </div>
     </div>
 </nav>
+
 <div class="container mt-5 mb-5" id="listagem">
 
     <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
@@ -130,10 +131,10 @@ $result = mysqli_query($conn, $sql);
                     <tr>
                         <th>Equipamento Destino</th>
                         <th>Documento / Categoria</th>
-                        <th>Localização no PC / Rede</th>
+                        <th>Anexo Digital</th>
                         <th>Data Emissão</th>
                         <th>Validade</th>
-                        <th class="text-center" style="width: 100px;">Ações</th>
+                        <th class="text-center" style="width: 140px;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -148,6 +149,9 @@ $result = mysqli_query($conn, $sql);
                                     $classe_validade = "text-danger fw-bold";
                                 }
                             }
+                            
+                            // Monta o caminho correto para o link de visualização recuando um diretório se necessário
+                            $caminho_completo_anexo = "../../" . $row['nome_ficheiro_caminho'];
                     ?>
                             <tr>
                                 <td>
@@ -164,10 +168,9 @@ $result = mysqli_query($conn, $sql);
                                 </td>
                                 
                                 <td>
-                                    <span class="caminho-local text-secondary" title="<?php echo htmlspecialchars($row['nome_ficheiro_caminho'], ENT_QUOTES, 'UTF-8'); ?>">
-                                        <i class="fa-solid fa-computer me-1"></i>
-                                        <?php echo htmlspecialchars($row['nome_ficheiro_caminho'], ENT_QUOTES, 'UTF-8'); ?>
-                                    </span>
+                                    <a href="<?php echo htmlspecialchars($caminho_completo_anexo, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" class="text-decoration-none text-primary small fw-semibold">
+                                        <i class="fa-solid fa-file-pdf text-danger me-1"></i> Visualizar Ficheiro
+                                    </a>
                                 </td>
                                 
                                 <td>
@@ -191,6 +194,10 @@ $result = mysqli_query($conn, $sql);
                                 
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm">
+                                        <a href="<?php echo htmlspecialchars($caminho_completo_anexo, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" class="btn btn-outline-success" title="Abrir Documento">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+
                                         <a href="../editar/editar_documentacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Documentação">
                                             <i class="fa-solid fa-pen"></i>
                                         </a>

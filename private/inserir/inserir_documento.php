@@ -1,104 +1,101 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
+    header("Location: ../../public/login.html?erro=restrito");
+    exit;
+}
 
-    // Configurações da Base de Dados
-    $host = "vsgate-s1.dei.isep.ipp.pt";
+$host = "vsgate-s1.dei.isep.ipp.pt";
     $user = "1240896";
     $pass = "campos_896";
     $dbname = "db1240896";
     $port = 10464;
 
-    $conn = mysqli_connect($host, $user, $pass, $dbname, $port);
-    if (!$conn) { die("Falha na ligação: " . mysqli_connect_error()); }
+$conn = mysqli_connect($host, $user, $pass, $dbname, $port);
 
-    // 1. Recolha e Higienização de todos os campos (agora todos via $_POST)
-    $equipamento_id         = intval($_POST['equipamento_id']);
-    $tipo_documento         = trim($_POST['tipo_documento']);
-    $nome_documento         = trim($_POST['nome_documento']);
-    $nome_ficheiro_caminho  = trim($_POST['nome_ficheiro_caminho']); // Captura a string do caminho do PC
-    $data_documento         = trim($_POST['data_documento']);
-    $data_validade          = !empty($_POST['data_validade']) ? trim($_POST['data_validade']) : null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $tipo_documento  = $_POST['tipo_documento'] ?? '';
+    $nome_documento  = trim($_POST['nome_documento'] ?? '');
+    $data_documento  = $_POST['data_documento'] ?? '';
+    $data_validade   = !empty($_POST['data_validade']) ? $_POST['data_validade'] : null;
+    $equipamento_id  = intval($_POST['equipamento_id'] ?? 0);
 
-    // Array de Controlo para o ENUM da tabela
-    $enums_validos = [
-        'Manual de utilizador', 'Manual de serviço', 'Certificado de calibração', 
-        'Contrato de manutenção', 'Fatura ou guia de aquisição', 
-        'Declaração de conformidade', 'Relatório técnico'
-    ];
-
-    // 2. Validações de consistência de dados
-    if ($equipamento_id <= 0 || empty($nome_documento) || empty($nome_ficheiro_caminho) || empty($data_documento) || !in_array($tipo_documento, $enums_validos)) {
-        $_SESSION['mensagem_erro'] = "Erro: Todos os campos obrigatórios (incluindo o caminho do ficheiro) devem ser preenchidos.";
+    // Validação elementar de campos textuais
+    if (empty($tipo_documento) || empty($nome_documento) || empty($data_documento) || $equipamento_id <= 0) {
+        $_SESSION['mensagem_erro'] = "Por favor, preencha todos os campos obrigatórios.";
         header("Location: ../documentacao.php");
         exit;
     }
 
-    // ==========================================
-    // NOVA SECÇÃO: VALIDAÇÃO DAS DATAS
-    // ==========================================
-    $d_doc = null;
-    $d_val = null;
-
-    // 1. Validar data_documento (Obrigatória)
-    if (!empty($data_documento)) {
-        $d_doc = DateTime::createFromFormat('Y-m-d', $data_documento);
-        if (!$d_doc || $d_doc->format('Y-m-d') !== $data_documento) {
-            $erros[] = "A data do documento introduzida é inválida.";
-        } elseif ($d_doc > new DateTime()) {
-            $erros[] = "A data do documento não pode ser uma data futura.";
-        }
-    }
-
-    // 2. Validar data_validade (Opcional - só valida se o utilizador preencheu)
-    if ($data_validade !== null) {
-        $d_val = DateTime::createFromFormat('Y-m-d', $data_validade);
-        if (!$d_val || $d_val->format('Y-m-d') !== $data_validade) {
-            $erros[] = "A data de validade introduzida é inválida.";
-        }
-    }
-
-    // 3. Validar a relação entre ambas (se ambas forem objetos DateTime válidos)
-    if ($d_doc && $d_val) {
-        if ($d_val < $d_doc) {
-            $erros[] = "A data de validade não pode ser anterior à data do documento.";
-        }
-    }
-    // ==========================================
-
-    // 3. Query SQL direcionada à estrutura exata da vossa tabela
-    $sql = "INSERT INTO documentacao (tipo_documento, nome_documento, nome_ficheiro_caminho, data_documento, data_validade, equipamento_id) 
-            VALUES (?, ?, ?, ?, ?, ?)";
-            
-    $stmt = mysqli_prepare($conn, $sql);
-    
-    if ($stmt) {
-        // "sssssi" -> tipo, nome_doc, caminho_string, data_doc, data_val, eq_id
-        mysqli_stmt_bind_param($stmt, "sssssi", 
-            $tipo_documento, 
-            $nome_documento, 
-            $nome_ficheiro_caminho, 
-            $data_documento, 
-            $data_validade, 
-            $equipamento_id
-        );
+    // --- PROCESSAMENTO DO UPLOAD DO FICHEIRO ---
+    if (isset($_FILES['documento_media']) && $_FILES['documento_media']['error'] === UPLOAD_ERR_OK) {
         
-        if (mysqli_stmt_execute($stmt)) {
-            $_SESSION['mensagem_sucesso'] = "O caminho para o documento '" . htmlspecialchars($nome_documento) . "' foi indexado com sucesso!";
+        $fileTmpPath = $_FILES['documento_media']['tmp_name'];
+        $fileName    = $_FILES['documento_media']['name'];
+        $fileSize    = $_FILES['documento_media']['size'];
+        
+        // Extrair e validar a extensão do ficheiro
+        $fileNameCmps = explode(".", $fileName);
+        $fileExtension = strtolower(end($fileNameCmps));
+        
+        $extensoes_permitidas = ['pdf', 'jpg', 'jpeg', 'png'];
+        
+        if (in_array($fileExtension, $extensoes_permitidas)) {
+            // Limitar o upload a 5MB por segurança hospitalar
+            if ($fileSize <= 5242880) {
+                
+                // Criar o diretório de uploads caso ele não exista no teu servidor
+                $uploadFileDir = '../../uploads/documentos/';
+                if (!is_dir($uploadFileDir)) {
+                    mkdir($uploadFileDir, 0755, true);
+                }
+
+                // Gerar uma Hash única baseada no tempo para o nome do ficheiro (previne duplicados)
+                $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+                $dest_path = $uploadFileDir . $newFileName;
+
+                // Move o ficheiro da pasta temporária para o destino final
+                if (move_uploaded_file($fileTmpPath, $dest_path)) {
+                    
+                    // Guardamos o caminho relativo ideal para ser lido no frontend em qualquer listagem
+                    $caminho_bd = 'uploads/documentos/' . $newFileName;
+
+                    // Inserir os dados na tabela de documentação
+                    $sql = "INSERT INTO documentacao (tipo_documento, nome_documento, nome_ficheiro_caminho, data_documento, data_validade, equipamento_id, estado) 
+                            VALUES (?, ?, ?, ?, ?, ?, 'Ativo')";
+                    $stmt = $conn->prepare($sql);
+                    $sucesso = $stmt->execute([
+                        $tipo_documento,
+                        $nome_documento,
+                        $caminho_bd,
+                        $data_documento,
+                        $data_validade,
+                        $equipamento_id
+                    ]);
+
+                    if ($sucesso) {
+                        $_SESSION['mensagem_sucesso'] = "Documento carregado e registado com sucesso!";
+                    } else {
+                        $_SESSION['mensagem_erro'] = "Erro ao guardar as informações do registo na Base de Dados.";
+                    }
+
+                } else {
+                    $_SESSION['mensagem_erro'] = "Erro de permissão ao mover o ficheiro para o diretório de destino.";
+                }
+            } else {
+                $_SESSION['mensagem_erro'] = "O ficheiro excede o limite máximo permitido de 5MB.";
+            }
         } else {
-            $_SESSION['mensagem_erro'] = "Erro técnico ao gravar na Base de Dados: " . mysqli_stmt_error($stmt);
+            $_SESSION['mensagem_erro'] = "Extensão inválida. Apenas são permitidos ficheiros PDF, JPG e PNG.";
         }
-        mysqli_stmt_close($stmt);
     } else {
-        $_SESSION['mensagem_erro'] = "Erro interno ao preparar os parâmetros da Base de Dados.";
+        $_SESSION['mensagem_erro'] = "Erro ao efetuar o upload do ficheiro ou nenhum ficheiro selecionado.";
     }
 
-    mysqli_close($conn);
-    header("Location: ../documentacao.php");
-    exit;
-
-} else {
     header("Location: ../documentacao.php");
     exit;
 }
+?>

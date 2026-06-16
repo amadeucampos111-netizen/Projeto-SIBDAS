@@ -110,7 +110,6 @@ mysqli_close($conn);
         <div class="col-lg-9">
             
             <div class="card shadow-sm border-0 rounded-3 p-4">
-                <!-- Cabeçalho da Ficha -->
                 <div class="border-bottom pb-3 mb-4 d-flex justify-content-between align-items-center">
                     <div>
                         <span class="badge bg-success mb-1"><?php echo htmlspecialchars($eq['categoria']); ?></span>
@@ -120,10 +119,9 @@ mysqli_close($conn);
                         </h3>
                         <small class="text-muted">Código de Inventário: <strong><?php echo htmlspecialchars($eq['codigo_interno']); ?></strong></small>
                     </div>
-                    <a href="pesq_avan.php" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left me-1"></i> Voltar à Pesquisa Avançada</a>
+                    <a href="pesq_avan.php" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left me-1"></i> Voltar à Pesquisa</a>
                 </div>
 
-                <!-- Grelha de Informações -->
                 <div class="row g-3">
                     <div class="col-md-4">
                         <div class="label-detalhe">Marca</div>
@@ -176,7 +174,6 @@ mysqli_close($conn);
                         <div class="valor-detalhe fw-bold text-success"><?php echo htmlspecialchars($eq['estado_atual']); ?></div>
                     </div>
 
-
                     <div class="col-12 mt-4">
                         <div class="label-detalhe">Observações Técnicas e Histórico</div>
                         <div class="p-3 bg-light rounded border" style="min-height: 80px;">
@@ -187,11 +184,9 @@ mysqli_close($conn);
                     <div class="col-12 mt-4">
                         <div class="border-top pt-3">
                             <div class="label-detalhe mb-2"><i class="fa-solid fa-truck-medical text-info me-1"></i> Entidades Comerciais & Fornecedores Associados</div>
-                            
                             <div class="row g-2">
                                 <?php if (mysqli_num_rows($result_forn) > 0): ?>
                                     <?php while ($forn = mysqli_fetch_assoc($result_forn)): 
-                                        // Definir cores para os badges com base no ENUM
                                         $badge_color = "bg-secondary";
                                         if ($forn['tipo_fornecedor'] === 'Fabricante') $badge_color = "bg-dark";
                                         if ($forn['tipo_fornecedor'] === 'Distribuidor ou fornecedor comercial') $badge_color = "bg-primary";
@@ -233,7 +228,8 @@ mysqli_close($conn);
                                             </div>
                                         </div>
                                     <?php endwhile; ?>
-                                <?php else: ?>
+                                <?php endif; ?>    
+                                <?php if (!mysqli_num_rows($result_forn)): ?>
                                     <div class="col-12">
                                         <div class="p-3 bg-light rounded text-center text-muted border border-dashed">
                                             <i class="fa-solid fa-handshake-slash me-1"></i> Nenhuma entidade comercial ou de assistência técnica foi vinculada a este equipamento.
@@ -247,13 +243,10 @@ mysqli_close($conn);
                     <div class="col-12 mt-4">
                         <div class="border-top pt-3">
                             <div class="label-detalhe mb-2"><i class="fa-solid fa-file-shield text-primary me-1"></i> Estado da Garantia e Contrato de Manutenção</div>
-                            
                             <?php if ($garantia): 
                                 $hoje = date('Y-m-d');
                                 $tem_garantia = !empty($garantia['data_fim_garantia']);
                                 $expirada = ($tem_garantia && $garantia['data_fim_garantia'] < $hoje);
-                                
-                                // Define a cor do painel esquerdo com base no estado da garantia
                                 $cor_borda_garantia = $expirada ? "border-danger" : "border-primary";
                             ?>
                                 <div class="card-cobertura p-3 border-start border-3 <?php echo $cor_borda_garantia; ?> shadow-sm">
@@ -261,22 +254,17 @@ mysqli_close($conn);
                                         <div class="col-md-6 border-end">
                                             <span class="fw-bold text-secondary small d-block mb-1"><i class="fa-solid fa-shield-halved me-1"></i> Garantia do Fabricante:</span>
                                             <?php if ($tem_garantia): ?>
-                                                <div class="fs-5 fw-bold text-dark">
-                                                    Até <?php echo date('d/m/Y', strtotime($garantia['data_fim_garantia'])); ?>
-                                                </div>
+                                                <div class="fs-5 fw-bold text-dark">Até <?php echo date('d/m/Y', strtotime($garantia['data_fim_garantia'])); ?></div>
                                                 <small class="text-muted d-block">Início: <?php echo date('d/m/Y', strtotime($garantia['data_inicio_garantia'])); ?></small>
                                                 <?php echo $expirada ? "<span class='badge bg-danger mt-1'>Garantia Expirada</span>" : "<span class='badge bg-success mt-1'>Garantia Válida / Ativa</span>"; ?>
                                             <?php else: ?>
                                                 <span class="text-muted"><em>Não especificada ou sem garantia base.</em></span>
                                             <?php endif; ?>
                                         </div>
-
                                         <div class="col-md-6 ps-md-4">
                                             <span class="fw-bold text-secondary small d-block mb-1"><i class="fa-solid fa-screwdriver-wrench me-1"></i> Contrato de Assistência Técnica:</span>
                                             <?php if ($garantia['tem_contrato_manutencao']): ?>
-                                                <div class="fs-6 fw-bold text-primary mb-1">
-                                                    Modalidade: <?php echo htmlspecialchars($garantia['tipo_contrato'] ?: 'Não definido'); ?>
-                                                </div>
+                                                <div class="fs-6 fw-bold text-primary mb-1">Modalidade: <?php echo htmlspecialchars($garantia['tipo_contrato'] ?: 'Não definido'); ?></div>
                                                 <div class="small text-muted">
                                                     <strong>Periodicidade:</strong> <?php echo htmlspecialchars($garantia['periodicidade'] ?: 'Conforme pedido'); ?><br>
                                                     <strong>Responsável:</strong> <?php echo htmlspecialchars($garantia['entidade_responsavel_nome'] ?: 'Gestão Interna (Eng. Clínica)'); ?>
@@ -286,13 +274,10 @@ mysqli_close($conn);
                                                 <small class="d-block text-muted mt-1">Intervenções preventivas/corretivas dependem de adjudicação isolada.</small>
                                             <?php endif; ?>
                                         </div>
-
                                         <?php if (!empty($garantia['observacoes'])): ?>
                                             <div class="col-12 border-top pt-2 mt-2">
                                                 <small class="fw-bold text-muted d-block">Cláusulas ou Observações do Contrato:</small>
-                                                <p class="mb-0 text-secondary bg-light p-2 rounded border style-obs" style="font-size: 0.85rem;">
-                                                    <?php echo nl2br(htmlspecialchars($garantia['observacoes'])); ?>
-                                                </p>
+                                                <p class="mb-0 text-secondary bg-light p-2 rounded border style-obs" style="font-size: 0.85rem;"><?php echo nl2br(htmlspecialchars($garantia['observacoes'])); ?></p>
                                             </div>
                                         <?php endif; ?>
                                     </div>
@@ -308,7 +293,6 @@ mysqli_close($conn);
                     <div class="col-12 mt-4">
                         <div class="border-top pt-3">
                             <div class="label-detalhe mb-2"><i class="fa-solid fa-puzzle-piece text-warning me-1"></i> Componentes, Módulos e Acessórios Integrados</div>
-                            
                             <div class="table-responsive bg-white rounded border">
                                 <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.9rem;">
                                     <thead class="table-light">
@@ -324,25 +308,14 @@ mysqli_close($conn);
                                             <?php while ($comp = mysqli_fetch_assoc($result_comp)): ?>
                                                 <tr>
                                                     <td><code class="text-dark fw-bold"><?php echo htmlspecialchars($comp['codigo_componente']); ?></code></td>
-                                                    <td class="fw-semibold text-dark">
-                                                        <i class="fa-solid fa-circle-dot text-warning me-1" style="font-size: 0.7rem;"></i>
-                                                        <?php echo htmlspecialchars($comp['designacao_componente']); ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php echo !empty($comp['numero_serie_componente']) ? htmlspecialchars($comp['numero_serie_componente']) : '<span class="text-muted"><em>N/A</em></span>'; ?>
-                                                    </td>
-                                                    <td>
-                                                        <small class="text-muted">
-                                                            <?php echo !empty($comp['observacoes']) ? htmlspecialchars($comp['observacoes']) : '—'; ?>
-                                                        </small>
-                                                    </td>
+                                                    <td class="fw-semibold text-dark"><i class="fa-solid fa-circle-dot text-warning me-1" style="font-size: 0.7rem;"></i><?php echo htmlspecialchars($comp['designacao_componente']); ?></td>
+                                                    <td><?php echo !empty($comp['numero_serie_componente']) ? htmlspecialchars($comp['numero_serie_componente']) : '<span class="text-muted"><em>N/A</em></span>'; ?></td>
+                                                    <td><small class="text-muted"><?php echo !empty($comp['observacoes']) ? htmlspecialchars($comp['observacoes']) : '—'; ?></small></td>
                                                 </tr>
                                             <?php endwhile; ?>
                                         <?php else: ?>
                                             <tr>
-                                                <td colspan="4" class="text-center text-muted py-3">
-                                                    <i class="fa-solid fa-cubes-solid me-1"></i> Não existem subcomponentes ou acessórios modulares mapeados para este ativo.
-                                                </td>
+                                                <td colspan="4" class="text-center text-muted py-3"><i class="fa-solid fa-cubes-solid me-1"></i> Não existem subcomponentes ou acessórios modulares mapeados para este ativo.</td>
                                             </tr>
                                         <?php endif; ?>
                                     </tbody>
@@ -354,17 +327,16 @@ mysqli_close($conn);
                     <div class="col-12 mt-4">
                         <div class="border-top pt-3">
                             <div class="label-detalhe mb-2"><i class="fa-solid fa-folder-open text-success me-1"></i> Documentação Técnica Associada</div>
-                            
                             <div class="table-responsive bg-white rounded border">
                                 <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.9rem;">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Tipo de Documento</th>
                                             <th>Nome Descritivo</th>
-                                            <th>Caminho no PC / Rede Interna</th>
+                                            <th>Caminho do Ficheiro</th>
                                             <th>Data Doc.</th>
                                             <th>Validade</th>
-                                            <th class="text-center" style="width: 50px;">Ação</th>
+                                            <th class="text-center" style="width: 90px;">Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -404,10 +376,20 @@ mysqli_close($conn);
                                                         </small>
                                                     </td>
                                                     <td class="text-center">
-                                                        <button type="button" class="btn btn-link btn-sm text-secondary p-0" title="Copiar Caminho"
-                                                                onclick="navigator.clipboard.writeText('<?php echo addslashes($doc['nome_ficheiro_caminho']); ?>'); alert('Caminho copiado para a área de transferência!');">
-                                                            <i class="fa-solid fa-copy fs-6"></i>
-                                                        </button>
+                                                        <div class="d-flex justify-content-center gap-2">
+                                                            <a href="../<?php echo htmlspecialchars($doc['nome_ficheiro_caminho']); ?>" 
+                                                               target="_blank" 
+                                                               class="btn btn-sm btn-outline-success p-1" 
+                                                               title="Abrir / Descarregar Documento"
+                                                               style="line-height: 1; padding: 3px 6px !important;">
+                                                                <i class="fa-solid fa-download"></i>
+                                                            </a>
+                                                            
+                                                            <button type="button" class="btn btn-link btn-sm text-secondary p-0" title="Copiar Caminho"
+                                                                    onclick="navigator.clipboard.writeText('<?php echo addslashes($doc['nome_ficheiro_caminho']); ?>'); alert('Caminho copiado para a área de transferência!');">
+                                                                <i class="fa-solid fa-copy fs-6"></i>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             <?php endwhile; ?>
@@ -422,8 +404,9 @@ mysqli_close($conn);
                                 </table>
                             </div>
                         </div>
-                </div>
+                    </div>
 
+                </div>
             </div>
             
         </div>

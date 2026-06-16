@@ -19,20 +19,17 @@ $port = 10464;
     $pass = "campos_896";
     $dbname = "db1240896";
 
-    $conn = mysqli_connect($host, $user, $pass, $dbname, $port);
-
-if (!$conn) {
-    die("Falha na ligação: " . mysqli_connect_error());
+ try {
+    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $user, $pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+    ]);
+} catch (\PDOException $e) {
+    die("Erro temporário no servidor.");
 }
 
-// 2. Query que junta a documentação ao respetivo equipamento
-$sql = "SELECT d.*, e.designacao AS nome_equipamento, e.numero_serie 
-        FROM documentacao d
-        INNER JOIN equipamentos e ON d.equipamento_id = e.id
-        ORDER BY e.designacao ASC, d.tipo_documento ASC";
-
-$result = mysqli_query($conn, $sql);
-
+// Procura os equipamentos ativos para popular o select de vínculo
+$equips = $pdo->query("SELECT id, designacao, codigo_interno FROM equipamentos ORDER BY designacao ASC")->fetchAll();
 
 ?>
 <!DOCTYPE html>
@@ -132,95 +129,80 @@ $result = mysqli_query($conn, $sql);
 </nav>
 
 <div class="container mt-5 mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="fw-bold text-dark mb-1">Gestão de Documentação Técnica</h2>
-                <p class="text-muted mb-0">Registos, acompanhamentos e controlo da documentação técnica dos equipamentos.</p>
-            </div>
-            <!-- Botão de Atalho para Scroll -->
-            <a href="listar/lista_documentos.php" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-list me-1"></i> Ir para Lista</a>
+    
+    <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i> <?php echo $_SESSION['mensagem_sucesso']; unset($_SESSION['mensagem_sucesso']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    <div class="row justify-content-center">
-        <div class="container mt-5 mb-5 card p-4 mb-4 shadow-sm border-0 rounded-3">
+    <?php endif; ?>
 
-            <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
-                <div class="alert alert-success"><?php echo $_SESSION['mensagem_sucesso']; unset($_SESSION['mensagem_sucesso']); ?></div>
-            <?php endif; ?>
-            <?php if (isset($_SESSION['mensagem_erro'])): ?>
-                <div class="alert alert-danger"><?php echo $_SESSION['mensagem_erro']; unset($_SESSION['mensagem_erro']); ?></div>
-            <?php endif; ?>
+    <?php if (isset($_SESSION['mensagem_erro'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> <?php echo $_SESSION['mensagem_erro']; unset($_SESSION['mensagem_erro']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
 
-            <div class="card p-4 shadow-sm border-0 rounded-3">
-                <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-primary">
-                    <i class="fa-solid fa-file-arrow-up fs-4 me-2"></i>
-                    <h5 class="fw-bold mb-0 text-dark">Upload de Documentação Técnica</h5>
+    <div class="card p-4 shadow-sm bg-white border-0">
+        <h4 class="fw-bold text-dark mb-4"><i class="fa-solid fa-file-medical text-success me-2"></i>Registar Novo Documento Técnico</h4>
+        
+        <form action="inserir/inserir_documento.php" method="POST" enctype="multipart/form-data">
+            
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Tipo de Documento</label>
+                    <select name="tipo_documento" class="form-select" required>
+                        <option value="" disabled selected>Selecione uma opção...</option>
+                        <option value="Manual de utilizador">Manual de utilizador</option>
+                        <option value="Manual de serviço">Manual de serviço</option>
+                        <option value="Certificado de calibração">Certificado de calibração</option>
+                        <option value="Contrato de manutenção">Contrato de manutenção</option>
+                        <option value="Fatura ou guia de aquisição">Fatura ou guia de aquisição</option>
+                        <option value="Declaração de conformidade">Declaração de conformidade</option>
+                        <option value="Relatório técnico">Relatório técnico</option>
+                    </select>
                 </div>
 
-                <form action="inserir/inserir_documento.php" method="POST" enctype="multipart/form-data">
-                    <div class="row g-3">
-                        
-                        <div class="col-12 col-md-6">
-                            <label for="equipamento_id" class="form-label fw-semibold">Equipamento Associado</label>
-                            <select class="form-select" id="equipamento_id" name="equipamento_id" required>
-                                <option value="" selected disabled>Selecione o equipamento...</option>
-                                <?php
-                                if ($conn) {
-                                    $res = mysqli_query($conn, "SELECT id, designacao, numero_serie FROM equipamentos ORDER BY designacao ASC");
-                                    while ($eq = mysqli_fetch_assoc($res)) {
-                                        echo "<option value='{$eq['id']}'>" . htmlspecialchars($eq['designacao']) . " (S/N: " . htmlspecialchars($eq['numero_serie']) . ")</option>";
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Designação do Documento (Nome)</label>
+                    <input type="text" name="nome_documento" class="form-control" placeholder="Ex: Manual Técnico do Ventilador X" required>
+                </div>
 
-                        <div class="col-12 col-md-6">
-                            <label for="tipo_documento" class="form-label fw-semibold">Tipo de Documento</label>
-                            <select class="form-select" id="tipo_documento" name="tipo_documento" required>
-                                <option value="" selected disabled>Selecione o tipo oficial...</option>
-                                <option value="Manual de utilizador">Manual de utilizador</option>
-                                <option value="Manual de serviço">Manual de serviço</option>
-                                <option value="Certificado de calibração">Certificado de calibração</option>
-                                <option value="Contrato de manutenção">Contrato de manutenção</option>
-                                <option value="Fatura ou guia de aquisição">Fatura ou guia de aquisição</option>
-                                <option value="Declaração de conformidade">Declaração de conformidade</option>
-                                <option value="Relatório técnico">Relatório técnico</option>
-                            </select>
-                        </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Data do Documento</label>
+                    <input type="date" name="data_documento" class="form-control" required>
+                </div>
 
-                        <div class="col-12">
-                            <label for="nome_documento" class="form-label fw-semibold">Nome Descritivo do Documento</label>
-                            <input type="text" class="form-control" id="nome_documento" name="nome_documento" placeholder="Ex: Certificado Anual de Calibração ISQ 2026" required>
-                        </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Data de Validade (Opcional)</label>
+                    <input type="date" name="data_validade" class="form-control">
+                </div>
 
-                        <div class="col-12 col-md-6">
-                            <label for="data_documento" class="form-label fw-semibold">Data de Emissão / Documento</label>
-                            <input type="date" class="form-control" id="data_documento" name="data_documento" required>
-                        </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-semibold">Equipamento Vinculado</label>
+                    <select name="equipamento_id" class="form-select" required>
+                        <option value="" disabled selected>Selecione o equipamento...</option>
+                        <?php foreach($equips as $e): ?>
+                            <option value="<?php echo $e['id']; ?>">
+                                <?php echo htmlspecialchars($e['designacao']) . " (Inv: " . htmlspecialchars($e['codigo_interno']) . ")"; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-                        <div class="col-12 col-md-6">
-                            <label for="data_validade" class="form-label fw-semibold">Data de Validade (Opcional)</label>
-                            <input type="date" class="form-control" id="data_validade" name="data_validade">
-                            <div class="form-text">Aplicável a calibrações ou contratos com fim programado.</div>
-                        </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-semibold">Anexar Ficheiro Digital (PDF, PNG, JPG - Máx 5MB)</label>
+                    <input type="file" name="documento_media" class="form-control" accept=".pdf,.png,.jpg,.jpeg" required>
+                </div>
 
-                        <div class="col-12">
-                            <label for="nome_ficheiro_caminho" class="form-label fw-semibold">Caminho do Ficheiro</label>
-                            <input type="text" class="form-control" id="nome_ficheiro_caminho" name="nome_ficheiro_caminho" required>
-                        </div>
-
-                    </div>
-
-                    <div class="mt-4 d-flex justify-content-end gap-2">
-                        <button type="reset" class="btn btn-outline-secondary px-4">Limpar</button>
-                        <button type="submit" class="btn btn-primary px-4">
-                            <i class="fa-solid fa-cloud-arrow-up me-1"></i> Guardar Documento
-                        </button>
-                    </div>
-                </form>
+                <div class="col-md-12 text-end mt-4">
+                    <a href="listar/lista_documentos.php" class="btn btn-light border px-4 me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-success px-4">Salvar e Fazer Upload</button>
+                </div>
             </div>
 
-        </div>
+        </form>
     </div>
 </div>
 
