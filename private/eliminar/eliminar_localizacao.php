@@ -33,6 +33,7 @@ if ($id <= 0) {
 // =================================================================
 // VERIFICAÇÃO DE SEGURANÇA: Existem equipamentos nesta localização?
 // =================================================================
+// Mantém-se a regra de negócio: mesmo para inativar, não deve haver equipamentos vinculados ativos
 $sql_check = "SELECT COUNT(*) as total FROM equipamentos WHERE localizacao_id = ?";
 $stmt_check = mysqli_prepare($conn, $sql_check);
 
@@ -44,8 +45,7 @@ if ($stmt_check) {
     mysqli_stmt_close($stmt_check);
 
     if ($row_check['total'] > 0) {
-        // Bloqueia e aborta a eliminação se existirem dependências na BD
-        $_SESSION['mensagem_erro'] = "Não é possível eliminar esta localização porque existem " . $row_check['total'] . " equipamento(s) associado(s) a ela. Transfira os equipamentos primeiro.";
+        $_SESSION['mensagem_erro'] = "Não é possível arquivar esta localização porque existem " . $row_check['total'] . " equipamento(s) associado(s) a ela. Transfira os equipamentos primeiro.";
         mysqli_close($conn);
         header("Location: ../localizacao.php");
         exit;
@@ -55,9 +55,10 @@ if ($stmt_check) {
 $localizacao = null;
 
 // ==========================================
-// PASSO 1: PROCURAR A LOCALIZAÇÃO PARA MOSTRAR OS DETALHES
+// PASSO 1: PROCURAR A LOCALIZAÇÃO COMPLETA PARA MOSTRAR OS DETALHES
 // ==========================================
-$sql_busca = "SELECT edificio FROM localizaciones WHERE id = ?";
+// Expandido para trazer todos os campos contextuais na visualização de confirmação
+$sql_busca = "SELECT edificio, piso, servico_departamento, sala_gabinete FROM localizaciones WHERE id = ?";
 $stmt_busca = mysqli_prepare($conn, $sql_busca);
 if ($stmt_busca) {
     mysqli_stmt_bind_param($stmt_busca, "i", $id);
@@ -75,24 +76,29 @@ if (!$localizacao) {
 }
 
 // ==========================================
-// PASSO 2: SE O UTILIZADOR CONFIRMOU A ELIMINAÇÃO (CLICOU EM "SIM")
+// PASSO 2: SE O UTILIZADOR CONFIRMOU O ARQUIVAMENTO (CLICOU EM "SIM")
 // ==========================================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_arquivar'])) {
     
-    $sql_delete = "DELETE FROM localizaciones WHERE id = ?";
-    $stmt_delete = mysqli_prepare($conn, $sql_delete);
+    // ALTERADO: Mudança radical de DELETE físico para UPDATE de estado lógico
+    $sql_update = "UPDATE localizaciones SET estado = 'Inativo' WHERE id = ?";
+    $stmt_update = mysqli_prepare($conn, $sql_update);
 
-    if ($stmt_delete) {
-        mysqli_stmt_bind_param($stmt_delete, "i", $id);
+    if ($stmt_update) {
+        mysqli_stmt_bind_param($stmt_update, "i", $id);
         
-        if (mysqli_stmt_execute($stmt_delete)) {
-            $_SESSION['mensagem_sucesso'] = "Localização hospitalar removida do sistema com sucesso!";
+        if (mysqli_stmt_execute($stmt_update)) {
+            $_SESSION['mensagem_sucesso'] = "A localização hospitalar foi movida para o arquivo histórico com sucesso!";
+            mysqli_close($conn);
+            // Redireciona diretamente para o arquivo conforme solicitado
+            header("Location: ../listar/lista_localizacoes_inativas.php");
+            exit;
         } else {
-            $_SESSION['mensagem_erro'] = "Erro técnico ao tentar eliminar a localização da base de dados.";
+            $_SESSION['mensagem_erro'] = "Erro técnico ao tentar arquivar a localização no sistema.";
         }
-        mysqli_stmt_close($stmt_delete);
+        mysqli_stmt_close($stmt_update);
     } else {
-        $_SESSION['mensagem_erro'] = "Erro interno ao preparar a eliminação.";
+        $_SESSION['mensagem_erro'] = "Erro interno ao preparar o arquivamento.";
     }
 
     mysqli_close($conn);
@@ -105,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>MedTrack | Confirmar Eliminação de Localização</title>
+    <title>MedTrack | Confirmar Arquivamento de Localização</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -117,23 +123,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])
             
             <div class="card shadow-sm border-0 rounded-3 text-center p-4">
                 <div class="card-body">
-                    <div class="text-danger mb-3">
-                        <i class="fa-solid fa-map-location-dot fa-4x"></i>
+                    <div class="text-warning mb-3">
+                        <i class="fa-solid fa-box-archive fa-4x"></i>
                     </div>
                     
-                    <h4 class="fw-bold text-dark mb-3">Eliminar Localização?</h4>
+                    <h4 class="fw-bold text-dark mb-3">Arquivar Localização Hospitalar?</h4>
                     
                     <p class="text-muted mb-4">
-                        Tem a certeza que deseja remover permanentemente esta área hospitalar do inventário? 
-                        Esta ação removerá o registo de forma definitiva da base de dados.
+                        Tem a certeza que deseja desativar esta área? O registo sairá das listagens diárias operacionais e será guardado de forma segura no histórico do sistema.
                     </p>
 
                     <div class="bg-light p-3 rounded border text-start mb-4">
-                        <div class="mb-1"><strong>Edifício / Sala / Serviço:</strong> <?php echo htmlspecialchars($localizacao['edificio']); ?></div>
-                        <div><strong>Estado de Vínculos:</strong> <span class="text-success">Livre (0 equipamentos associados)</span></div>
+                        <div class="mb-1"><strong>Edifício / Bloco:</strong> <?php echo htmlspecialchars($localizacao['edificio']); ?></div>
+                        <div class="mb-1"><strong>Piso / Andar:</strong> <?php echo htmlspecialchars($localizacao['piso']); ?></div>
+                        <div class="mb-1"><strong>Serviço / Departamento:</strong> <?php echo htmlspecialchars($localizacao['servico_departamento']); ?></div>
+                        <div class="mb-1"><strong>Sala / Gabinete:</strong> <?php echo htmlspecialchars($localizacao['sala_gabinete']); ?></div>
+                        <hr class="my-2">
+                        <div><strong>Estado de Vínculos:</strong> <span class="text-success"><i class="fa-solid fa-circle-check me-1"></i>Livre (Pronto a Arquivar)</span></div>
                     </div>
 
-                    <form action="eliminar_localizacao.php" method="POST">
+                    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
                         <input type="hidden" name="id" value="<?php echo $id; ?>">
                         
                         <div class="d-flex justify-content-center gap-3">
@@ -141,8 +150,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminar'])
                                 <i class="fa-solid fa-xmark me-1"></i> Não, Cancelar
                             </a>
                             
-                            <button type="submit" name="confirmar_eliminar" class="btn btn-danger px-4 fw-semibold">
-                                <i class="fa-solid fa-trash me-1"></i> Sim, Eliminar
+                            <button type="submit" name="confirmar_arquivar" class="btn btn-warning text-dark px-4 fw-semibold">
+                                <i class="fa-solid fa-box-archive me-1"></i> Sim, Arquivar
                             </button>
                         </div>
                     </form>

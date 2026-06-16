@@ -82,8 +82,12 @@ $result = mysqli_query($conn, $sql);
                     </ul>
                 </li>
                 
-                <li class="nav-item">
-                    <a class="nav-link" href="localizacao.php"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="../localizacao.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="localizacao.php"><i class="fa-solid fa-map-location-dot me-2"></i> Gerir Localizações</a></li>
+                        <li><a class="dropdown-item" href="listar/lista_localizacoes_inativas.php"><i class="fa-solid fa-box-archive me-2"></i> Arquivo de Localizações</a></li>
+                    </ul>
                 </li>
                 
                 <li class="nav-item dropdown">

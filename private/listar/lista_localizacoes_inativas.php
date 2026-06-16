@@ -2,36 +2,33 @@
 session_start();
 
 if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-    // Por segurança, limpa qualquer resíduo de sessão que possa existir
     session_unset();
     session_destroy();
-    
-    // Expulsar o intruso de volta para o formulário de login
     header("Location: ../../public/login.php?erro=restrito");
     exit;
 }
 
+$host = "vsgate-s1.dei.isep.ipp.pt";
 $port = 10464;
-$conn = mysqli_connect("vsgate-s1.dei.isep.ipp.pt", "1240896", "campos_896", "db1240896", $port);
+$user = "1240896";
+$pass = "campos_896";
+$dbname = "db1240896";
+
+$conn = mysqli_connect($host, $user, $pass, $dbname, $port);
 
 if (!$conn) {
     die("Falha na ligação à base de dados: " . mysqli_connect_error());
 }
 
-// ALTERADO: Adicionado o filtro 'WHERE gc.estado = 'Ativo'' para aplicar o Soft Delete na listagem principal
-$sql = "SELECT gc.*, e.designacao AS eq_nome, e.numero_serie, f.nome_empresa AS forn_nome 
-        FROM garantias_contratos gc
-        INNER JOIN equipamentos e ON gc.equipamento_id = e.id
-        LEFT JOIN fornecedores f ON gc.entidade_responsavel_id = f.id
-        WHERE gc.estado = 'Ativo'
-        ORDER BY e.designacao ASC";
+// Recolhe exclusivamente as localizações cujo estado é 'Inativo'
+$sql = "SELECT * FROM localizaciones WHERE estado = 'Inativo' ORDER BY edificio ASC, piso ASC";
 $result = mysqli_query($conn, $sql);
 ?>
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>MedTrack | Lista de Contratos</title>
+    <title>MedTrack | Arquivo de Localizações</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="../../assets/img/hosp_icon.png" type="image/png">
@@ -39,7 +36,8 @@ $result = mysqli_query($conn, $sql);
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-light">
- <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container-fluid px-lg-4"> 
         <a class="navbar-brand d-flex align-items-center py-0" href="../dashboard.php">
             <img src="../../assets/img/hosp_icon_branco.png" alt="Logo" width="105" height="70" class="d-inline-block align-text-top me-2">
@@ -96,80 +94,68 @@ $result = mysqli_query($conn, $sql);
 </nav>
 
 <div class="container mt-5">
-    <?php if(isset($_SESSION['msg_sucesso'])): ?> 
+    <?php if(isset($_SESSION['mensagem_sucesso'])): ?> 
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-circle-check me-2"></i> <?php echo $_SESSION['msg_sucesso']; unset($_SESSION['msg_sucesso']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div> 
-    <?php endif; ?>
-    
-    <?php if(isset($_SESSION['msg_erro'])): ?> 
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i> <?php echo $_SESSION['msg_erro']; unset($_SESSION['msg_erro']); ?>
+            <i class="fa-solid fa-circle-check me-2"></i> <?php echo $_SESSION['mensagem_sucesso']; unset($_SESSION['mensagem_sucesso']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div> 
     <?php endif; ?>
 
-    <div class="card p-4 shadow-sm border-0">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="fw-bold mb-0"><i class="fa-solid fa-clock-history text-success me-2"></i>Controlo de Garantias e Contratos</h5>
-            <a href="../garantia_contratos.php" class="btn btn-success text-white fw-semibold"><i class="fa-solid fa-plus me-1"></i> Novo Contrato</a>
+    <div class="mb-3">
+        <a href="../localizacao.php" class="btn btn-sm btn-secondary fw-semibold">
+            <i class="fa-solid fa-arrow-left me-1"></i> Voltar à Gestão Ativa
+        </a>
+    </div>
+
+    <div class="card p-4 shadow-sm border-warning border-1">
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+            <h5 class="fw-bold mb-0 text-dark">
+                <i class="fa-solid fa-box-archive text-warning me-2"></i>Arquivo de Localizações Inativas
+            </h5>
+            <span class="badge bg-warning text-dark fw-bold">Arquivo Histórico</span>
         </div>
 
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Equipamento</th>
-                        <th>Garantia Base</th>
-                        <th>Contrato Manutenção</th>
-                        <th>Entidade Responsável</th>
-                        <th class="text-center" style="width: 110px;">Ações</th>
+                        <th style="width: 80px;">ID</th>
+                        <th>Edifício / Bloco</th>
+                        <th>Piso / Andar</th>
+                        <th>Serviço / Departamento</th>
+                        <th>Sala / Gabinete / Box</th>
+                        <th class="text-center" style="width: 100px;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php 
                     if(mysqli_num_rows($result) > 0):
                         while($row = mysqli_fetch_assoc($result)): 
-                            $expirado = (!empty($row['data_fim_garantia']) && $row['data_fim_garantia'] < date('Y-m-d'));
                     ?>
-                        <tr>
+                        <tr class="text-muted">
+                            <td class="fw-semibold">#<?php echo $row['id']; ?></td>
                             <td>
-                                <div class="fw-bold text-dark"><?php echo htmlspecialchars($row['eq_nome']); ?></div>
-                                <small class="text-muted">S/N: <?php echo htmlspecialchars($row['numero_serie']); ?></small>
+                                <i class="fa-solid fa-building text-secondary me-2"></i><?php echo htmlspecialchars($row['edificio']); ?>
                             </td>
                             <td>
-                                <?php if(!empty($row['data_fim_garantia'])): ?>
-                                    <small>Até: <?php echo date('d/m/Y', strtotime($row['data_fim_garantia'])); ?></small>
-                                    <?php echo $expirado ? "<span class='badge bg-danger ms-1'>Expirada</span>" : "<span class='badge bg-success ms-1'>Ativa</span>"; ?>
-                                <?php else: echo "<em class='text-muted'>Não definida</em>"; endif; ?>
+                                <span class="badge bg-light text-muted border px-2 py-1.5"><?php echo htmlspecialchars($row['piso']); ?></span>
                             </td>
-                            <td>
-                                <?php if($row['tem_contrato_manutencao']): ?>
-                                    <span class="badge bg-info text-dark"><?php echo htmlspecialchars($row['tipo_contrato']); ?></span>
-                                    <small class="d-block text-muted">Ações: <?php echo htmlspecialchars($row['periodicidade']); ?></small>
-                                <?php else: echo "<span class='text-muted'>Não possui</span>"; endif; ?>
-                            </td>
-                            <td><?php echo htmlspecialchars($row['forn_nome'] ?? 'Gestão Interna'); ?></td>
+                            <td><?php echo htmlspecialchars($row['servico_departamento']); ?></td>
+                            <td><?php echo htmlspecialchars($row['sala_gabinete']); ?></td>
                             <td class="text-center">
-                                <div class="btn-group btn-group-sm">
-                                    <a href="../editar/editar_garantia.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-warning text-dark" title="Editar Contrato">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </a>
-                                    <a href="../eliminar/eliminar_garantia.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Arquivar Registo">
-                                        <i class="fa-solid fa-box-archive"></i>
-                                    </a>
-                                </div>
+                                <a href="../eliminar/reativar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-outline-success" title="Reativar Localização">
+                                    <i class="fa-solid fa-arrows-rotate"></i>
+                                </a>
                             </td>
                         </tr>
-                        <?php 
+                    <?php 
                         endwhile;
                     else:
                     ?>
                         <tr>
-                            <td colspan="5" class="text-center p-5 text-muted">
-                                <i class="fa-solid fa-file-circle-minus fs-2 d-block mb-2 text-secondary"></i>
-                                Nenhum contrato ou cobertura de garantia ativa no sistema.
+                            <td colspan="6" class="text-center p-5 text-muted">
+                                <i class="fa-solid fa-folder-open fs-2 d-block mb-2 text-secondary"></i>
+                                Não existem áreas ou localizações arquivadas.
                             </td>
                         </tr>
                     <?php 

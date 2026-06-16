@@ -2,13 +2,11 @@
 session_start();
 
 if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-    
     // Por segurança, limpa qualquer resíduo de sessão que possa existir
     session_unset();
     session_destroy();
     
-    // 3. Expulsar o intruso de volta para o formulário de login
-    // Ajusta o caminho se o teu login.php estiver numa pasta acima (ex: ../login.php)
+    // Expulsar o intruso de volta para o formulário de login
     header("Location: ../public/login.php?erro=restrito");
     exit; // Interrompe imediatamente a execução do resto da página
 }
@@ -26,8 +24,8 @@ if (!$conn) {
     die("Falha na ligação: " . mysqli_connect_error());
 }
 
-// 2. Query para ler todas as localizações ordenadas por Edifício e Piso
-$sql_tabela = "SELECT * FROM localizaciones ORDER BY edificio ASC, piso ASC, servico_departamento ASC";
+// 2. Query ALTERADA: Agora filtra por estado = 'Ativo' (Soft Delete)
+$sql_tabela = "SELECT * FROM localizaciones WHERE estado = 'Ativo' ORDER BY edificio ASC, piso ASC, servico_departamento ASC";
 $result_tabela = mysqli_query($conn, $sql_tabela);
 ?>
 
@@ -43,12 +41,12 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="../assets/css/admin1240896.css">
- 
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
-    <div class="container-fluid px-lg-4"> <a class="navbar-brand d-flex align-items-center py-0" href="dashboard.php">
+    <div class="container-fluid px-lg-4"> 
+        <a class="navbar-brand d-flex align-items-center py-0" href="dashboard.php">
             <img src="../assets/img/hosp_icon_branco.png" alt="Logo" width="105" height="70" class="d-inline-block align-text-top me-2">
         </a>
         
@@ -78,8 +76,14 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                     </ul>
                 </li>
                 
-                <li class="nav-item">
-                    <a class="nav-link" href="localizacao.php"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="localizacao.php" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-hospital-user me-1"></i> Localizações
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="localizacao.php"><i class="fa-solid fa-map-location-dot me-2"></i> Gerir Localizações</a></li>
+                        <li><a class="dropdown-item" href="listar/lista_localizacoes_inativas.php"><i class="fa-solid fa-box-archive me-2"></i> Arquivo de Localizações</a></li>
+                    </ul>
                 </li>
                 
                 <li class="nav-item dropdown">
@@ -105,7 +109,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link " href="editar_texto_frontend.php"><i class="fa-solid fa-edit me-1"></i> Editar Textos</a>
+                    <a class="nav-link" href="editar_texto_frontend.php"><i class="fa-solid fa-edit me-1"></i> Editar Textos</a>
                 </li>
                 
                 <li class="nav-item">
@@ -122,156 +126,154 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
     </div>
 </nav>
 
-    <div class=" container mt-5 mb-5 card p-4 mb-4 shadow-sm border-0 rounded-3">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="fw-bold text-dark mb-1">Gestão de Localizações Hospitalares</h2>
-                <p class="text-muted mb-0">Registos, acompanhamentos e controlo das localizações dos equipamentos.</p>
-            </div>
-            <!-- Botão de Atalho para Scroll -->
+<div class="container mt-5 mb-5 card p-4 mb-4 shadow-sm border-0 rounded-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Gestão de Localizações Hospitalares</h2>
+            <p class="text-muted mb-0">Registos, acompanhamentos e controlo das localizações dos equipamentos.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="listar/lista_localizacoes_inativas.php" class="btn btn-outline-warning btn-sm fw-semibold"><i class="fa-solid fa-box-archive me-1"></i> Ver Arquivo Inativos</a>
             <a href="#listagem" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-list me-1"></i> Ir para Lista</a>
         </div>
-    
-    <!-- Inserir nova localização -->
-    <div class="card card-custom p-4 mb-4 shadow-sm border-0 rounded-3">
-    <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-primary">
-        <i class="fa-solid fa-map-location-dot fs-4 me-2"></i>
-        <h5 class="fw-bold mb-0 text-dark">Inserir Nova Localização Hospitalar</h5>
     </div>
-    
-    <form action="inserir/inserir_localizacao.php" method="POST">
-        <div class="row g-3">
-            
-            <div class="col-12 col-md-3">
-                <label for="edificio" class="form-label fw-semibold">Edifício / Bloco</label>
-                <input type="text" class="form-control" id="edificio" name="edificio" placeholder="Ex: Edifício Central" required>
+
+    <div class="card card-custom p-4 mb-4 shadow-sm border-0 rounded-3">
+        <div class="border-bottom pb-2 mb-4 d-flex align-items-center text-primary">
+            <i class="fa-solid fa-map-location-dot fs-4 me-2"></i>
+            <h5 class="fw-bold mb-0 text-dark">Inserir Nova Localização Hospitalar</h5>
+        </div>
+        
+        <form action="inserir/inserir_localizacao.php" method="POST">
+            <div class="row g-3">
+                <div class="col-12 col-md-3">
+                    <label for="edificio" class="form-label fw-semibold">Edifício / Bloco</label>
+                    <input type="text" class="form-control" id="edificio" name="edificio" placeholder="Ex: Edifício Central" required>
+                </div>
+
+                <div class="col-12 col-md-2">
+                    <label for="piso" class="form-label fw-semibold">Piso / Andar</label>
+                    <input type="text" class="form-control" id="piso" name="piso" placeholder="Ex: 0, 1, -1" required>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="servico_departamento" class="form-label fw-semibold">Serviço ou Departamento</label>
+                    <input type="text" class="form-control" id="servico_departamento" name="servico_departamento" placeholder="Ex: Urgência Geral, UCI, Bloco Operatório" required>
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label for="sala_gabinete" class="form-label fw-semibold">Sala / Gabinete / Box</label>
+                    <input type="text" class="form-control" id="sala_gabinete" name="sala_gabinete" placeholder="Ex: Sala Reanimação 1, Box 5" required>
+                </div>
             </div>
 
-            <div class="col-12 col-md-2">
-                <label for="piso" class="form-label fw-semibold">Piso / Andar</label>
-                <input type="text" class="form-control" id="piso" name="piso" placeholder="Ex: 0, 1, -1" required>
+            <div class="mt-4 d-flex justify-content-end gap-2">
+                <button type="reset" class="btn btn-outline-secondary px-4 fw-semibold">Limpar</button>
+                <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                    <i class="fa-solid fa-floppy-disk me-1"></i> Gravar Localização
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="container mt-4 mb-2 p-0" id="listagem">
+
+        <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i> <?php echo $_SESSION['mensagem_sucesso']; unset($_SESSION['mensagem_sucesso']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['mensagem_erro'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-circle-exclamation me-2"></i> <?php echo $_SESSION['mensagem_erro']; unset($_SESSION['mensagem_erro']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+        <div class="card card-custom p-4" id="listagem-localizacoes">
+            <div class="border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between text-secondary">
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-map-location-dot fs-4 me-2 text-dark"></i>
+                    <h5 class="fw-bold mb-0 text-dark">Localizações Hospitalares Ativas</h5>
+                </div>
+                <span class="badge bg-custom-azul text-white">Configuração do Sistema</span>
             </div>
 
-            <div class="col-12 col-md-4">
-                <label for="servico_departamento" class="form-label fw-semibold">Serviço ou Departamento</label>
-                <input type="text" class="form-control" id="servico_departamento" name="servico_departamento" placeholder="Ex: Urgência Geral, UCI, Bloco Operatório" required>
-            </div>
-
-            <div class="col-12 col-md-3">
-                <label for="sala_gabinete" class="form-label fw-semibold">Sala / Gabinete / Box</label>
-                <input type="text" class="form-control" id="sala_gabinete" name="sala_gabinete" placeholder="Ex: Sala Reanimação 1, Box 5" required>
-            </div>
-
-        </div>
-
-        <div class="mt-4 d-flex justify-content-end gap-2">
-            <button type="reset" class="btn btn-outline-secondary px-4 fw-semibold">Limpar</button>
-            <button type="submit" class="btn btn-primary px-4 fw-semibold">
-                <i class="fa-solid fa-floppy-disk me-1"></i> Gravar Localização
-            </button>
-        </div>
-    </form>
-</div>
-
-<!-- Listagem das localizações já registadas -->
-<div class="container mt-5 mb-5" id="listagem">
-
-    <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-circle-check me-2"></i> <?php echo $_SESSION['mensagem_sucesso']; unset($_SESSION['mensagem_sucesso']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-
-    <?php if (isset($_SESSION['mensagem_erro'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-circle-exclamation me-2"></i> <?php echo $_SESSION['mensagem_erro']; unset($_SESSION['mensagem_erro']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-
-    <div class="card card-custom p-4" id="listagem-localizacoes">
-        <div class="border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between text-secondary">
-            <div class="d-flex align-items-center">
-                <i class="fa-solid fa-map-location-dot fs-4 me-2 text-dark"></i>
-                <h5 class="fw-bold mb-0 text-dark">Localizações Hospitalares Registadas</h5>
-            </div>
-            <span class="badge bg-custom-azul text-white">Configuração do Sistema</span>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 80px;">ID</th>
-                        <th>Edifício / Bloco</th>
-                        <th>Piso / Andar</th>
-                        <th>Serviço / Departamento</th>
-                        <th>Sala / Gabinete / Box</th>
-                        <th class="text-center" style="width: 120px;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    // 3. Validar se existem registos na base de dados
-                    if (mysqli_num_rows($result_tabela) > 0):
-                        
-                        // 4. Ciclo While para ler linha a linha
-                        while ($row = mysqli_fetch_assoc($result_tabela)): 
-                    ?>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 80px;">ID</th>
+                            <th>Edifício / Bloco</th>
+                            <th>Piso / Andar</th>
+                            <th>Serviço / Departamento</th>
+                            <th>Sala / Gabinete / Box</th>
+                            <th class="text-center" style="width: 120px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        // Validar se existem registos ativos na base de dados
+                        if (mysqli_num_rows($result_tabela) > 0):
+                            
+                            // Ciclo While para ler linha a linha
+                            while ($row = mysqli_fetch_assoc($result_tabela)): 
+                        ?>
+                                <tr>
+                                    <td class="text-muted fw-semibold">#<?php echo $row['id']; ?></td>
+                                    
+                                    <td class="fw-bold text-dark">
+                                        <i class="fa-solid fa-building text-secondary me-2"></i><?php echo htmlspecialchars($row['edificio'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </td>
+                                    
+                                    <td>
+                                        <span class="badge bg-light text-dark border px-2 py-1.5">
+                                             <?php echo htmlspecialchars($row['piso'], ENT_QUOTES, 'UTF-8'); ?>
+                                        </span>
+                                    </td>
+                                    
+                                    <td class="fw-semibold text-primary">
+                                        <?php echo htmlspecialchars($row['servico_departamento'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </td>
+                                    
+                                    <td>
+                                        <span class="text-secondary"><?php echo htmlspecialchars($row['sala_gabinete'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="editar/editar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Localização">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </a>
+                                            <a href="eliminar/eliminar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-warning" title="Arquivar (Soft Delete)">
+                                                <i class="fa-solid fa-box-archive"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                        <?php 
+                            endwhile; 
+                        else: 
+                        ?>
                             <tr>
-                                <td class="text-muted fw-semibold">#<?php echo $row['id']; ?></td>
-                                
-                                <td class="fw-bold text-dark">
-                                    <i class="fa-solid fa-building text-secondary me-2"></i><?php echo htmlspecialchars($row['edificio'], ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
-                                
-                                <td>
-                                    <span class="badge bg-light text-dark border px-2 py-1.5">
-                                         <?php echo htmlspecialchars($row['piso'], ENT_QUOTES, 'UTF-8'); ?>
-                                    </span>
-                                </td>
-                                
-                                <td class="fw-semibold text-primary">
-                                    <?php echo htmlspecialchars($row['servico_departamento'], ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
-                                
-                                <td>
-                                    <span class="text-secondary"><?php echo htmlspecialchars($row['sala_gabinete'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                </td>
-                                
-                                <td class="text-center">
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="editar/editar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Localização">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </a>
-                                        <a href="eliminar/eliminar_localizacao.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Apagar">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
-                                    </div>
+                                <td colspan="6" class="text-center p-5 text-muted">
+                                    <i class="fa-solid fa-map-pin fs-2 d-block mb-2 text-secondary"></i>
+                                    Nenhuma localização hospitalar ativa mapeada na base de dados.
                                 </td>
                             </tr>
-                    <?php 
-                        endwhile; 
-                    else: 
-                    ?>
-                        <tr>
-                            <td colspan="6" class="text-center p-5 text-muted">
-                                <i class="fa-solid fa-map-pin fs-2 d-block mb-2 text-secondary"></i>
-                                Nenhuma localização hospitalar foi mapeada ou registada na base de dados.
-                            </td>
-                        </tr>
-                    <?php 
-                    endif; 
-                    
-                    // Fechar a ligação após carregar a tabela
-                    mysqli_close($conn);
-                    ?>
-                </tbody>
-            </table>
+                        <?php 
+                        endif; 
+                        
+                        // Fechar a ligação após carregar a tabela
+                        mysqli_close($conn);
+                        ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

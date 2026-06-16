@@ -116,6 +116,7 @@ ALTER TABLE `garantias_contratos` ADD FOREIGN KEY (`equipamento_id`) REFERENCES 
 ALTER TABLE fornecedores ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
 ALTER TABLE documentacao ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
 ALTER TABLE garantias_contratos ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
+ALTER TABLE localizaciones ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
 
 
 -- ============================================================================

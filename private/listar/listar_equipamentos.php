@@ -74,7 +74,7 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
     
 </head>
 <body>
-   <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
+ <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container-fluid px-lg-4"> 
         <a class="navbar-brand d-flex align-items-center py-0" href="../dashboard.php">
             <img src="../../assets/img/hosp_icon_branco.png" alt="Logo" width="105" height="70" class="d-inline-block align-text-top me-2">
@@ -97,7 +97,13 @@ if (isset($_SESSION['mensagem_sucesso'])): ?>
                         <li><a class="dropdown-item" href="lista_garantias_inativas.php"><i class="fa-solid fa-file-alt me-2"></i> Lista de Garantias Inativas</a></li>
                     </ul>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="../localizacao.php"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="../localizacao.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="../localizacao.php"><i class="fa-solid fa-map-location-dot me-2"></i> Gerir Localizações</a></li>
+                        <li><a class="dropdown-item" href="lista_localizacoes_inativas.php"><i class="fa-solid fa-box-archive me-2"></i> Arquivo de Localizações</a></li>
+                    </ul>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="../fornecedores.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-truck-medical me-1"></i> Fornecedores</a>
                     <ul class="dropdown-menu">
