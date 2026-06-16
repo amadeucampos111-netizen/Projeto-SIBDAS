@@ -9,7 +9,7 @@ if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
     
     // 3. Expulsar o intruso de volta para o formulário de login
     // Ajusta o caminho se o teu login.php estiver numa pasta acima (ex: ../login.php)
-    header("Location: ../public/login.php?erro=restrito");
+    header("Location: ../public/login.html?erro=restrito");
     exit; // Interrompe imediatamente a execução do resto da página
 }
 

@@ -10,7 +10,7 @@ if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
     session_destroy();
     
     // 3. Expulsar o intruso de volta para o formulário de login
-    header("Location: ../../public/login.php?erro=restrito");
+    header("Location: ../../public/login.html?erro=restrito");
     exit; // Interrompe imediatamente a execução do resto da página
 }
 

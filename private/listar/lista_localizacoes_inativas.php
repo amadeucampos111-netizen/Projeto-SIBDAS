@@ -4,7 +4,7 @@ session_start();
 if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
     session_unset();
     session_destroy();
-    header("Location: ../../public/login.php?erro=restrito");
+    header("Location: ../../public/login.html?erro=restrito");
     exit;
 }
 

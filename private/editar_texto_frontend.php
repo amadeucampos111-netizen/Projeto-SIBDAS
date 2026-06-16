@@ -1,4 +1,18 @@
 <?php
+
+session_start();
+
+if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
+    
+    // Por segurança, limpa qualquer resíduo de sessão que possa existir
+    session_unset();
+    session_destroy();
+    
+    // 3. Expulsar o intruso de volta para o formulário de login
+    // Ajusta o caminho se o teu login.php estiver numa pasta acima (ex: ../login.php)
+    header("Location: ../public/login.html?erro=restrito");
+    exit; // Interrompe imediatamente a execução do resto da página
+}
 $host = "vsgate-s1.dei.isep.ipp.pt";
 $port = 10464;
 $user = "1240896";
@@ -13,17 +27,12 @@ if (!$conn) {
     die("Falha na ligação: " . mysqli_connect_error());
 }
 
-if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-    session_unset();
-    session_destroy();
-    header("Location: ../../public/login.php?erro=restrito");
-    exit;
-}
+
 
 // 2. Bloqueio Administrativo: Se não for administrador, é expulso para a dashboard com um aviso
 if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     $_SESSION['mensagem_erro'] = "Acesso negado. Esta área está reservada exclusivamente a Administradores.";
-    header("Location: ../dashboard.php");
+    header("Location: dashboard.php");
     exit;
 }
 
