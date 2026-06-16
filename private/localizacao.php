@@ -45,8 +45,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
-    <div class="container-fluid px-lg-4"> 
-        <a class="navbar-brand d-flex align-items-center py-0" href="dashboard.php">
+    <div class="container-fluid px-lg-4"> <a class="navbar-brand d-flex align-items-center py-0" href="dashboard.php">
             <img src="../assets/img/hosp_icon_branco.png" alt="Logo" width="105" height="70" class="d-inline-block align-text-top me-2">
         </a>
         
@@ -69,6 +68,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                         <li><a class="dropdown-item" href="gestao_equip.php"><i class="fa-solid fa-list me-2"></i> Registar Equipamentos e Componentes</a></li>
                         <li><a class="dropdown-item" href="listar/listar_equipamentos.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Equipamentos</a></li>
                         <li><a class="dropdown-item" href="listar/lista_componentes.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Componentes</a></li>
+                        <li><a class="dropdown-item" href="listar/lista_componentes_inativos.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Componentes Inativos</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="garantia_contratos.php"><i class="fa-solid fa-file-shield me-2"></i> Registo de Garantias e Contratos</a></li>
                         <li><a class="dropdown-item" href="listar/lista_garantias.php"><i class="fa-solid fa-file-alt me-2"></i> Lista de Garantias e Contratos</a></li>
@@ -77,9 +77,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                 </li>
                 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle " href="localizacao.php" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-hospital-user me-1"></i> Localizações
-                    </a>
+                    <a class="nav-link dropdown-toggle " href="../localizacao.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="localizacao.php"><i class="fa-solid fa-map-location-dot me-2"></i> Gerir Localizações</a></li>
                         <li><a class="dropdown-item" href="listar/lista_localizacoes_inativas.php"><i class="fa-solid fa-box-archive me-2"></i> Arquivo de Localizações</a></li>
@@ -109,7 +107,7 @@ $result_tabela = mysqli_query($conn, $sql_tabela);
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="editar_texto_frontend.php"><i class="fa-solid fa-edit me-1"></i> Editar Textos</a>
+                    <a class="nav-link " href="editar_texto_frontend.php"><i class="fa-solid fa-edit me-1"></i> Editar Textos</a>
                 </li>
                 
                 <li class="nav-item">

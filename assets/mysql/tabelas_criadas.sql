@@ -117,7 +117,7 @@ ALTER TABLE fornecedores ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
 ALTER TABLE documentacao ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
 ALTER TABLE garantias_contratos ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
 ALTER TABLE localizaciones ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
-
+ALTER TABLE componentes_associados ADD COLUMN estado VARCHAR(20) DEFAULT 'Ativo';
 
 -- ============================================================================
 -- 3. INSERÇÃO DOS DADOS (ORDEM DE DEPENDÊNCIA RESPEITADA)

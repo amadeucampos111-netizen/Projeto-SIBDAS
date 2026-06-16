@@ -5,13 +5,11 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-    
     // Por segurança, limpa qualquer resíduo de sessão que possa existir
     session_unset();
     session_destroy();
     
     // 3. Expulsar o intruso de volta para o formulário de login
-    // Ajusta o caminho se o teu login.php estiver numa pasta acima (ex: ../login.php)
     header("Location: ../../public/login.php?erro=restrito");
     exit; // Interrompe imediatamente a execução do resto da página
 }
@@ -29,10 +27,11 @@ if (!$conn) {
     die("Erro na ligação à base de dados: " . mysqli_connect_error());
 }
 
-// 3. Query para listar os componentes e trazer as informações do equipamento pai associado
+// 3. Query MODIFICADA: Filtrar apenas os componentes que possuem estado 'Ativo' (Soft Delete aplicado)
 $query = "SELECT c.*, e.designacao AS equipamento_nome, e.codigo_interno AS equipamento_codigo 
           FROM componentes_associados c
           INNER JOIN equipamentos e ON c.equipamento_pai_id = e.id
+          WHERE c.estado = 'Ativo'
           ORDER BY c.id DESC";
 
 $result = mysqli_query($conn, $query);
@@ -48,17 +47,16 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listagem de Componentes | MedTrack</title>
-    <link rel="shortcut icon" href="../../assets/img/hosp_icon.png" type="image/png">
+    <link class="shortcut icon" href="../../assets/img/hosp_icon.png" type="image/png">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="../../assets/css/admin1240896.css" rel="stylesheet">
-    
 </head>
 
 <body>
- <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container-fluid px-lg-4"> 
         <a class="navbar-brand d-flex align-items-center py-0" href="../dashboard.php">
             <img src="../../assets/img/hosp_icon_branco.png" alt="Logo" width="105" height="70" class="d-inline-block align-text-top me-2">
@@ -70,11 +68,12 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
             <ul class="navbar-nav mb-2 mb-lg-0 ms-3 small text-nowrap">
                 <li class="nav-item"><a class="nav-link" href="../dashboard.php"><i class="fa-solid fa-chart-pie me-1"></i> Dashboard</a></li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="../gestao_equip.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-microscope me-1"></i> Equipamentos</a>
+                    <a class="nav-link dropdown-toggle " href="../gestao_equip.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-microscope me-1"></i> Equipamentos</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="../gestao_equip.php"><i class="fa-solid fa-list me-2"></i> Registar Equipamentos</a></li>
                         <li><a class="dropdown-item" href="listar_equipamentos.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Equipamentos</a></li>
                         <li><a class="dropdown-item" href="lista_componentes.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Componentes</a></li>
+                        <li><a class="dropdown-item" href="lista_componentes_inativos.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Componentes Inativos</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="../garantia_contratos.php"><i class="fa-solid fa-file-shield me-2"></i> Registo de Garantias</a></li>
                         <li><a class="dropdown-item" href="lista_garantias.php"><i class="fa-solid fa-file-alt me-2"></i> Lista de Garantias</a></li>
@@ -82,7 +81,7 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle " href="../localizacao.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a>
+                    <a class="nav-link dropdown-toggle" href="../localizacao.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="../localizacao.php"><i class="fa-solid fa-map-location-dot me-2"></i> Gerir Localizações</a></li>
                         <li><a class="dropdown-item" href="lista_localizacoes_inativas.php"><i class="fa-solid fa-box-archive me-2"></i> Arquivo de Localizações</a></li>
@@ -116,14 +115,33 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
 
     <div class="container mt-5 mb-5">
         
+        <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i> <?php echo $_SESSION['mensagem_sucesso']; unset($_SESSION['mensagem_sucesso']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['mensagem_erro'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i> <?php echo $_SESSION['mensagem_erro']; unset($_SESSION['mensagem_erro']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="fw-bold text-dark mb-1">Componentes e Módulos Associados</h2>
                 <p class="text-muted mb-0">Listagem de sub-módulos, sensores e peças vinculadas aos equipamentos médicos hospitalares.</p>
             </div>
-            <a href="../gestao_equip.php" class="btn btn-outline-secondary btn-sm">
-                <i class="fa-solid fa-arrow-left me-1"></i> Voltar à Gestão
-            </a>
+            <div>
+                <a href="lista_componentes_inativos.php" class="btn btn-sm btn-outline-warning me-2">
+                    <i class="fa-solid fa-box-archive me-1"></i> Ver Inativos
+                </a>
+                <a href="../gestao_equip.php" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Voltar à Gestão
+                </a>
+            </div>
         </div>
 
         <div class="card card-custom p-4 bg-white">
@@ -171,26 +189,25 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
                                         <?php echo !empty($row['observacoes']) ? htmlspecialchars($row['observacoes']) : '<em>Sem notas.</em>'; ?>
                                     </small>
                                 </td>
-                            <td class="text-center">
-                                <div class="btn-group btn-group-sm">
-                                    <a href="../editar/editar_componente.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Ficha">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </a>
-                                    <a href="../eliminar/eliminar_componentes.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Abater/Apagar" >
-                                        <i class="fa-solid fa-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="../editar/editar_componente.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-primary" title="Editar Ficha">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <a href="../eliminar/eliminar_componentes.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger" title="Abater/Desativar" >
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
                             </tr>
                         <?php 
                             endwhile; 
                         else: 
                         ?>
                             <tr>
-                                <td colspan="6" class="text-center py-4 text-muted">
+                                <td colspan="7" class="text-center py-4 text-muted">
                                     <i class="fa-solid fa-folder-open fs-3 d-block mb-2 text-secondary"></i>
-                                    Nenhum componente associado foi encontrado no inventário.
+                                    Nenhum componente ativo associado foi encontrado no inventário.
                                 </td>
                             </tr>
                         <?php endif; ?>
@@ -200,8 +217,7 @@ $equipamentos_lista = mysqli_fetch_all($result_equips, MYSQLI_ASSOC);
         </div>
 
     </div>
-   
-
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

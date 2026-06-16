@@ -44,7 +44,7 @@ $result = mysqli_query($conn, $sql);
 </head>
 
 <body class="bg-light">
- <nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-custom-verde shadow-sm">
     <div class="container-fluid px-lg-4"> 
         <a class="navbar-brand d-flex align-items-center py-0" href="../dashboard.php">
             <img src="../../assets/img/hosp_icon_branco.png" alt="Logo" width="105" height="70" class="d-inline-block align-text-top me-2">
@@ -56,11 +56,12 @@ $result = mysqli_query($conn, $sql);
             <ul class="navbar-nav mb-2 mb-lg-0 ms-3 small text-nowrap">
                 <li class="nav-item"><a class="nav-link" href="../dashboard.php"><i class="fa-solid fa-chart-pie me-1"></i> Dashboard</a></li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="../gestao_equip.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-microscope me-1"></i> Equipamentos</a>
+                    <a class="nav-link dropdown-toggle " href="../gestao_equip.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-microscope me-1"></i> Equipamentos</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="../gestao_equip.php"><i class="fa-solid fa-list me-2"></i> Registar Equipamentos</a></li>
                         <li><a class="dropdown-item" href="listar_equipamentos.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Equipamentos</a></li>
                         <li><a class="dropdown-item" href="lista_componentes.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Componentes</a></li>
+                        <li><a class="dropdown-item" href="lista_componentes_inativos.php"><i class="fa-solid fa-plus me-2"></i> Listagem de Componentes Inativos</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="../garantia_contratos.php"><i class="fa-solid fa-file-shield me-2"></i> Registo de Garantias</a></li>
                         <li><a class="dropdown-item" href="lista_garantias.php"><i class="fa-solid fa-file-alt me-2"></i> Lista de Garantias</a></li>
@@ -68,7 +69,7 @@ $result = mysqli_query($conn, $sql);
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle " href="../localizacao.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a>
+                    <a class="nav-link dropdown-toggle" href="../localizacao.php" role="button" data-bs-toggle="dropdown"><i class="fa-solid fa-hospital-user me-1"></i> Localizações</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="../localizacao.php"><i class="fa-solid fa-map-location-dot me-2"></i> Gerir Localizações</a></li>
                         <li><a class="dropdown-item" href="lista_localizacoes_inativas.php"><i class="fa-solid fa-box-archive me-2"></i> Arquivo de Localizações</a></li>
