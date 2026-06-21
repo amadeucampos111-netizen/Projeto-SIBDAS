@@ -2,6 +2,29 @@ Nome do projeto: Criação de um sistema web para gestão de equipamentos hospit
 Nome do estudante: Amadeu Martim Leal Campos
 Número de estudande: 1240896
 
+Estrutura do projeto:
+
+/apoio_hospitalar/
+
+├──assets/
+│   ├──css/
+│   ├──img/
+│   ├──js/
+│   ├──mysql/
+├──private/
+│   ├──editar/
+│   ├──inserir/
+│   ├──listar/
+│   ├──eliminar/
+├──public/
+│   ├──index.php
+│   ├──login.html
+├──uploads/
+│   ├──documentos/
+├──Declaracao_IA.pdf
+├──README.txt
+├──Relatorio_Tecnico_SIBDAS.pdf
+
 Instruções para instalação e execução da aplicação:
 
 Para a instalação correta do projeto é necessário colocar o ficheiro zip no seguinte caminho de diretórios:

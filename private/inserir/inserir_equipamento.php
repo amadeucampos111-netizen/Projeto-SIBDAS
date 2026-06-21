@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ==========================================
     $erros = [];
     $ano_atual = intval(date('Y'));
+    $ano_aquisicao = null; // Será definido após validação da data de aquisição
 
     // 1. Validar o formato e existência real da data_aquisicao (Formato esperado: Y-m-d)
     $d = DateTime::createFromFormat('Y-m-d', $data_aquisicao);

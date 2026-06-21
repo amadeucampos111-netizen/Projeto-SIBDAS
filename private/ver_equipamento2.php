@@ -119,7 +119,14 @@ mysqli_close($conn);
                         </h3>
                         <small class="text-muted">Código de Inventário: <strong><?php echo htmlspecialchars($eq['codigo_interno']); ?></strong></small>
                     </div>
-                    <a href="pesq_avan.php" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left me-1"></i> Voltar à Pesquisa</a>
+                    <div class="btn-group">
+    <a href="exportar_equipamento2.php?id=<?php echo $id; ?>" class="btn btn-success">
+        <i class="fa-solid fa-file-csv me-1"></i> Exportar CSV
+    </a>
+    <a href="pesq_avan.php" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-1"></i> Voltar à Pesquisa Avançada
+    </a>
+</div>
                 </div>
 
                 <div class="row g-3">
