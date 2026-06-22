@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_arquivar'])
             $_SESSION['msg_sucesso'] = "O registo de garantia/contrato foi movido para o arquivo com sucesso.";
             mysqli_close($conn);
             // Redireciona diretamente para a nova lista de inativos
-            header("Location: ../listar/lista_garantias_inativas.php");
+            header("Location: ../listar/lista_garantias.php");
             exit;
         } else {
             $_SESSION['msg_erro'] = "Erro técnico ao tentar arquivar: " . mysqli_stmt_error($stmt_update);

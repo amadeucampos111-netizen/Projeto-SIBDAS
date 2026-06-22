@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_arquivar'])
             $_SESSION['mensagem_sucesso'] = "Componente desativado e arquivado com sucesso!";
             mysqli_close($conn);
             // Redireciona diretamente para o histórico de inativos conforme solicitado
-            header("Location: ../listar/lista_componentes_inativos.php");
+            header("Location: ../listar/lista_componentes.php");
             exit();
         } else {
             $_SESSION['mensagem_erro'] = "Erro técnico ao tentar arquivar o componente na base de dados.";

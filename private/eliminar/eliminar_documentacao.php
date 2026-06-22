@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_inativar'])
                 $_SESSION['mensagem_sucesso'] = "O documento foi movido para o arquivo de inativos com sucesso!";
                 mysqli_close($conn);
                 // Redireciona diretamente para a lista de documentos inativos
-                header("Location: ../listar/lista_documentos_inativos.php");
+                header("Location: ../listar/lista_documentos.php");
                 exit;
             } else {
                 $_SESSION['mensagem_erro'] = "O documento indicado já se encontrava inativo ou não foi alterado.";

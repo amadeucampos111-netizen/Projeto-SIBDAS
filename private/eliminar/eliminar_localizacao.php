@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_arquivar'])
             $_SESSION['mensagem_sucesso'] = "A localização hospitalar foi movida para o arquivo histórico com sucesso!";
             mysqli_close($conn);
             // Redireciona diretamente para o arquivo conforme solicitado
-            header("Location: ../listar/lista_localizacoes_inativas.php");
+            header("Location: ../localizacao.php");
             exit;
         } else {
             $_SESSION['mensagem_erro'] = "Erro técnico ao tentar arquivar a localização no sistema.";

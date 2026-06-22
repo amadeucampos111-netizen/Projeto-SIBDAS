@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_inativar'])
             $_SESSION['mensagem_sucesso'] = "Fornecedor movido para o arquivo de inativos com sucesso!";
             mysqli_close($conn);
             // Redireciona diretamente para a lista de fornecedores inativos
-            header("Location: ../listar/lista_fornecedores_inativos.php");
+            header("Location: ../listar/lista_fornecedores.php");
             exit;
         } else {
             $_SESSION['mensagem_erro'] = "Erro técnico ao tentar alterar o estado do fornecedor.";
