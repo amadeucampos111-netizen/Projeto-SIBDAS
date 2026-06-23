@@ -2,13 +2,11 @@
 session_start();
 
 if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-    
     // Por segurança, limpa qualquer resíduo de sessão que possa existir
     session_unset();
     session_destroy();
     
     // 3. Expulsar o intruso de volta para o formulário de login
-    // Ajusta o caminho se o teu login.php estiver numa pasta acima (ex: ../login.php)
     header("Location: ../../public/login.html?erro=restrito");
     exit; // Interrompe imediatamente a execução do resto da página
 }
@@ -25,6 +23,7 @@ if (!$conn) { die("Falha na ligação: " . mysqli_connect_error()); }
 
 // Inicializar a variável para evitar avisos de variável indefinida no editor
 $fornecedor = null;
+$erro = null;
 
 // ==========================================
 // AÇÃO 1: RECUPERAR OS DADOS ATUAIS PARA O FORMULÁRIO (GET)
@@ -40,6 +39,15 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     
     if (mysqli_num_rows($result) === 1) {
         $fornecedor = mysqli_fetch_assoc($result);
+        
+        // --- BLINDAGEM CONTRA VALORES NULL DA BASE DE DADOS ---
+        $fornecedor['contacto_telefonico']     = (trim($fornecedor['contacto_telefonico'] ?? '') !== '') ? trim($fornecedor['contacto_telefonico']) : "Sem contacto telefónico";
+        $fornecedor['website']                 = (trim($fornecedor['website'] ?? '') !== '') ? trim($fornecedor['website']) : "Sem website";
+        $fornecedor['morada']                  = (trim($fornecedor['morada'] ?? '') !== '') ? trim($fornecedor['morada']) : "Sem morada";
+        $fornecedor['pessoa_contacto']         = (trim($fornecedor['pessoa_contacto'] ?? '') !== '') ? trim($fornecedor['pessoa_contacto']) : "Sem pessoa de contacto";
+        $fornecedor['telefone_pessoa_contacto'] = (trim($fornecedor['telefone_pessoa_contacto'] ?? '') !== '') ? trim($fornecedor['telefone_pessoa_contacto']) : "Sem telefone da pessoa de contacto";
+        $fornecedor['observacoes']             = (trim($fornecedor['observacoes'] ?? '') !== '') ? trim($fornecedor['observacoes']) : "Sem observações";
+        
     } else {
         $_SESSION['mensagem_erro'] = "Fornecedor não encontrado.";
         header("Location: ../listar/lista_fornecedores.php");
@@ -71,6 +79,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pessoa_contacto           = trim($_POST['pessoa_contacto']);
     $telefone_pessoa_contacto  = trim($_POST['telefone_pessoa_contacto']);
     $observacoes               = trim($_POST['observacoes']);
+
+    // Validar se os campos opcionais foram deixados vazios no POST e aplicar a máscara "Sem..."
+    if ($contacto_telefonico === '')      { $contacto_telefonico = "Sem contacto telefónico"; }
+    if ($website === '')                  { $website = "Sem website"; }
+    if ($morada === '')                   { $morada = "Sem morada"; }
+    if ($pessoa_contacto === '')           { $pessoa_contacto = "Sem pessoa de contacto"; }
+    if ($telefone_pessoa_contacto === '')  { $telefone_pessoa_contacto = "Sem telefone da pessoa de contacto"; }
+    if ($observacoes === '')              { $observacoes = "Sem observações"; }
 
     // Validar se os campos obrigatórios foram mantidos preenchidos
     if (empty($nome_empresa) || empty($nif) || empty($email)) {
@@ -106,6 +122,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_stmt_close($stmt_update);
         }
     }
+    
+    // Se falhar a validação, realimenta a variável $fornecedor para não quebrar os campos HTML abaixo
+    if ($erro) {
+        $fornecedor = $_POST;
+    }
 }
 ?>
 
@@ -117,10 +138,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
-   
     
     <link rel="stylesheet" href="../../assets/css/admin1240896.css">
-    
 </head>
 <body>
 
@@ -138,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </a>
                 </div>
 
-                <?php if (isset($erro)): ?>
+                <?php if (!empty($erro)): ?>
                     <div class="alert alert-danger d-flex align-items-center">
                         <i class="fa-solid fa-triangle-exclamation me-2"></i>
                         <div><?php echo $erro; ?></div>
@@ -146,61 +165,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
 
                 <form action="editar_fornecedor.php" method="POST">
-                    <input type="hidden" name="id" value="<?php echo isset($fornecedor) ? $fornecedor['id'] : $id; ?>">
+                    <input type="hidden" name="id" value="<?php echo htmlspecialchars(($fornecedor['id'] ?? $id ?? '')); ?>">
 
                     <div class="row g-3">
                         
                         <div class="col-12 col-md-8">
                             <label class="form-label fw-semibold">Nome da Empresa / Entidade</label>
                             <input type="text" class="form-control" name="nome_empresa" 
-                                   value="<?php echo htmlspecialchars($_POST['nome_empresa'] ?? $fornecedor['nome_empresa'] ?? ''); ?>" required>
+                                   value="<?php echo htmlspecialchars(($fornecedor['nome_empresa'] ?? '')); ?>" required>
                         </div>
 
                         <div class="col-12 col-md-4">
                             <label class="form-label fw-semibold">NIF (Contribuinte)</label>
                             <input type="text" class="form-control" name="nif" 
-                                   value="<?php echo htmlspecialchars($_POST['nif'] ?? $fornecedor['nif'] ?? ''); ?>" required>
+                                   value="<?php echo htmlspecialchars(($fornecedor['nif'] ?? '')); ?>" required>
                         </div>
 
                         <div class="col-12 col-md-4">
                             <label class="form-label fw-semibold">Contacto Telefónico Geral</label>
                             <input type="text" class="form-control" name="contacto_telefonico" 
-                                   value="<?php echo htmlspecialchars($_POST['contacto_telefonico'] ?? $fornecedor['contacto_telefonico'] ?? ''); ?>">
+                                   value="<?php echo htmlspecialchars(($fornecedor['contacto_telefonico'] ?? 'Sem contacto telefónico')); ?>">
                         </div>
 
                         <div class="col-12 col-md-4">
                             <label class="form-label fw-semibold">Email de Contacto</label>
                             <input type="email" class="form-control" name="email" 
-                                   value="<?php echo htmlspecialchars($_POST['email'] ?? $fornecedor['email'] ?? ''); ?>" required>
+                                   value="<?php echo htmlspecialchars(($fornecedor['email'] ?? '')); ?>" required>
                         </div>
 
                         <div class="col-12 col-md-4">
                             <label class="form-label fw-semibold">Website</label>
                             <input type="text" class="form-control" name="website" 
-                                   value="<?php echo htmlspecialchars($_POST['website'] ?? $fornecedor['website'] ?? ''); ?>">
+                                   value="<?php echo htmlspecialchars(($fornecedor['website'] ?? 'Sem website')); ?>">
                         </div>
 
                         <div class="col-12">
                             <label class="form-label fw-semibold">Morada Oficial</label>
                             <input type="text" class="form-control" name="morada" 
-                                   value="<?php echo htmlspecialchars($_POST['morada'] ?? $fornecedor['morada'] ?? ''); ?>">
+                                   value="<?php echo htmlspecialchars(($fornecedor['morada'] ?? 'Sem morada')); ?>">
                         </div>
 
                         <div class="col-12 col-md-6">
                             <label class="form-label fw-semibold">Pessoa de Contacto (Gestor de Conta / Técnico)</label>
                             <input type="text" class="form-control" name="pessoa_contacto" 
-                                   value="<?php echo htmlspecialchars($_POST['pessoa_contacto'] ?? $fornecedor['pessoa_contacto'] ?? ''); ?>">
+                                   value="<?php echo htmlspecialchars(($fornecedor['pessoa_contacto'] ?? 'Sem pessoa de contacto')); ?>">
                         </div>
 
                         <div class="col-12 col-md-6">
                             <label class="form-label fw-semibold">Telefone / Telemóvel da pessoa de contacto</label>
                             <input type="text" class="form-control" name="telefone_pessoa_contacto" 
-                                   value="<?php echo htmlspecialchars($_POST['telefone_pessoa_contacto'] ?? $fornecedor['telefone_pessoa_contacto'] ?? ''); ?>">
+                                   value="<?php echo htmlspecialchars(($fornecedor['telefone_pessoa_contacto'] ?? 'Sem telefone da pessoa de contacto')); ?>">
                         </div>
 
                         <div class="col-12">
                             <label class="form-label fw-semibold">Observações / Acordos Técnicos</label>
-                            <textarea class="form-control" name="observacoes" rows="4"><?php echo htmlspecialchars($_POST['observacoes'] ?? $fornecedor['observacoes'] ?? ''); ?></textarea>
+                            <textarea class="form-control" name="observacoes" rows="4"><?php echo htmlspecialchars(($fornecedor['observacoes'] ?? 'Sem observações')); ?></textarea>
                         </div>
 
                     </div>
