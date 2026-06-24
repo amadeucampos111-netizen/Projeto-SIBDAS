@@ -35,7 +35,7 @@ mysqli_set_charset($conn, "utf8mb4");
 // Criamos uma função interna para limpar e normalizar o texto inserido pelo utilizador
 
 
-$codigo_interno = isset($_GET['codigo_interno']) ? mysqli_real_escape_string($conn, trim($_GET['codigo_interno'])) : '';
+$codigo_interno = isset($_GET['codigo_interno']) ? mysqli_real_escape_string($conn, trim($_GET['codigo_interno'])) : ''; //Proteção contra SQL Injection. Escapa caracteres perigosos (como aspas simples ' ou duplas ")
 $designacao     = isset($_GET['designacao'])     ? mysqli_real_escape_string($conn, trim($_GET['designacao'])) : '';
 $marca          = isset($_GET['marca'])          ? mysqli_real_escape_string($conn, trim($_GET['marca'])) : '';
 $modelo         = isset($_GET['modelo'])         ? mysqli_real_escape_string($conn, trim($_GET['modelo'])) : '';
@@ -67,9 +67,9 @@ $params = [];
 $types = "";
 
 if (!empty($codigo_interno)) {
-    $sql .= " AND e.codigo_interno COLLATE utf8mb4_general_ci LIKE ?";
-    $params[] = "%$codigo_interno%";
-    $types .= "s";
+    $sql .= " AND e.codigo_interno COLLATE utf8mb4_general_ci LIKE ?"; //Operação Inteligente de Usabilidade. O sufixo _ci significa Case Insensitive e Accent Insensitive. Isto força o MySQL a ignorar a diferença entre maiúsculas/minúsculas e acentos
+    $params[] = "%$codigo_interno%"; //LIKE ? com %$variavel%: Permite fazer buscas parciais
+    $types .= "s";//$params[] e $types += "s": Guarda os valores e os tipos (neste caso, "s" de string) em matrizes dinâmicas
 }
 if (!empty($designacao)) {
     $sql .= " AND e.designacao COLLATE utf8mb4_general_ci LIKE ?";
@@ -113,15 +113,18 @@ if (!empty($criticidade)) {
 }
 
 // Agrupamento obrigatório devido ao uso de GROUP_CONCAT
+//Consolida as linhas repetidas provocadas pelas junções de fornecedores.
 $sql .= " GROUP BY e.id, l.id";
 
 if (!empty($fornecedor)) {
-    $sql .= " HAVING nomes_fornecedores COLLATE utf8mb4_general_ci LIKE ?";
+    $sql .= " HAVING nomes_fornecedores COLLATE utf8mb4_general_ci LIKE ?"; //O SQL não permite usar a cláusula WHERE para colunas virtuais geradas na hora (como a nomes_fornecedores). Para filtrar por fornecedor, o PHP anexa uma cláusula HAVING, que funciona exatamente como um WHERE, mas corre depois de o grupo e o GROUP_CONCAT estarem calculados.
     $params[] = "%$fornecedor%";
     $types .= "s";
 }
 
 // Lista de segurança para ordenação
+//O valor de ordenação vem diretamente do clique do utilizador no ecrã. Passar esse valor direto para o SQL seria perigoso. O código mapeia chaves seguras (ex: 'servico') para colunas reais ('l.servico_departamento'). 
+//Se o utilizador tentar adulterar a URL com código malicioso, o operador coalescente ?? descarta o ataque e força a ordenação padrão por e.designacao.
 $colunas_validas = [
     'designacao' => 'e.designacao',
     'codigo_interno' => 'e.codigo_interno',
@@ -138,7 +141,7 @@ $sql .= " ORDER BY $coluna_ordenar $direcao";
 $stmt = mysqli_prepare($conn, $sql);
 if ($stmt) {
     if (!empty($types)) {
-        mysqli_stmt_bind_param($stmt, $types, ...$params);
+        mysqli_stmt_bind_param($stmt, $types, ...$params); //Transforma a matriz de parâmetros em variáveis isoladas para a função mysqli_stmt_bind_param
     }
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);

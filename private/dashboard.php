@@ -91,8 +91,8 @@ $query_sem_doc = "SELECT COUNT(*) as total
                   LEFT JOIN documentacao d ON e.id = d.equipamento_id
                   WHERE d.equipamento_id IS NULL";
 
-$result_sem_doc = mysqli_query($conn, $query_sem_doc);
-$data_sem_doc = mysqli_fetch_assoc($result_sem_doc);
+$result_sem_doc = mysqli_query($conn, $query_sem_doc); //Pega na ligação ativa da tua base de dados ($conn) e envia o comando SQL para o servidor MySQL processar
+$data_sem_doc = mysqli_fetch_assoc($result_sem_doc); //Como o PHP não consegue ler o resultado bruto do MySQL diretamente, esta função converte a primeira linha do resultado numa matriz associativa
 
 // Guarda o valor na variável para o Dashboard
 $total_sem_documentacao = $data_sem_doc['total'];
@@ -203,7 +203,19 @@ $result_suporte_vida = mysqli_query($conn, $query_suporte_vida);
         </div>
     </div>
 </nav>
+    <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i> <?php echo $_SESSION['mensagem_sucesso']; unset($_SESSION['mensagem_sucesso']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
 
+        <?php if (isset($_SESSION['mensagem_erro'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i> <?php echo $_SESSION['mensagem_erro']; unset($_SESSION['mensagem_erro']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
     <div class="container mt-5">
         <div class="row mb-4">
             <div class="col">

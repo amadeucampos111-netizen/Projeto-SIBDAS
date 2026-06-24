@@ -73,20 +73,25 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-document.getElementById('formLogin').addEventListener('submit', function(e) {
+document.getElementById('formLogin').addEventListener('submit', function(e) { 
+    //document.getElementById('formLogin'): Procura no documento HTML o formulário que tem o atributo id="formLogin"
+    //.addEventListener('submit', ...): Fica à escuta (aguardando) que o utilizador tente submeter o formulário (seja clicando no botão ou pressionando Enter).
     e.preventDefault(); // Impede o recarregamento da página
 
     const btn = document.getElementById('btnEntrar');
     const containerErro = document.getElementById('container-erro');
+
+    //const btn e const containerErro: Criam referências para o botão de login e para a zona onde as mensagens de erro serão mostradas.
     
     // Desativar o botão para evitar duplos cliques
-    btn.disabled = true;
+    btn.disabled = true; 
     containerErro.innerHTML = '';
 
     // Agrupar os dados do formulário
     const formData = new FormData(this);
 
     // Enviar via AJAX para o ficheiro PHP
+    //fetch(...): Inicia uma comunicação com o servidor em segundo plano.
     fetch('../private/login.php', {
         method: 'POST',
         body: formData

@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Remover fisicamente o anexo antigo para evitar lixo no storage
                     $ficheiro_antigo = '../../' . $_POST['caminho_atual'];
                     if (!empty($_POST['caminho_atual']) && file_exists($ficheiro_antigo)) {
-                        unlink($ficheiro_antigo);
+                        unlink($ficheiro_antigo); // Esta é uma das partes mais importantes. Se o upload do novo ficheiro for bem-sucedido, o script apaga fisicamente o ficheiro antigo do disco do servidor
                     }
                     // Definir o novo caminho que será guardado na BD
                     $caminho_bd = 'uploads/documentos/' . $newFileName;

@@ -21,8 +21,8 @@ $port = 10464;
 
  try {
     $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, //Força o PDO a disparar exceções (erros controláveis) caso uma query falhe
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC //Configura o formato de resposta da BD para matrizes associativas (onde acedes aos valores pelos nomes das colunas
     ]);
 } catch (\PDOException $e) {
     die("Erro temporário no servidor.");

@@ -10,6 +10,7 @@ if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
 }
 
 // 2. Validação do ID
+//Operação de Segurança. Garante que o parâmetro id vindo do URL
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header("Location: ver_equipamento.php");
     exit;
@@ -49,7 +50,7 @@ header('Content-Type: text/csv; charset=utf-8');
 header('Content-Disposition: attachment; filename="Ficha_Tecnica_' . $eq['codigo_interno'] . '.csv"');
 
 // Abrir o buffer de saída diretamente
-$output = fopen('php://output', 'w');
+$output = fopen('php://output', 'w'); //É um fluxo de escrita direta. Tudo o que for gravado aqui é enviado em tempo real para o download do utilizador
 
 // Envia o BOM (Byte Order Mark) UTF-8 para o Excel não corromper acentos e símbolos (€, º, ª)
 fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));

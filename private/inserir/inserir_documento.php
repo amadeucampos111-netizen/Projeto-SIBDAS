@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // --- PROCESSAMENTO DO UPLOAD DO FICHEIRO ---
+    //Verifica se o ficheiro foi realmente enviado e se o código de erro é UPLOAD_ERR_OK (indica que o upload temporário para o servidor correu bem)
     if (isset($_FILES['documento_media']) && $_FILES['documento_media']['error'] === UPLOAD_ERR_OK) {
         
         $fileTmpPath = $_FILES['documento_media']['tmp_name'];
@@ -38,6 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fileSize    = $_FILES['documento_media']['size'];
         
         // Extrair e validar a extensão do ficheiro
+        //Divide o nome do ficheiro pelo ponto para extrair a extensão.
+        // Converte-a para minúsculas e valida se ela pertence à "lista branca" (pdf, jpg, jpeg, png)
         $fileNameCmps = explode(".", $fileName);
         $fileExtension = strtolower(end($fileNameCmps));
         
@@ -57,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
                 $dest_path = $uploadFileDir . $newFileName;
 
-                // Move o ficheiro da pasta temporária para o destino final
+                
+                //Transfere o ficheiro da pasta temporária do sistema operacional para o seu destino final e definitivo no servidor
                 if (move_uploaded_file($fileTmpPath, $dest_path)) {
                     
                     // Guardamos o caminho relativo ideal para ser lido no frontend em qualquer listagem

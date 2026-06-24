@@ -42,10 +42,10 @@ $mensagem = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Iniciar uma transação no MySQLi
-        $conn->begin_transaction();
+        $conn->begin_transaction(); //Operação Avançada de Segurança. Abre uma Transação ACID no MySQL. Significa que todas as alterações feitas a seguir ficarão "em espera". Se uma delas falhar, nenhuma será aplicada, garantindo que a base de dados nunca fica corrompida ou atualizada apenas "pela metade"
 
         // Preparar a Query de Atualização usando MySQLi (com placeholders '?')
-        $stmt = $conn->prepare("UPDATE textos_interface SET conteudo = ? WHERE chave = ?");
+        $stmt = $conn->prepare("UPDATE textos_interface SET conteudo = ? WHERE chave = ?"); //Prepara um comando SQL protegido contra SQL Injection. Os pontos de interrogação ? são placeholders temporários que serão substituídos de forma segura pelos dados reais
 
         // Percorrer todos os campos enviados pelo formulário
         foreach ($_POST['textos'] as $chave => $conteudo) {
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
     } catch (Exception $e) {
         // Reverter alterações em caso de erro
-        $conn->rollback();
+        $conn->rollback(); //rollback() desfaz instantaneamente tudo o que tinha sido alterado naquela tentativa
         $mensagem = "<div class='alert alert-danger'>Erro ao atualizar: " . htmlspecialchars($e->getMessage()) . "</div>";
     }
 }
@@ -70,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $textos = [];
 $result = $conn->query('SELECT chave, conteudo FROM textos_interface');
 if ($result) {
+    //Transforma as linhas da tabela numa matriz associativa organizada em PHP
     while ($row = $result->fetch_assoc()) {
         $textos[$row['chave']] = $row['conteudo'];
     }
@@ -77,7 +78,9 @@ if ($result) {
 
 // 3. FUNÇÃO AUXILIAR PARA EXIBIR OS TEXTOS COM SEGURANÇA
 function exibir_texto($chave, $texto_padrao) {
-    global $textos;
+    global $textos; //Dá à função permissão para ler a matriz $textos que foi criada fora dela
+    //isset($textos[$chave]) ? ... : $texto_padrao: Se a chave existir na base de dados, ela usa esse valor. Caso contrário, devolve um texto padrão
+    //Operação Crítica de Segurança. Sanitiza o texto antes de o injetar no HTML
     return isset($textos[$chave]) ? htmlspecialchars($textos[$chave], ENT_QUOTES, 'UTF-8') : $texto_padrao;
 }
 ?>

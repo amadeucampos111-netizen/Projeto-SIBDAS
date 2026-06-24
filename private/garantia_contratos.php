@@ -127,7 +127,11 @@ $conn = mysqli_connect("vsgate-s1.dei.isep.ipp.pt", "1240896", "campos_896", "db
                     <select class="form-select" name="equipamento_id" required>
                         <option value="" selected disabled>Selecione...</option>
                         <?php
-                        $res = mysqli_query($conn, "SELECT e.id, e.designacao, e.numero_serie FROM equipamentos e LEFT JOIN garantias_contratos gc ON e.id = gc.equipamento_id WHERE gc.id IS NULL ORDER BY e.designacao ASC");
+                        $res = mysqli_query($conn, 
+                        "SELECT e.id, e.designacao, e.numero_serie 
+                        FROM equipamentos e 
+                        LEFT JOIN garantias_contratos gc ON e.id = gc.equipamento_id 
+                        WHERE gc.id IS NULL ORDER BY e.designacao ASC");
                         while($row = mysqli_fetch_assoc($res)) echo "<option value='{$row['id']}'>{$row['designacao']} (S/N: {$row['numero_serie']})</option>";
                         ?>
                     </select>

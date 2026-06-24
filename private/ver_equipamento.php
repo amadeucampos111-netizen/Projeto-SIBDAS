@@ -186,7 +186,7 @@ mysqli_close($conn);
                         <div class="p-3 bg-light rounded border" style="min-height: 80px;">
                             <?php echo nl2br(htmlspecialchars($eq['observacoes'] ?: "Nenhuma observação técnica registada para este dispositivo.")); ?>
                         </div>
-                    </div>
+                    </div>                   
 
                     <div class="col-12 mt-4">
                         <div class="border-top pt-3">
@@ -232,8 +232,8 @@ mysqli_close($conn);
                                                         <div><i class="fa-solid fa-sticky-note me-1"></i> <?php echo htmlspecialchars($forn['observacoes']); ?></div>
                                                     <?php endif; ?>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            </div>                                                                           
+                                        </div>                                       
                                     <?php endwhile; ?>
                                 <?php endif; ?>    
                                 <?php if (!mysqli_num_rows($result_forn)): ?>
