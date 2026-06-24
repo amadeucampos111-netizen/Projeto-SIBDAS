@@ -1,141 +1,159 @@
+/* Configurações globais para o corpo (body) da página */
+body {
+    font-family: 'Titillium Web', sans-serif; /* Define a fonte principal do sistema */
+    background-color: #f8f9fa;               /* Define um fundo cinza muito claro (padrão Bootstrap) */
+    color: #333;                             /* Define a cor do texto num tom cinza escuro para melhor leitura */
+}
 
+/* Secção de destaque (Hero) que costuma ficar no topo da página */
+.hero-section {
+    /* Cria um fundo degradê que vai do verde escuro (#1e7225) ao verde médio (#289224) a 135 graus */
+    background: linear-gradient(135deg, #1e7225 0%, #289224 100%);
+    color: white;                            /* Força todos os textos dentro desta secção a serem brancos */
+    padding: 100px 0;                        /* Aplica um espaçamento interno grande (100px) no topo e no fundo */
+}
 
+/* Classe genérica para dar espaçamento vertical generoso às secções */
+.section-padding {
+    padding: 80px 0;                         /* Adiciona 80px de margem interna superior e inferior */
+}
 
+/* Fundo azul decorativo muito suave */
+.bg-light-blue {
+    background-color: #f0f4f8;               /* Define a cor de fundo para um azul acinzentado claro */
+}
 
- body {
-            font-family: 'Titillium Web', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        
-        .hero-section {
-            background: linear-gradient(135deg, #1e7225 0%, #289224 100%);
-            color: white;
-            padding: 100px 0;
-        }
+/* Cartões de funcionalidades ou destaques */
+.feature-card {
+    /* Suaviza as mudanças de animação (posição e sombra) para durarem 0.3 segundos */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;                            /* Remove as bordas padrão do cartão */
+    border-radius: 10px;                     /* Arredonda os cantos do cartão em 10px */
+}
 
-        .section-padding {
-            padding: 80px 0;
-        }
+/* Efeito visual quando o utilizador passa o rato por cima do cartão (Hover) */
+.feature-card:hover {
+    transform: translateY(-5px);             /* Faz o cartão "flutuar" para cima em 5px */
+    /* Aplica uma sombra projetada elegante e força o Bootstrap a aceitá-la com o !important */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
 
-        .bg-light-blue {
-            background-color: #f0f4f8;
-        }
+/* Estilização dos links dentro dos cartões de funcionalidades */
+.feature-card a {
+    text-decoration: none;                   /* Remove o sublinhado padrão dos links */
+    color: #2a5298;                          /* Define a cor do texto do link para um tom azul escuro */
+}
 
-        .feature-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: none;
-            border-radius: 10px;
-        }
+/* Contentor ou caixa para exibição de imagens de equipamentos médicos */
+.equip-img {
+    height: 180px;                           /* Força uma altura fixa de 180px */
+    object-fit: contain;                     /* Redimensiona a imagem para caber na caixa sem distorcer ou cortar */
+    background: #fff;                        /* Dá um fundo puramente branco à imagem */
+    padding: 15px;                           /* Afasta as bordas da imagem em 15px */
+    border-radius: 8px;                      /* Arredonda os cantos do fundo em 8px */
+}
 
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-        }
+/* Rodapé (Footer) da página */
+footer {
+    background-color: #289224;               /* Define o fundo do rodapé com o verde da marca */
+    color: #a0a0a0;                          /* Define a cor do texto para um cinza claro discreto */
+    padding: 30px 0;                         /* Dá um espaçamento interno de 30px acima e abaixo */
+}
 
-        .feature-card a {
-            text-decoration: none;
-            color: #2a5298;
-        }
+/* Sobrescrita da classe de espaçamento (esta tem precedência por estar mais abaixo) */
+.section-padding {
+    padding: 60px 0;                         /* Ajusta o espaçamento vertical das secções para 60px */
+}
 
-        .equip-img {
-            height: 180px;
-            object-fit: contain;
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-        }
+/* Ajuste específico para as imagens do Carrossel de fotos */
+.carousel-img-ajustada {
+    height: 450px;                           /* Define uma altura fixa de 450px para o carrossel */
+    object-fit: contain;                     /* Garante que a foto aparece inteira na tela sem ser distorcida */
+    object-position: center;                 /* Garante que o foco da imagem fica sempre centralizado */
+    width: 100%;                             /* Faz a imagem ocupar 100% da largura disponível */
+}
 
-        footer {
-            background-color: #289224;
-            color: #a0a0a0;
-            padding: 30px 0;
-        }
+/* Customização dos botões/setas de navegação do carrossel */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5);    /* Cria um círculo preto com 50% de transparência atrás da seta */
+    padding: 20px;                           /* Dá tamanho ao círculo ao redor da seta */
+    border-radius: 50%;                      /* Torna o fundo perfeitamente redondo */
+    background-size: 50%;                    /* Encolhe o ícone da seta branca para caber bem dentro do círculo */
+}
 
-        .section-padding {
-            padding: 60px 0;
-        }
+/* Linha decorativa horizontal usada abaixo de títulos */
+.h-line {
+    width: 60px;                             /* Define uma largura curta de 60px */
+    height: 3px;                             /* Define uma espessura fina de 3px (parece uma barra) */
+}
 
-        /* Força todas as imagens do carrossel a terem exatamente a mesma altura e proporção */
-        .carousel-img-ajustada {
-            height: 450px; /* Define a altura fixa ideal para o carrossel */
-            object-fit: contain; /* Faz com que a imagem preencha o espaço sem distorcer, cortando as bordas se necessário */
-            object-position: center; /* Mantém o centro da imagem sempre visível */
-            width: 100%;
-        }
+/* Caixa/Cartão do formulário de Login */
+.login-card {
+    border: none;                            /* Remove qualquer borda padrão */
+    border-radius: 16px;                     /* Deixa os cantos do cartão bastante arredondados (moderno) */
+    /* Cria uma sombra projetada escura e suave, dando o efeito de que o cartão está a flutuar na tela */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    background-color: #ffffff;               /* Fundo branco para destacar do fundo cinza da página */
+}
 
-        /* Adiciona um fundo escuro e redondo atrás das setas para garantir visibilidade em fotos claras */
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 50%;
-            background-size: 50%; /* Ajusta o tamanho da seta dentro do círculo */
-        }
+/* Caixas de texto (inputs) do formulário */
+.form-control {
+    border-radius: 8px;                      /* Arredonda os cantos do input em 8px */
+    /* Espaçamentos: 10px topo, 12px direita, 10px fundo, e 40px à esquerda para o ícone não pisar o texto */
+    padding: 10px 12px 10px 40px; 
+    border: 1px solid #ced4da;               /* Borda fina num cinza neutro */
+    transition: all 0.3s ease;               /* Faz qualquer transição (como o foco) ser suave */
+}
 
-        /* Linha decorativa abaixo do título */
-        .h-line {
-            width: 60px;
-            height: 3px;
-        }
-         /* Cartão de login flutuante com sombra suave */
-        .login-card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            background-color: #ffffff;
-        }
+/* Efeito visual quando o utilizador clica dentro do input (Foco) */
+.form-control:focus {
+    border-color: #2a7542;                   /* Muda a borda para o verde escuro do sistema */
+    /* Cria uma aura/brilho verde semi-transparente ao redor do input */
+    box-shadow: 0 0 0 0.25rem rgba(42, 117, 66, 0.25);
+}
 
-        /* Estilização suave para os inputs */
-        .form-control {
-            border-radius: 8px;
-            padding: 10px 12px 10px 40px; /* Espaço à esquerda para o ícone */
-            border: 1px solid #ced4da;
-            transition: all 0.3s ease;
-        }
+/* Contentor especial para agrupar o input e o seu respetivo ícone */
+.input-group-custom {
+    position: relative;                      /* Funciona como ponto de referência para o ícone absoluto */
+}
 
-        .form-control:focus {
-            border-color: #2a7542;
-            box-shadow: 0 0 0 0.25rem rgba(42, 117, 66, 0.25);
-        }
+/* Alinhamento dos ícones do Font Awesome (como o cadeado ou utilizador) dentro do input */
+.input-group-custom i {
+    position: absolute;                      /* Desprende o ícone do fluxo e permite posicioná-lo livremente */
+    left: 15px;                              /* Afasta o ícone 15px da borda esquerda do input */
+    top: 50%;                                /* Joga o ícone para o meio vertical do bloco */
+    transform: translateY(-50%);             /* Ajuste matemático perfeito para centralizar o ícone na vertical */
+    color: #6c757d;                          /* Pinta o ícone com um cinza neutro */
+    z-index: 10;                             /* Garante que o ícone fica por cima do input e não escondido atrás */
+}
 
-        /* Posicionamento dos ícones dentro dos inputs */
-        .input-group-custom {
-            position: relative;
-        }
+/* Botão de submissão (Entrar) costumizado em tons verdes */
+.btn-green {
+    background-color: #2a7542;               /* Define a cor de fundo para o verde corporativo */
+    color: #ffffff;                          /* Texto do botão em branco */
+    border-radius: 8px;                      /* Cantos arredondados em 8px seguindo o padrão dos inputs */
+    padding: 10px 0;                         /* Dá uma boa altura vertical ao botão */
+    font-weight: 600;                        /* Deixa a letra ligeiramente em negrito (semi-bold) */
+    transition: all 0.3s ease;               /* Torna os efeitos de clique e passagem de rato suaves */
+    border: none;                            /* Remove a borda padrão do botão */
+}
 
-        .input-group-custom i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6c757d;
-            z-index: 10;
-        }
+/* Efeito ao passar o rato sobre o botão verde */
+.btn-green:hover {
+    background-color: #1e4d2b;               /* Escurece o verde do botão no hover */
+    color: #ffffff;                          /* Mantém o texto em branco */
+    transform: translateY(-1px);             /* Dá um micro efeito de elevação (sobe 1px) */
+}
 
-        /* Botão de Entrar personalizado com tons verdes */
-        .btn-green {
-            background-color: #2a7542;
-            color: #ffffff;
-            border-radius: 8px;
-            padding: 10px 0;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-        }
+/* Imagem do logótipo do sistema */
+.logo-img {
+    width: 70px;                             /* Fixa a largura do logo em 70px */
+    height: auto;                            /* Ajusta a altura automaticamente para não distorcer a imagem */
+    transition: transform 0.3s ease;         /* Prepara o logo para uma animação suave de tamanho */
+}
 
-        .btn-green:hover {
-            background-color: #1e4d2b;
-            color: #ffffff;
-            transform: translateY(-1px);
-        }
-        
-        .logo-img {
-            width: 70px;
-            height: auto;
-            transition: transform 0.3s ease;
-        }
-        
-        .logo-img:hover {
-            transform: scale(1.05);
-        }
+/* Efeito ao passar o rato sobre o logótipo */
+.logo-img:hover {
+    transform: scale(1.05);                  /* Aumenta o tamanho do logo em 5% (efeito de zoom suave) */
+}

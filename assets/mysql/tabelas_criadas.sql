@@ -142,3 +142,14 @@ VALUES (
 ); -- Hash BCRYPT gerada para: 1234
 
 INSERT INTO administradores (utilizador_id) VALUES (1);
+
+--localizaciones -> equipamentos (1:N): Uma localização (sala/gabinete) pode conter vários equipamentos médicos, mas cada equipamento está fisicamente instalado em apenas uma localização num dado momento
+--equipamentos -> fornecedores (M:N via equipamento_fornecedor): Um equipamento pode envolver várias entidades (o fabricante original, o distribuidor que o vendeu e a empresa externa de assistência técnica). 
+--Da mesma forma, um fornecedor pode prestar serviços a vários equipamentos.
+--equipamentos -> garantias_contratos (1:1): O campo equipamento_id na tabela de garantias está marcado como UNIQUE. Isto transforma o relacionamento padrão 1:N num vínculo estrito de 1 para 1. 
+--Cada equipamento tem, no máximo, uma ficha de garantia/contrato ativa
+--equipamentos -> componentes_associados (1:N): Relacionamento de composição (Todo/Parte). Equipamentos complexos (ex: uma torre de endoscopia) possuem subcomponentes.
+ --O uso de ON DELETE CASCADE garante que, se o equipamento for eliminado do sistema, as suas peças associadas são automaticamente limpas.
+ --equipamentos -> documentacao (1:N): Um equipamento médico pode ter vários documentos digitais anexados (manuais, relatórios de calibração).
+ --utilizadores -> administradores (1:1 / Especialização): Utiliza o padrão de herança em bases de dados. Todos os administradores são utilizadores, partilhando a mesma PK.
+ -- Se o utilizador for apagado, o seu registo de administrador desaparece em cascata.

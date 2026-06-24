@@ -1,104 +1,143 @@
-  body {
-            font-family: 'Titillium Web', sans-serif !important; 
-            background-color: #f8f9fa;
-            color: #333333;
-        }
+/* Configurações de estilo para o corpo inteiro da página (body) */
+body {
+    /* Força o uso da fonte 'Titillium Web' em toda a página, ignorando outras regras com o !important */
+    font-family: 'Titillium Web', sans-serif !important; 
+    background-color: #f8f9fa;            /* Aplica um fundo cinza muito claro (padrão Bootstrap) */
+    color: #333333;                          /* Define a cor do texto num tom cinza escuro para excelente contraste */
+}
 
-        /* Customização com base na cor verde solicitada */
-        .bg-custom-verde {
-            background-color: #289224 !important;
-        }
+/* ==========================================================================
+   Customização com base na cor verde solicitada (Identidade Visual da Marca)
+   ========================================================================== */
 
-        .text-custom-verde {
-            color: #289224 !important;
-        }
+/* Classe para aplicar a cor verde corporativa ao fundo de elementos */
+.bg-custom-verde {
+    /* Define o fundo verde e força a sua aplicação sobrepondo classes nativas com !important */
+    background-color: #289224 !important;
+}
 
-        /* Estilização da Navbar */
-        .navbar {
-            padding: 0.75rem 1rem;
-        }
-        .navbar-brand {
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        .nav-link {
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.85) !important;
-            transition: color 0.2s ease-in-out, background-color 0.2s;
-            padding: 0.5rem 0.75rem !important;
-            border-radius: 4px;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #ffffff !important;
-            background-color: rgba(255, 255, 255, 0.15);
-        }
+/* Classe para aplicar a cor verde corporativa diretamente em textos, títulos ou ícones */
+.text-custom-verde {
+    /* Pinta o texto de verde e garante prioridade máxima com o !important */
+    color: #289224 !important;
+}
 
-        /* Cards Estéticos Avançados (Design Moderno) */
-        .card-stats {
-            border: none;
-            border-radius: 8px;
-            background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card-stats:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-        }
-        /* Barras de cor laterais para indicar a categoria do indicador */
-        .border-indicador-verde {
-            border-left: 5px solid #289224 !important;
-        }
-        .border-indicador-azul {
-            border-left: 5px solid #0dcaf0 !important;
-        }
-        .icon-box {
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
+/* ==========================================================================
+   Estilização da Barra de Navegação (Navbar)
+   ========================================================================== */
 
-        /* Ativa o efeito hover apenas em ecrãs médios/grandes (computadores) */
+/* Ajustes na estrutura da barra de navegação superior */
+.navbar {
+    padding: 0.75rem 1rem;                /* Define o espaçamento interno: 12px (cima/baixo) e 16px (lados) */
+}
+
+/* Nome da marca ou Logótipo em texto na Navbar */
+.navbar-brand {
+    font-weight: 700;                     /* Aplica um estilo negrito bem forte (Bold) */
+    letter-spacing: 0.5px;                /* Cria um micro espaçamento de 0.5px entre as letras do título */
+}
+
+/* Links de navegação da Navbar (Ex: Equipamentos, Localizações) */
+.nav-link {
+    font-weight: 600;                     /* Define a letra como semi-negrito */
+    /* Define o texto branco com 85% de opacidade para um visual suave e força o !important */
+    color: rgba(255, 255, 255, 0.85) !important;
+    /* Suaviza as transições de cor do texto (0.2s) e da cor de fundo (0.2s) */
+    transition: color 0.2s ease-in-out, background-color 0.2s;
+    padding: 0.5rem 0.75rem !important;   /* Define a área de clique: 8px vertical e 12px horizontal */
+    border-radius: 4px;                   /* Arredonda ligeiramente os cantos do link (útil no efeito hover) */
+}
+
+/* Estado visual do link quando o rato passa por cima (Hover) ou quando a página está ativa (.active) */
+.nav-link:hover, .nav-link.active {
+    color: #ffffff !important;            /* Transforma o texto em branco puro (100% opacidade) */
+    background-color: rgba(255, 255, 255, 0.15); /* Cria um fundo branco muito suave e semi-transparente */
+}
+
+/* ==========================================================================
+   Cards Estéticos Avançados (Design Moderno de Estatísticas/Dashboard)
+   ========================================================================== */
+
+/* Caixa/Cartão que exibe métricas no Dashboard (Ex: Total de Equipamentos) */
+.card-stats {
+    border: none;                         /* Remove a borda cinza padrão do Bootstrap */
+    border-radius: 8px;                   /* Arredonda os cantos do cartão em 8px */
+    background-color: #ffffff;            /* Define o fundo do cartão como branco puro */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Aplica uma sombra projetada extremamente suave e moderna */
+    /* Prepara o cartão para animar suavemente o tamanho e a sombra durante 0.2 segundos */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efeito visual de elevação ao passar o rato sobre o cartão de estatísticas */
+.card-stats:hover {
+    transform: translateY(-3px);          /* Faz o cartão mover-se 3px para cima (efeito "flutuante") */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08); /* Torna a sombra um pouco mais intensa para destacar a elevação */
+}
+
+/* Barras verticais decorativas na lateral esquerda do cartão */
+.border-indicador-verde {
+    border-left: 5px solid #289224 !important; /* Cria uma barra grossa (5px) com o verde do projeto na esquerda */
+}
+
+.border-indicador-azul {
+    border-left: 5px solid #0dcaf0 !important; /* Cria uma barra grossa (5px) com o azul ciano na esquerda */
+}
+
+/* Contentor quadrado/circular estilizado para alojar os ícones dentro do cartão */
+.icon-box {
+    width: 48px;                          /* Fixa a largura do bloco em 48px */
+    height: 48px;                         /* Fixa a altura do bloco em 48px */
+    border-radius: 8px;                   /* Arredonda os cantos do quadrado em 8px */
+    display: flex;                        /* Ativa o modelo Flexbox para posicionar o ícone interno */
+    align-items: center;                  /* Alinha o ícone perfeitamente no centro vertical */
+    justify-content: center;              /* Alinha o ícone perfeitamente no centro horizontal */
+    font-size: 1.5rem;                    /* Define o tamanho do ícone Font Awesome para 24px */
+}
+
+/* ==========================================================================
+   Comportamentos Responsivos e Animações dos Menus Dropdown
+   ========================================================================== */
+
+/* Regras aplicadas apenas em ecrãs com largura igual ou superior a 992px (computadores/portáteis) */
 @media (min-width: 992px) {
+    /* Faz o menu suspenso (Dropdown) abrir automaticamente ao passar o rato, sem precisar de clicar */
     .navbar-nav .nav-item.dropdown:hover .dropdown-menu {
-        display: block;
-        margin-top: 0; /* Remove o espaço que pode fazer o menu fechar sozinho */
-        animation: fadeInNavbar 0.2s ease-in-out; /* Adiciona uma transição suave */
+        display: block;                   /* Altera o estado de escondido para visível */
+        margin-top: 0;                    /* Elimina folgas que poderiam fechar o menu ao mover o rato */
+        animation: fadeInNavbar 0.2s ease-in-out; /* Ativa a animação de surgimento suave definida abaixo */
     }
 }
 
-/* Pequena animação de surgimento suave */
+/* Definição da animação de surgimento suave (Fade In + Deslizamento) */
 @keyframes fadeInNavbar {
     from {
-        opacity: 0;
-        transform: translateY(5px);
+        opacity: 0;                       /* Inicia o menu completamente invisível */
+        transform: translateY(5px);       /* Começa posicionado 5px mais abaixo do local original */
     }
     to {
-        opacity: 1;
-        transform: translateY(0);
+        opacity: 1;                       /* Termina o menu totalmente visível */
+        transform: translateY(0);         /* Termina na sua posição matemática correta */
     }
 }
 
-/* Customização visual opcional para os itens do submenu combinarem com o MedTrack */
+/* Customização da caixa do menu suspenso (Submenu) */
 .dropdown-menu {
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    border: none;                         /* Remove a borda padrão do submenu do Bootstrap */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Dá uma sombra suave para destacar o menu sobre o conteúdo */
+    border-radius: 8px;                   /* Arredonda os quatro cantos do menu suspenso em 8px */
 }
 
+/* Linhas de opções individuais dentro do submenu */
 .dropdown-item {
-    font-size: 0.9rem;
-    padding: 8px 16px;
-    color: #495057;
-    transition: all 0.2s ease;
+    font-size: 0.9rem;                    /* Encolhe o tamanho da letra ligeiramente para um visual limpo */
+    padding: 8px 16px;                    /* Define o espaçamento interno: 8px vertical e 16px horizontal */
+    color: #495057;                       /* Aplica um tom de cinza escuro corporativo ao texto */
+    transition: all 0.2s ease;            /* Torna todas as animações nesta classe (como o hover) suaves */
 }
 
+/* Efeito dinâmico quando passas o rato sobre uma opção do submenu */
 .dropdown-item:hover {
-    background-color: #f1f3f5;
-    color: #198754; /* Cor verde padrão do Bootstrap ou a cor do teu projeto */
-    padding-left: 20px; /* Efeito de ligeiro deslize ao passar o rato */
+    background-color: #f1f3f5;            /* Dá um fundo cinza claro muito subtil ao item */
+    color: #198754;                       /* Altera o texto para a cor verde de destaque */
+    padding-left: 20px;                   /* Afasta o texto mais 4px para a direita, criando o efeito de deslize */
 }

@@ -1,10 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
+    //DOMContentLoaded: Este evento garante que o código JavaScript só vai correr depois que todo o HTML da página tiver sido completamente carregado pelo navegador
     // 1. Captura o formulário pelo ID (garante que o teu <form> tem id="formPesquisa")
     const form = document.getElementById("formPesquisa");
 
     if (form) {
         form.addEventListener("submit", function (event) {
-            // 2. Seleciona todos os inputs de texto dentro do formulário
+            // querySelectorAll('input[type="text"]') cria uma lista com todas as caixas de texto (<input type="text">) que existem dentro daquele formulário, permitindo limpar todas de uma só vez
             const inputs = form.querySelectorAll('input[type="text"]');
 
             inputs.forEach(function (input) {
